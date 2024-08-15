@@ -3,9 +3,7 @@ spring:
     name: health-future-backend
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3308/healthy?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false
-    username: healthy
-    password: 8641D9011BB446CA8D9D29F8A1BFB80B
+    url: ${DATABASE_URL}?useUnicode=true&characterEncoding=utf8
   jpa:
     open-in-view: false
     database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
@@ -27,13 +25,13 @@ server:
   port: 8080
 
 application:
-  secret-key: my-secret-token-to-change-in-production
+  secret-key: ${JWT_SECRET_KEY}
   token-validity-day: 30
   oss:
     host: https://healthy-future-dev.oss-cn-shanghai.aliyuncs.com
     endpoint: https://oss-cn-shanghai.aliyuncs.com
-    access-key-id:
-    access-key-secret:
+    access-key-id: 111
+    access-key-secret: 111
     bucket-name: healthy-future-dev
   map:
     key: 111

@@ -1,11 +1,8 @@
 logging:
   level:
-    root: debug
-  config: classpath:logback-dev.xml
+    edu.stanford.fsi.reap: DEBUG
 
 application:
   oss:
     bucket-name: healthy-future-dev
-  map:
-    key: 111
 
