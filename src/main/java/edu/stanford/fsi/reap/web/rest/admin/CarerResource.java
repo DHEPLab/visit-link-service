@@ -72,7 +72,7 @@ public class CarerResource {
         Optional<Carer> master = repository.findOneByBabyIdAndMasterIsTrue(carer.getBaby().getId());
         // when changing the current master caregiver to no
         if (master.isPresent() && id.equals(master.get().getId()) && !carer.isMaster()) {
-            throw new BadRequestAlertException("请至少设置一个主看护人");
+            throw new BadRequestAlertException("请至少设置一个主看护人", "", "", "noPrimaryCaregiver", null);
         }
         saveCarerModifyRecord(id, carer);
         return ResponseEntity.ok(service.save(carer));

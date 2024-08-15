@@ -20,7 +20,7 @@ public class BabyDTO {
     @Size(min = 2, max = 10)
     private String name;
 
-    @Size(max = 50)
+    @Size(min =1, max = 50)
     private String identity;
 
     @NotNull

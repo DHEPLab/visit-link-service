@@ -3,6 +3,7 @@ package edu.stanford.fsi.reap.service;
 import edu.stanford.fsi.reap.dto.AppOfflineLessonDTO;
 import edu.stanford.fsi.reap.dto.VisitResultDTO;
 import edu.stanford.fsi.reap.entity.*;
+import edu.stanford.fsi.reap.entity.Module;
 import edu.stanford.fsi.reap.entity.enumerations.BabyStage;
 import edu.stanford.fsi.reap.entity.enumerations.VisitStatus;
 import edu.stanford.fsi.reap.pojo.Domain;

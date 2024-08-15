@@ -102,7 +102,7 @@ public class BabyService {
                                                 }));
     }
 
-    public List<Map<String, String>> check(@Valid List<ImportBabyDto> list) {
+    public List<Map<String, String>> check(@Valid List<ImportBabyDto> list, String lang) {
 
         List<Map<String, String>> results = new ArrayList<>();
         list.stream().forEach(baby -> {
@@ -111,7 +111,7 @@ public class BabyService {
                 Map<String, String> map = new HashMap<>();
                 map.put("name", baby.getName());
                 map.put("number", baby.getNumber().toString());
-                map.put("matters", "ID: " + baby.getIdentity() + " 已经存在");
+                map.put("matters", "ID: " + baby.getIdentity() + ("zh".equals(lang) ? " 已经存在" : " exists"));
                 results.add(map);
                 return;
             }
@@ -122,7 +122,7 @@ public class BabyService {
                     Map<String, String> map = new HashMap<>();
                     map.put("name", baby.getName());
                     map.put("number", baby.getNumber().toString());
-                    map.put("matters", "CHW未找到");
+                    map.put("matters", ("zh".equals(lang) ? " CHW未找到" : "CHW not found"));
                     results.add(map);
                     return;
                 }

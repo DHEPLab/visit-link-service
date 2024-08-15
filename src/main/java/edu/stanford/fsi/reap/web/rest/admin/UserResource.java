@@ -101,19 +101,21 @@ public class UserResource {
         .ifPresent(
             consumer -> {
               if (!consumer.getId().equals(chw.getId())) {
-                throw new BadRequestAlertException("ID: " + chw.getIdentity() + " 已经存在");
+                  Map<String, Object> context = new HashMap<>();
+                  context.put("id", chw.getIdentity());
+                  throw new BadRequestAlertException("ID: " + chw.getIdentity() + " 已经存在", "", "", "idExists", context);
               }
             });
   }
 
   @PostMapping
   public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO)
-      throws URISyntaxException {
+          throws URISyntaxException {
     if (!SecurityUtils.hasAuthorityAdmin() && !userDTO.roleChw()) {
       throw new AccessDeniedException("You cannot add users other than chw roles");
     }
     if (userRepository.findOneByUsername(userDTO.getUsername()).isPresent()
-        || userRepository.findCountByUsernameAndDeletedTrue(userDTO.getUsername()) > 0) {
+            || userRepository.findCountByUsernameAndDeletedTrue(userDTO.getUsername()) > 0) {
       throw new LoginAlreadyUsedException(userDTO.getUsername());
     }
 
@@ -170,7 +172,6 @@ public class UserResource {
     @Size(min = 2, max = 10)
     private String realName;
 
-    @Size(min = 11, max = 11)
     @NotNull
     private String phone;
 
@@ -260,23 +261,23 @@ public class UserResource {
   @GetMapping("/supervisor/{id}/chw")
   public List<User> getSupervisorChwList(@PathVariable Long id) {
     return userRepository
-        .findById(id)
-        .map(userRepository::findAllByChwSupervisor)
-        .orElse(new ArrayList<>());
+            .findById(id)
+            .map(userRepository::findAllByChwSupervisor)
+            .orElse(new ArrayList<>());
   }
 
   @PostMapping("/supervisor/{id}/chw")
   public void assignChwToSupervisor(@PathVariable Long id, @RequestBody Long[] chwIds) {
     userRepository
-        .findById(id)
-        .ifPresent(
-            user -> {
-              if (user.roleSupervisor()) {
-                userService.assignChwToSupervisor(user, chwIds);
-              } else {
-                log.warn("be assign user {} role is not ROLE_SUPERVISOR", id);
-              }
-            });
+            .findById(id)
+            .ifPresent(
+                    user -> {
+                      if (user.roleSupervisor()) {
+                        userService.assignChwToSupervisor(user, chwIds);
+                      } else {
+                        log.warn("be assign user {} role is not ROLE_SUPERVISOR", id);
+                      }
+                    });
   }
 
   @GetMapping("/admin")
@@ -289,10 +290,10 @@ public class UserResource {
   @GetMapping("/{id}")
   public ResponseEntity<User> getUser(@PathVariable Long id) {
     return userRepository
-        .findById(id)
-        .filter(user -> SecurityUtils.hasAuthorityAdmin() || ownResponsibleChw(user))
-        .map(ResponseEntity::ok)
-        .orElse(ResponseEntity.notFound().build());
+            .findById(id)
+            .filter(user -> SecurityUtils.hasAuthorityAdmin() || ownResponsibleChw(user))
+            .map(ResponseEntity::ok)
+            .orElse(ResponseEntity.notFound().build());
   }
 
   private boolean ownResponsibleChw(User user) {

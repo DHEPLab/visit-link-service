@@ -21,7 +21,7 @@ public class AccountResource {
   private final PasswordEncoder passwordEncoder;
 
   public AccountResource(
-      UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+          UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
     this.userService = userService;
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
@@ -40,20 +40,20 @@ public class AccountResource {
   @PutMapping("/profile")
   public void changeProfile(@Valid @RequestBody ProfileWrapper profileWrapper) {
     userService
-        .getCurrentUser()
-        .ifPresent(
-            user -> {
-              user.setRealName(profileWrapper.getRealName());
-              user.setPhone(profileWrapper.getPhone());
-              userRepository.save(user);
-            });
+            .getCurrentUser()
+            .ifPresent(
+                    user -> {
+                      user.setRealName(profileWrapper.getRealName());
+                      user.setPhone(profileWrapper.getPhone());
+                      userRepository.save(user);
+                    });
   }
 
   @PutMapping("/password")
   public void changeAccountPassword(@Valid @RequestBody PasswordWrapper passwordWrapper) {
     String passwordHash = userService.getCurrentLogin().getPassword();
     if (!passwordEncoder.matches(passwordWrapper.getOldPassword(), passwordHash)) {
-      throw new BadRequestAlertException("旧密码错误");
+      throw new BadRequestAlertException("旧密码错误", "", "", "wrongOldPassword", null);
     }
     userService.changePassword(passwordWrapper.getPassword());
   }

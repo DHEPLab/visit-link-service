@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import edu.stanford.fsi.reap.converter.StringListConverter;
 import edu.stanford.fsi.reap.dto.ErrDTO;
 import edu.stanford.fsi.reap.entity.*;
+import edu.stanford.fsi.reap.entity.Module;
 import edu.stanford.fsi.reap.entity.enumerations.*;
 import edu.stanford.fsi.reap.pojo.Domain;
 import edu.stanford.fsi.reap.pojo.VisitReportObjData;

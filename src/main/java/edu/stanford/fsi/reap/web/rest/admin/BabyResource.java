@@ -319,8 +319,8 @@ public class BabyResource {
 
     @PostMapping("/check")
     public ResponseEntity<List<Map<String, String>>> check(
-            @Valid @RequestBody List<ImportBabyDto> list) {
-        return ResponseEntity.ok(service.check(list));
+            @Valid @RequestBody List<ImportBabyDto> list, @RequestParam(required = false, defaultValue = "zh") String lang) {
+        return ResponseEntity.ok(service.check(list, lang));
     }
 
     @PostMapping("/imports")

@@ -91,7 +91,7 @@ public class QuestionnaireResource {
   }
 
   @DeleteMapping("/{id}")
-  public void deleteQuestionnaire(@PathVariable Long id) {
+  public void deleteQuestionnaire(@PathVariable Long id,@RequestParam(required = false, defaultValue = "zh") String lang) {
     questionnaireRepository
         .findById(id)
         .ifPresent(
@@ -100,7 +100,7 @@ public class QuestionnaireResource {
                 List<Lesson> countLesson = lessonRepository.findByQuestionnaireId(id);
                 log.info("Delete master branch questionnaire, id {} , Number of USES {}", id, countLesson.size());
                 if (countLesson.size() > 0) {
-                  throw new BadRequestAlertException("不能删除已经在课堂中使用的问卷");
+                  throw new BadRequestAlertException(("zh".equals(lang) ? " 不能删除已在课堂中使用的问卷" : " This survey cannot be deleted because it is linked to a session"));
                 }
               }
               questionnaireRepository.deleteById(id);

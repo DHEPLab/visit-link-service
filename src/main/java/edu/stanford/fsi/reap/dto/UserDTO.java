@@ -3,7 +3,6 @@ package edu.stanford.fsi.reap.dto;
 import edu.stanford.fsi.reap.entity.CommunityHouseWorker;
 import edu.stanford.fsi.reap.security.AuthoritiesConstants;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.util.StringUtils;
@@ -27,7 +26,6 @@ public class UserDTO {
   private String realName;
 
   @NotNull
-  @Pattern(regexp = "^1\\d{10}", message = "请输入11位手机号")
   private String phone;
 
   @NotNull private String role;

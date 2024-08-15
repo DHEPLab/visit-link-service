@@ -139,7 +139,7 @@ public class ModuleResource {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteModule(@PathVariable Long id) {
+    public void deleteModule(@PathVariable Long id, @RequestParam(required = false, defaultValue = "zh") String lang) {
         repository
                 .findById(id)
                 .ifPresent(
@@ -148,7 +148,7 @@ public class ModuleResource {
                                 Long count = lessonRepository.countByModuleId(id);
                                 log.info("Delete master branch module, id {} , Number of USES {}", id, count);
                                 if (count > 0) {
-                                    throw new BadRequestAlertException("不能删除已在课堂中使用的模块");
+                                    throw new BadRequestAlertException( ("zh".equals(lang) ? " 不能删除已在课堂中使用的模块" : " This module cannot be deleted because it is linked to a session"));
                                 }
                             }
                             repository.deleteById(id);
