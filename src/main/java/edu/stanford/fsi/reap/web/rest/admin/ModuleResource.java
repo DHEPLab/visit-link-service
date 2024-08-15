@@ -108,9 +108,12 @@ public class ModuleResource {
         return service.draft(module);
     }
 
-    private Module throwNumberAlreadyExistException(Module module) {
-        throw new BadRequestAlertException("编号" + module.getNumber() + "已经存在");
-    }
+  private Module throwNumberAlreadyExistException(Module module) {
+      throw new BadRequestAlertException(
+              "error.module.number.exists",
+              module.getNumber()
+      );
+  }
 
     @GetMapping
     public Page<ModuleDTO> getModules(String search, Boolean published, Pageable pageable) {
@@ -148,7 +151,7 @@ public class ModuleResource {
                                 Long count = lessonRepository.countByModuleId(id);
                                 log.info("Delete master branch module, id {} , Number of USES {}", id, count);
                                 if (count > 0) {
-                                    throw new BadRequestAlertException( ("zh".equals(lang) ? " 不能删除已在课堂中使用的模块" : " This module cannot be deleted because it is linked to a session"));
+                                    throw new BadRequestAlertException("error.module.delete.inUse");
                                 }
                             }
                             repository.deleteById(id);

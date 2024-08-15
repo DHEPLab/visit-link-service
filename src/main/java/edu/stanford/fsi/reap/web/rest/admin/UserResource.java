@@ -103,7 +103,7 @@ public class UserResource {
               if (!consumer.getId().equals(chw.getId())) {
                   Map<String, Object> context = new HashMap<>();
                   context.put("id", chw.getIdentity());
-                  throw new BadRequestAlertException("ID: " + chw.getIdentity() + " 已经存在", "", "", "idExists", context);
+                  throw new BadRequestAlertException("error.chw.identity.exists", chw.getIdentity());
               }
             });
   }
@@ -120,7 +120,7 @@ public class UserResource {
     }
 
     if (userDTO.roleChw() && userDTO.chwIsEmpty()) {
-      throw new BadRequestAlertException("chw identity 必填");
+      throw new BadRequestAlertException("error.user.chwIdentityRequired");
     }
     keepCHWIdentityUnique(userDTO.getChw());
 

@@ -72,7 +72,7 @@ public class CarerResource {
         Optional<Carer> master = repository.findOneByBabyIdAndMasterIsTrue(carer.getBaby().getId());
         // when changing the current master caregiver to no
         if (master.isPresent() && id.equals(master.get().getId()) && !carer.isMaster()) {
-            throw new BadRequestAlertException("请至少设置一个主看护人", "", "", "noPrimaryCaregiver", null);
+            throw new BadRequestAlertException("error.carer.atLeastOneMaster");
         }
         saveCarerModifyRecord(id, carer);
         return ResponseEntity.ok(service.save(carer));
@@ -103,7 +103,7 @@ public class CarerResource {
                 .ifPresent(
                         carer -> {
                             if (carer.isMaster()) {
-                                throw new BadRequestAlertException("主看护人不可删除，请更换主看护人后进行此操作");
+                                throw new BadRequestAlertException("error.carer.cannotDeleteMaster");
                             }
                             repository.deleteById(id);
                         });

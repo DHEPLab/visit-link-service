@@ -83,18 +83,18 @@ public class VisitResource {
         // 家访日期不能早于今天
         if (visitDate.isBefore(LocalDate.now())) {
             saveErrorLog(dto);
-            throw new BadRequestAlertException(mapMsg(dto.getVisitTime()));
+            throw new BadRequestAlertException("error.visit.pastDate", mapMsg(dto.getVisitTime()));
         }
 
-        // 创建当天的家访，提交时间不能晚于 21:00
-        if (DateRange.pastTodayDeadline(dto.getVisitTime(), LocalDateTime.now())) {
-            throw new BadRequestAlertException("已过截止时间 21:00，不能创建今天的家访");
-        }
+    // 创建当天的家访，提交时间不能晚于 21:00
+    if (DateRange.pastTodayDeadline(dto.getVisitTime(), LocalDateTime.now())) {
+      throw new BadRequestAlertException("error.visit.pastDeadline");
+    }
 
-        // 宝宝有未完成的家访不能再次创建新家访
-        if (repository.findByBabyIdAndStatus(dto.getBabyId(), VisitStatus.NOT_STARTED).isPresent()) {
-            throw new BadRequestAlertException("该宝宝已有未完成的家访，不能重复创建家访");
-        }
+    // 宝宝有未完成的家访不能再次创建新家访
+    if (repository.findByBabyIdAndStatus(dto.getBabyId(), VisitStatus.NOT_STARTED).isPresent()) {
+      throw new BadRequestAlertException("error.visit.alreadyExists");
+    }
 
         Long userId = SecurityUtils.getUserId();
         Baby baby = babyRepository
@@ -104,13 +104,13 @@ public class VisitResource {
         if (!baby.getApproved()) {
             Optional<BabyUpdateInfo> babyUpdateInfoOptional=this.babyUpdateInfoRepository.findByBabyIdAndDeleted(baby.getId(),false);
             if (!babyUpdateInfoOptional.isPresent()||!babyUpdateInfoOptional.get().getUpdateNormal()){
-                throw new BadRequestAlertException("审核中的宝宝不能创建家访");
+                throw new BadRequestAlertException("error.visit.babyNotApproved");
             }
         }
 
         Lesson lesson = lessonRepository
                 .findById(dto.getLessonId())
-                .orElseThrow(() -> new BadRequestAlertException("不存在该课程，无法创建家访"));
+                .orElseThrow(() -> new BadRequestAlertException("error.visit.lessonNotFound"));
 
         Optional<List<LocalDate>> visitDateRange = lessonService
                 .visitDateRange(baby, lesson, LocalDate.now());
@@ -156,7 +156,7 @@ public class VisitResource {
                 .ifPresent(
                         visit -> {
                             if (!VisitStatus.NOT_STARTED.equals(visit.getStatus())) {
-                                throw new BadRequestAlertException("不能修改除未开始以外状态的家访");
+                                throw new BadRequestAlertException("error.visit.invalidStatus");
                             }
                             visit.yearMonthDay(wrapper.getVisitTime()).setVisitTime(wrapper.getVisitTime());
                             repository.save(visit);
@@ -178,7 +178,7 @@ public class VisitResource {
                 .ifPresent(
                         visit -> {
                             if (visit.done()) {
-                                throw new BadRequestAlertException("已完成的课堂不能添加备注");
+                                throw new BadRequestAlertException("error.visit.completed");
                             }
                             visit.setRemark(wrapper.getRemark());
                             service.addRemark(visit);
@@ -250,7 +250,7 @@ public class VisitResource {
                                 repository.save(visit);
                                 repository.deleteById(id);
                             } else {
-                                throw new BadRequestAlertException("只能取消未开始的家访");
+                                throw new BadRequestAlertException("error.visit.cannotCancel");
                             }
                         }
                 );

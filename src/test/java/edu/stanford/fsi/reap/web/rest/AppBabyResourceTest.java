@@ -98,13 +98,12 @@ class AppBabyResourceTest {
 
   @Test
   void should_get_no_curriculum_message() throws Exception {
-    when(babyRepository.findByIdAndChwIdAndDeletedFalse(100L, null))
-            .thenReturn(Optional.of(new Baby()));
-    mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("该宝宝还没有分配课程大纲，请联系管理员"));
+    when(babyRepository.findByIdAndChwIdAndDeletedFalseAndApprovedTrue(100L, null))
+        .thenReturn(Optional.of(new Baby()));
+    mockMvc.perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("This baby hasn't been assigned a curriculum outline yet. Please contact the administrator."));
   }
 
   @Test
@@ -112,12 +111,11 @@ class AppBabyResourceTest {
     when(babyRepository.findByIdAndChwIdAndDeletedFalse(100L, null))
             .thenReturn(Optional.of(Baby.builder().curriculum(new Curriculum()).build()));
     when(visitRepository.findByBabyIdAndNotStarted(100L))
-            .thenReturn(Collections.singletonList(mock(VisitResultDTO.class)));
-    mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("您还有未完成的家访，无法创建新的家访"));
+        .thenReturn(Collections.singletonList(mock(VisitResultDTO.class)));
+    mockMvc.perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("You have an unfinished home visit. You cannot create a new one."));
   }
 
   @Test

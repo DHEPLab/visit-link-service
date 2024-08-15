@@ -154,21 +154,21 @@ public class AppBabyResource {
             return ResponseEntity.notFound().build();
         }
 
-        Baby baby = optional.get();
-        if (baby.noCurriculum()) {
-            throw new BadRequestAlertException("该宝宝还没有分配课程大纲，请联系管理员");
-        }
-
-        List<VisitResultDTO> notStarted = visitRepository.findByBabyIdAndNotStarted(id);
-        if (notStarted.size() > 0) {
-            throw new BadRequestAlertException("您还有未完成的家访，无法创建新的家访");
-        }
-
-        return lessonService
-                .findAvailable(baby, DateRange.checkBaseline(LocalDate.now(), LocalDateTime.now()))
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new BadRequestAlertException("没有匹配的课堂，无法创建家访"));
+    Baby baby = optional.get();
+    if (baby.noCurriculum()) {
+        throw new BadRequestAlertException("error.baby.noCurriculum");
     }
+
+    List<VisitResultDTO> notStarted = visitRepository.findByBabyIdAndNotStarted(id);
+    if (notStarted.size() > 0) {
+        throw new BadRequestAlertException("error.baby.pendingVisit");
+    }
+
+    return lessonService
+        .findAvailable(baby, DateRange.checkBaseline(LocalDate.now(), LocalDateTime.now()))
+        .map(ResponseEntity::ok)
+            .orElseThrow(() -> new BadRequestAlertException("error.baby.noMatchingLesson"));
+  }
 
     @PostMapping
     public AppBabyDTO createBabyFromApp(@Valid @RequestBody AppCreateBabyDTO dto) {
@@ -192,7 +192,7 @@ public class AppBabyResource {
         Optional<Carer> master = carerRepository.findOneByBabyIdAndMasterIsTrue(id);
         // when changing the current master caregiver to no
         if (master.isPresent() && carerId.equals(master.get().getId()) && !carer.isMaster()) {
-            throw new BadRequestAlertException("请至少设置一个主看护人");
+            throw new BadRequestAlertException("error.baby.atLeastOneMaster");
         }
         saveCarerModifyRecord(carer);
         service.saveBabyCarerWithoutReview(id, SecurityUtils.getUserId(), carer);

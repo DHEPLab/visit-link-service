@@ -53,7 +53,7 @@ public class AccountResource {
   public void changeAccountPassword(@Valid @RequestBody PasswordWrapper passwordWrapper) {
     String passwordHash = userService.getCurrentLogin().getPassword();
     if (!passwordEncoder.matches(passwordWrapper.getOldPassword(), passwordHash)) {
-      throw new BadRequestAlertException("旧密码错误", "", "", "wrongOldPassword", null);
+      throw new BadRequestAlertException("error.wrong.old.password");
     }
     userService.changePassword(passwordWrapper.getPassword());
   }
