@@ -1,1 +1,1 @@
-ALTER TABLE healthy.baby DROP `rejected`;
+ALTER TABLE baby DROP `rejected`;

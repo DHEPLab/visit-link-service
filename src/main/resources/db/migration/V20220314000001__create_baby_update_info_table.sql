@@ -1,4 +1,4 @@
-CREATE TABLE healthy.baby_update_info (
+CREATE TABLE baby_update_info (
                                           id BIGINT UNSIGNED auto_increment NOT NULL,
                                           baby_id BIGINT UNSIGNED NULL,
                                           update_normal BIT(1) NULL COMMENT '是否是普通更新',

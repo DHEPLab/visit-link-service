@@ -1,1 +1,1 @@
-ALTER TABLE healthy.baby_modify_record ADD `approved` varchar(2);
+ALTER TABLE baby_modify_record ADD `approved` varchar(2);

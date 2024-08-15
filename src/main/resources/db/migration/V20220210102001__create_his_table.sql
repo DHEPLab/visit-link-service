@@ -1,4 +1,4 @@
--- healthy.baby_history definition
+-- baby_history definition
 
 CREATE TABLE `baby_history` (
                                 `id` bigint NOT NULL AUTO_INCREMENT,
@@ -33,7 +33,7 @@ CREATE TABLE `baby_history` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='儿童信息-历史修改记录';
 
 
--- healthy.carer_history definition
+-- carer_history definition
 
 CREATE TABLE `carer_history` (
                                  `id` bigint NOT NULL AUTO_INCREMENT,
@@ -54,7 +54,7 @@ CREATE TABLE `carer_history` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='看护人-历史修改记录';
 
 
--- healthy.community_house_worker_history definition
+-- community_house_worker_history definition
 
 CREATE TABLE `community_house_worker_history` (
                                                   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -72,7 +72,7 @@ CREATE TABLE `community_house_worker_history` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='社区工作者-历史记录表';
 
 
--- healthy.curriculum_history definition
+-- curriculum_history definition
 
 CREATE TABLE `curriculum_history` (
                                       `id` bigint NOT NULL AUTO_INCREMENT,
@@ -92,7 +92,7 @@ CREATE TABLE `curriculum_history` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='课程大纲-历史记录';
 
 
--- healthy.lesson_history definition
+-- lesson_history definition
 
 CREATE TABLE `lesson_history` (
                                   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -121,7 +121,7 @@ CREATE TABLE `lesson_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='上课-历史记录表';
 
 
--- healthy.module_history definition
+-- module_history definition
 
 CREATE TABLE `module_history` (
                                   `id` bigint NOT NULL AUTO_INCREMENT,
@@ -143,7 +143,7 @@ CREATE TABLE `module_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='模块信息-历史记录';
 
 
--- healthy.questionnaire_history definition
+-- questionnaire_history definition
 
 CREATE TABLE `questionnaire_history` (
                                          `id` bigint NOT NULL AUTO_INCREMENT,
@@ -163,7 +163,7 @@ CREATE TABLE `questionnaire_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='问答信息-历史记录';
 
 
--- healthy.tag_history definition
+-- tag_history definition
 
 CREATE TABLE `tag_history` (
                                `id` bigint NOT NULL AUTO_INCREMENT,
@@ -173,7 +173,7 @@ CREATE TABLE `tag_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin;
 
 
--- healthy.user_history definition
+-- user_history definition
 
 CREATE TABLE `user_history` (
                                 `id` bigint NOT NULL AUTO_INCREMENT,
@@ -195,7 +195,7 @@ CREATE TABLE `user_history` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='用户信息-历史记录';
 
 
--- healthy.visit_history definition
+-- visit_history definition
 
 CREATE TABLE `visit_history` (
                                  `id` bigint NOT NULL AUTO_INCREMENT,
@@ -228,7 +228,7 @@ CREATE TABLE `visit_history` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='家庭访问-历史记录';
 
 
--- healthy.visit_report_history definition
+-- visit_report_history definition
 
 CREATE TABLE `visit_report_history` (
                                         `id` bigint NOT NULL AUTO_INCREMENT,

@@ -1,4 +1,4 @@
-CREATE TABLE healthy.account_operation_record (
+CREATE TABLE account_operation_record (
                                                   id BIGINT UNSIGNED auto_increment NOT NULL,
                                                   account_id BIGINT UNSIGNED NULL COMMENT '账号ID',
                                                   account_type varchar(20) NOT NULL COMMENT '账号类型(BABY,CHW,SUPERVISOR)',

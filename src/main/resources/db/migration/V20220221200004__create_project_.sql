@@ -1,4 +1,4 @@
-CREATE TABLE healthy.project (
+CREATE TABLE project (
                                  id BIGINT UNSIGNED auto_increment NOT NULL,
                                  name varchar(50) NULL,
                                  code varchar(100) NULL,

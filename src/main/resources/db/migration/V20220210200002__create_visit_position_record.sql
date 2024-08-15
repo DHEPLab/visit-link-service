@@ -1,4 +1,4 @@
-CREATE TABLE healthy.visit_position_record (
+CREATE TABLE visit_position_record (
                                                id BIGINT UNSIGNED auto_increment NOT NULL,
                                                visit_id BIGINT UNSIGNED NULL,
                                                baby_id BIGINT UNSIGNED NULL,
