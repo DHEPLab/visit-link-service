@@ -1,0 +1,1 @@
+ALTER TABLE `healthy`.`baby` MODIFY COLUMN `name` varchar(10) CHARACTER SET gbk COLLATE gbk_chinese_ci NULL DEFAULT NULL AFTER `location`;

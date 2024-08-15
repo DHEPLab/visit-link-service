@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    show-sql: false
+
+logging:
+  level:
+    edu.stanford.fsi.reap: INFO
+  config: classpath:logback-prod.xml
+
+application:
+  secret-key: 9ECA9BE9-A8FE-44AD-B257-9ABF7622879F
+  token-validity-day: 30
+  oss:
+    host: https://healthy-future-prod.oss-cn-zhangjiakou.aliyuncs.com
+    endpoint: https://oss-cn-zhangjiakou.aliyuncs.com
+    bucket-name: healthy-future-prod
+  map:
+    key: 111

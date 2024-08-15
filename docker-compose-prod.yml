@@ -1,0 +1,26 @@
+version: '3.6'
+services:
+  backend:
+    build: .
+    command:
+      [
+          sh,
+          -c,
+          'java -Duser.timezone=GMT+08:00 $JAVA_OPTS -Dspring.profiles.active=$DEPLOY_GROUP -Djava.security.egd=file:/dev/./urandom -jar /app.jar',
+      ]
+    volumes:
+      - /var/log/healthy-future/:/var/log
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://rm-8vbkj85k8rsr5h040.mysql.zhangbei.rds.aliyuncs.com:3306/healthy?useUnicode=true&characterEncoding=utf8&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=healthy
+      - SPRING_DATASOURCE_PASSWORD=8641D9011BB446CA8D9D29F8A1BFB80B
+      - TZ=Asia/Shanghai
+    ports:
+      - 8080:8080
+    restart: always
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    name: internal_network

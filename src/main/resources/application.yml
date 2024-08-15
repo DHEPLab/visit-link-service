@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: health-future-backend
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3308/healthy?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf8&useSSL=false
+    username: healthy
+    password: 8641D9011BB446CA8D9D29F8A1BFB80B
+  jpa:
+    open-in-view: false
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    database: mysql
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  mvc:
+    throw-exception-if-no-handler-found: true
+  servlet:
+    multipart:
+      max-file-size: -1
+      max-request-size: -1
+  jackson.time-zone: GMT+08:00
+  flyway:
+    clean-disabled: true
+
+server:
+  port: 8080
+
+application:
+  secret-key: my-secret-token-to-change-in-production
+  token-validity-day: 30
+  oss:
+    host: https://healthy-future-dev.oss-cn-shanghai.aliyuncs.com
+    endpoint: https://oss-cn-shanghai.aliyuncs.com
+    access-key-id:
+    access-key-secret:
+    bucket-name: healthy-future-dev
+  map:
+    key: 111
+
+  cron:
+    visit-expired: "0 59 23 * * ?"
