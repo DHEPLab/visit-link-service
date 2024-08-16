@@ -40,3 +40,4 @@ logback-local.xml
 
 ~$**
 .DS_Store
+docker-compose-local.yml
