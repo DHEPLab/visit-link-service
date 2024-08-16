@@ -142,7 +142,7 @@ public class ModuleResource {
     }
 
     @DeleteMapping("/{id}")
-    public void deleteModule(@PathVariable Long id, @RequestParam(required = false, defaultValue = "zh") String lang) {
+    public void deleteModule(@PathVariable Long id) {
         repository
                 .findById(id)
                 .ifPresent(
