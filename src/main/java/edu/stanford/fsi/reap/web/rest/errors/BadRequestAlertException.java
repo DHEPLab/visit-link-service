@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Locale;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -25,6 +26,7 @@ public class BadRequestAlertException extends AbstractThrowableProblem {
 
     private final String entityName;
     private final String errorKey;
+    @Getter(AccessLevel.NONE)
     private final Object[] params;
 
     private static final MessageSource messageSource;
@@ -66,14 +68,24 @@ public class BadRequestAlertException extends AbstractThrowableProblem {
     }
 
     private static String getTranslatedMessage(String defaultMessage, Object... params) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes == null) {
+            log.warn("RequestAttributes is null, returning default message");
+            return defaultMessage;
+        }
+
+        HttpServletRequest request = attributes.getRequest();
         String lang = request.getParameter("lang");
         Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
         log.info("Locale: {}", locale);
 
-        String translatedMessage = messageSource.getMessage(defaultMessage, params, locale);
+        String translatedMessage = messageSource.getMessage(defaultMessage, params, defaultMessage, locale);
 
         log.info("Translated message: {}", translatedMessage);
         return translatedMessage;
+    }
+
+    public Object[] getParams() {
+        return params == null ? null : params.clone();
     }
 }

@@ -101,8 +101,6 @@ public class UserResource {
         .ifPresent(
             consumer -> {
               if (!consumer.getId().equals(chw.getId())) {
-                  Map<String, Object> context = new HashMap<>();
-                  context.put("id", chw.getIdentity());
                   throw new BadRequestAlertException("error.chw.identity.exists", chw.getIdentity());
               }
             });
