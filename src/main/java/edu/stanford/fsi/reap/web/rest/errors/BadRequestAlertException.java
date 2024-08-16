@@ -75,11 +75,10 @@ public class BadRequestAlertException extends AbstractThrowableProblem {
         }
 
         HttpServletRequest request = attributes.getRequest();
-        String lang = request.getParameter("lang");
+        String lang = request.getHeader("Accept-Language");
         Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
-        log.info("Locale: {}", locale);
 
-        String translatedMessage = messageSource.getMessage(defaultMessage, params, defaultMessage, locale);
+        String translatedMessage = messageSource.getMessage(defaultMessage, params, locale);
 
         log.info("Translated message: {}", translatedMessage);
         return translatedMessage;
