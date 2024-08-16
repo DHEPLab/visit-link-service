@@ -114,7 +114,7 @@ class AppBabyResourceTest {
     mockMvc.perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
         .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("You have an unfinished home visit. You cannot create a new one."));
+        .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("Visit cannot be scheduled since there is an unfinished visit."));
   }
 
   @Test
