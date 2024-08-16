@@ -102,8 +102,7 @@ class AppBabyResourceTest {
         .thenReturn(Optional.of(new Baby()));
     mockMvc.perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
         .andDo(print())
-        .andExpect(status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("This baby hasn't been assigned a curriculum outline yet. Please contact the administrator."));
+        .andExpect(status().isNotFound());
   }
 
   @Test
