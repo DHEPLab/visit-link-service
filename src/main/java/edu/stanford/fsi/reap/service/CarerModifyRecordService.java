@@ -11,6 +11,7 @@ import edu.stanford.fsi.reap.utils.FieldValueUtil;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,22 +29,20 @@ public class CarerModifyRecordService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<CarerModifyRecordDTO> getCarerList(Long carerId) {
+    @Autowired
+    private ResourceBundleMessageSource localSource;
+
+    public List<CarerModifyRecordDTO> getCarerList(Long carerId, String lang) {
         List<CarerModifyRecord> carerModifyRecords = repository.findByCarerId(carerId);
         List<CarerModifyRecordDTO> res;
 
         res = carerModifyRecords.stream().map(carerModifyRecord -> {
                     CarerModifyRecordDTO dto = new CarerModifyRecordDTO();
+                    Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
                     if (userRepository.findById(carerModifyRecord.getUserId()).isPresent()) {
                         User user = userRepository.findById(carerModifyRecord.getUserId()).get();
-                        String role;
-                        if (user.getRole().equals("ROLE_ADMIN")) {
-                            role = "管理员";
-                        } else if (user.getRole().equals("ROLE_CHW")) {
-                            role = "社区工作者";
-                        } else {
-                            role = "督导员";
-                        }
+                        String role =  localSource.getMessage(user.getRole(), null, locale);
+//
                         dto.setRoleName(role);
                         dto.setUserName(user.getUsername());
                         dto.setLastModifiedAt(carerModifyRecord.getLastModifiedAt());
@@ -59,10 +58,11 @@ public class CarerModifyRecordService {
                         Map<String, Object> newCarerMap = FieldValueUtil.getFieldValuePair(newCarer, true);
                         String changedColumn = carerModifyRecord.getChangedColumn();
                         split = changedColumn.split(",");
+                        String unknown =  localSource.getMessage("UNKNOWN", null, locale);
                         for (String s : split) {
-                            String oldCarerValue = map.get(s) == null ? "未知" : map.get(s).toString();
+                            String oldCarerValue = map.get(s) == null ? unknown : map.get(s).toString();
                             oldValues.add(oldCarerValue);
-                            String newCarerValue = newCarerMap.get(s) == null ? "未知" : newCarerMap.get(s).toString();
+                            String newCarerValue = newCarerMap.get(s) == null ? unknown : newCarerMap.get(s).toString();
                             newValues.add(newCarerValue);
                         }
                     } catch (IllegalAccessException e) {

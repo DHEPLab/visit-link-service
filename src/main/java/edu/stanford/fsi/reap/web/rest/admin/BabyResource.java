@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -247,8 +248,8 @@ public class BabyResource {
     }
 
     @GetMapping("modify-records")
-    public ResponseEntity<List<BabyModifyRecordDTO>> getBabyModifyRecord(Long babyId) {
-        List<BabyModifyRecordDTO> res = babyModifyRecordService.getBabyList(babyId);
+    public ResponseEntity<List<BabyModifyRecordDTO>> getBabyModifyRecord(Long babyId, @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
+        List<BabyModifyRecordDTO> res = babyModifyRecordService.getBabyList(babyId, lang);
         return ResponseEntity.ok(res);
     }
 

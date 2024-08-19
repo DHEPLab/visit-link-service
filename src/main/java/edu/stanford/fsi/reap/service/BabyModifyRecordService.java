@@ -10,6 +10,7 @@ import edu.stanford.fsi.reap.repository.UserRepository;
 import edu.stanford.fsi.reap.utils.FieldValueUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,9 @@ public class BabyModifyRecordService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private ResourceBundleMessageSource localSource;
+
     public BabyModifyRecordService(BabyModifyRecordRepository repository) {
         this.repository = repository;
     }
@@ -34,21 +38,16 @@ public class BabyModifyRecordService {
         return repository.findByBabyId(babyId);
     }
 
-    public List<BabyModifyRecordDTO> getBabyList(Long babyId) {
+    public List<BabyModifyRecordDTO> getBabyList(Long babyId, String lang) {
+        Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
         List<BabyModifyRecord> babyModifyRecords = repository.findByBabyId(babyId);
         List<BabyModifyRecordDTO> res;
         res = babyModifyRecords.stream().map(babyModifyRecord -> {
                     BabyModifyRecordDTO dto = new BabyModifyRecordDTO();
                     if (userRepository.findById(babyModifyRecord.getUserId()).isPresent()) {
                         User user = userRepository.findById(babyModifyRecord.getUserId()).get();
-                        String role;
-                        if (user.getRole().equals("ROLE_ADMIN")) {
-                            role = "管理员";
-                        } else if (user.getRole().equals("ROLE_CHW")) {
-                            role = "社区工作者";
-                        } else {
-                            role = "督导员";
-                        }
+                        String role =  localSource.getMessage(user.getRole(), null, locale);
+
                         dto.setRoleName(role);
                         dto.setUserName(user.getUsername());
                         dto.setLastModifiedAt(babyModifyRecord.getLastModifiedAt());

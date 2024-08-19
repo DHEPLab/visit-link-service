@@ -15,6 +15,7 @@ import edu.stanford.fsi.reap.service.CarerService;
 import edu.stanford.fsi.reap.utils.FieldValueUtil;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,14 +46,15 @@ public class CarerResource {
     }
 
     @GetMapping("carers/modify-records")
-    public ResponseEntity<List<CarerModifyRecordDTO>> getCarerModifyRecord(Long babyId) {
+    public ResponseEntity<List<CarerModifyRecordDTO>> getCarerModifyRecord(Long babyId,
+                                                                           @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
         List<Long> carerIds = repository.findCarerIdByBabyId(babyId);
         if (CollUtil.isEmpty(carerIds)) {
             return ResponseEntity.ok(Collections.EMPTY_LIST);
         }
         List<CarerModifyRecordDTO> result = new ArrayList<>();
         carerIds.stream().forEach((carerId) -> {
-            result.addAll(carerModifyRecordService.getCarerList(carerId));
+            result.addAll(carerModifyRecordService.getCarerList(carerId, lang));
         });
         return ResponseEntity.ok(result);
     }
