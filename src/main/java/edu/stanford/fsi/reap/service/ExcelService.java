@@ -10,9 +10,12 @@ import edu.stanford.fsi.reap.pojo.Domain;
 import edu.stanford.fsi.reap.pojo.VisitReportObjData;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
+import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,8 +24,6 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +45,10 @@ public class ExcelService {
     private final TagService tagService;
     private final CommunityHouseWorkerRepository chwRepository;
 
-    public ExcelService(UserRepository userRepository, CarerRepository carerRepository, ModuleRepository moduleRepository, BabyRepository babyRepository, CommunityHouseWorkerRepository communityHouseWorkerRepository, PasswordEncoder passwordEncoder, TagService tagService, CommunityHouseWorkerRepository chwRepository) {
+    @Autowired
+    private ResourceBundleMessageSource localSource;
+
+    public ExcelService(UserRepository userRepository, CarerRepository carerRepository, ModuleRepository moduleRepository, BabyRepository babyRepository, CommunityHouseWorkerRepository communityHouseWorkerRepository, PasswordEncoder passwordEncoder, TagService tagService, CommunityHouseWorkerRepository chwRepository, ResourceBundleMessageSource localSource) {
         this.userRepository = userRepository;
         this.carerRepository = carerRepository;
         this.moduleRepository = moduleRepository;
@@ -53,6 +57,7 @@ public class ExcelService {
         this.passwordEncoder = passwordEncoder;
         this.tagService = tagService;
         this.chwRepository = chwRepository;
+        this.localSource = localSource;
     }
 
     /**
@@ -708,9 +713,9 @@ public class ExcelService {
     }
 
     @Transactional
-    public void importChws(MultipartFile records) {
+    public void importChws(MultipartFile records, String lang) {
         try (Workbook workBook = new XSSFWorkbook(records.getInputStream())) {
-            handleChwRecordRow(workBook.getSheetAt(0));
+            handleChwRecordRow(workBook.getSheetAt(0), lang);
         } catch (Exception e) {
             log.error("importContentRow ", e);
         }
@@ -760,7 +765,15 @@ public class ExcelService {
         return errDTO;
     }
 
-    private void handleChwRecordRow(Sheet sheet) {
+    private ErrDTO getLocaleDTO(String name, Integer number, String code, Locale locale, Object... args) {
+        ErrDTO errDTO = new ErrDTO();
+        errDTO.setMatters(localSource.getMessage(code, args, locale));
+        errDTO.setName(name);
+        errDTO.setNumber(number);
+        return errDTO;
+    }
+
+    private void handleChwRecordRow(Sheet sheet, String lang) {
         int endRow = sheet.getLastRowNum() + 1;
         for (int i = 2; i < endRow; i++) {
             if (StringUtils.isEmpty(sheet.getRow(i).getCell(0).getStringCellValue())) {
@@ -788,7 +801,7 @@ public class ExcelService {
                 !communityHouseWorkerRepository.findFirstByIdentity(identity).isPresent() &&
                 !StringUtils.isEmpty(tag) &&
                 !StringUtils.isEmpty(phone) &&
-                phone.matches("\\d{11}") &&
+                (!lang.equals("zh") || phone.matches("\\d{11}")) &&
                 !StringUtils.isEmpty(username) &&
                 !userRepository.findOneByUsername(username).isPresent() &&
                 !StringUtils.isEmpty(password)) {
@@ -808,16 +821,17 @@ public class ExcelService {
     }
 
 
-    public Map<String, Object> checkChws(MultipartFile records) {
+    public Map<String, Object> checkChws(MultipartFile records, String lang) {
         try (Workbook workBook = new XSSFWorkbook(records.getInputStream())) {
-            return checkChwRecordRow(workBook.getSheetAt(0));
+            return checkChwRecordRow(workBook.getSheetAt(0), lang);
         } catch (Exception e) {
             log.error("importContentRow ", e);
-            throw new RuntimeException("导入失败，服务器异常，数据可能有问题！");
+            throw new BadRequestAlertException("error.excel.dataInvalid");
         }
     }
 
-    private Map<String, Object> checkChwRecordRow(Sheet sheet) {
+    private Map<String, Object> checkChwRecordRow(Sheet sheet, String lang) {
+        Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
         Map<String, Object> map = new HashMap<>();
 
         List<ErrDTO> errDTOS = new ArrayList<>();
@@ -857,45 +871,44 @@ public class ExcelService {
 
                 a++;
                 if (StringUtils.isEmpty(realName)) {
-                    errDTOS.add(getDTO(realName, (i - 1), "真实姓名必填"));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1),"error.excel.chw.name", locale));
                     continue;
                 }
                 if (StringUtils.isEmpty(identity)) {
-                    errDTOS.add(getDTO(realName, (i - 1), "社区工作者ID必填"));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.chwId", locale));
                     continue;
                 }
                 if (communityHouseWorkerRepository.findFirstByIdentity(identity).isPresent()) {
-                    errDTOS.add(getDTO(realName, (i - 1), "ID: " + identity + " 已经存在"));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.chwIdExist", locale,identity));
                     continue;
                 }
                 if (StringUtils.isEmpty(tag)) {
-                    errDTOS.add(getDTO(realName, (i - 1), "所在地区必填"));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.area", locale));
                     continue;
                 }
-                String[] split = tag.split(",");
-                if (split.length > 3) {
+                if ("zh".equals(lang) && tag.split(",").length > 3) {
                     errDTOS.add(getDTO(realName, (i - 1), "街道或乡镇最多只能添加3个"));
                     continue;
                 }
                 if (StringUtils.isEmpty(phone)) {
-                    errDTOS.add(getDTO(realName, (i - 1), "联系电话必填"));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.phone", locale));
                     continue;
                 }
-                if (!phone.matches("\\d{11}")) {
+                if ("zh".equals(lang) && !phone.matches("\\d{11}")) {
                     errDTOS.add(getDTO(realName, (i - 1), "社区工作者电话:11位手机号码"));
                     continue;
                 }
                 if (StringUtils.isEmpty(username)) {
-                    errDTOS.add(getDTO(realName, (i - 1), "账户名称必填"));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.username", locale));
                     continue;
                 }
                 if (userRepository.findOneByUsername(username).isPresent()) {
-                    errDTOS.add(getDTO(realName, (i - 1), "username: " + username + " 已经存在"));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.usernameExist", locale, username));
                     continue;
                 }
 
                 if (StringUtils.isEmpty(password)) {
-                    errDTOS.add(getDTO(realName, (i - 1), "账户密码必填"));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.password", locale));
                 }
             }
         }

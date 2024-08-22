@@ -22,6 +22,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
@@ -79,18 +80,20 @@ public class UserResource {
   }
 
   @PostMapping("/check")
-  public Map<String,Object> check(@RequestParam(name = "records") MultipartFile records) {
+  public Map<String,Object> check(@RequestParam(name = "records") MultipartFile records,
+                                  @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
     if (records.isEmpty()) {
-      throw new BadRequestAlertException("上传文件不能为空！");
+      throw new BadRequestAlertException("error.excel.empty");
     }
-    return excelService.checkChws(records);
+    return excelService.checkChws(records, lang);
   }
 
 
   @PostMapping("/import")
-  public ResponseEntity importChws(@RequestParam(name = "records") MultipartFile records) {
+  public ResponseEntity importChws(@RequestParam(name = "records") MultipartFile records,
+                                   @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
 
-    excelService.importChws(records);
+    excelService.importChws(records, lang);
     return ResponseEntity.ok().build();
   }
 
