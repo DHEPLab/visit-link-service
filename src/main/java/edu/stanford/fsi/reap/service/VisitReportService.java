@@ -44,7 +44,7 @@ public class VisitReportService {
    */
   public byte[] report(ReportDTO reportDTO) {
     if (!reportDTO.validDay())
-      throw new BadRequestAlertException("请导出合理日期区间");
+      throw new BadRequestAlertException("error.excel.report.invalidDate");
     Long projectId= SecurityUtils.getProjectId();
     List<VisitReportObjData> list = visitReportRepository.findByCreatedAtBetween(reportDTO.getStartTime(), reportDTO.getEndTime()).stream()
             .filter(target->{
