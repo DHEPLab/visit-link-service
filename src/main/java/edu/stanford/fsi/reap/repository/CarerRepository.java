@@ -26,7 +26,7 @@ public interface CarerRepository extends JpaRepository<Carer, Long> {
 
     @Query(
             nativeQuery = true,
-            value = "select id from healthy.carer where baby_id=?1"
+            value = "select id from carer where baby_id=?1"
     )
     List<Long> findCarerIdByBabyId(Long babyId);
 }
