@@ -64,6 +64,7 @@ public class ExcelService {
      * 家访记录
      */
     public byte[] writeExcel(List<VisitReportObjData> visitReportObjData) {
+        System.out.println("visitReportObjData>>>>"+visitReportObjData);
         return getDataReport(visitReportObjData, this::mapByteArray);
     }
 
@@ -78,7 +79,7 @@ public class ExcelService {
             return saveFileOrOther.apply(workBook);
         } catch (Exception e) {
             log.error("addContentRow ", e);
-            throw new RuntimeException("导出失败，服务器异常，数据可能不全");
+            throw new RuntimeException("error.excel.report.dataInvalid");
         }
     }
 
@@ -274,7 +275,7 @@ public class ExcelService {
             return saveFileOrOther.apply(workBook);
         } catch (Exception e) {
             log.error("addContentRow ", e);
-            throw new RuntimeException("导出失败，服务器异常，数据可能不全");
+            throw new RuntimeException("error.excel.report.dataInvalid");
         }
     }
 
@@ -403,7 +404,7 @@ public class ExcelService {
             return saveFileOrOther.apply(workBook);
         } catch (Exception e) {
             log.error("addContentRow ", e);
-            throw new RuntimeException("导出失败，服务器异常，数据可能不全");
+            throw new RuntimeException("error.excel.report.dataInvalid");
         }
     }
 
@@ -464,7 +465,8 @@ public class ExcelService {
 
     private byte[] mapByteArray(Workbook workBook) {
         try (
-                FileOutputStream out = new FileOutputStream("/home/jbf/Downloads/" + UUID.randomUUID().toString() + ".xlsx")
+//                FileOutputStream out = new FileOutputStream("/home/jbf/Downloads/" + UUID.randomUUID().toString() + ".xlsx")
+                FileOutputStream out = new FileOutputStream("/var/tmp/HF/" + UUID.randomUUID().toString() + ".xlsx")
         ) {
             workBook.write(out);
             return null;
@@ -499,7 +501,7 @@ public class ExcelService {
             return saveFileOrOther.apply(workBook);
         } catch (Exception e) {
             log.error("addContentRow ", e);
-            throw new RuntimeException("导出失败，服务器异常，数据可能不全");
+            throw new RuntimeException("error.excel.report.dataInvalid");
         }
     }
 
