@@ -1,6 +1,6 @@
 package edu.stanford.fsi.reap.web.rest;
 
-import org.springframework.beans.factory.annotation.Value;
+import edu.stanford.fsi.reap.service.FileService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,14 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/files")
 public class FileResource {
+    private final FileService fileService;
 
-  @Value("${application.oss.host}")
-  private String ossHost;
+    public FileResource(FileService fileService) {
+        this.fileService = fileService;
+    }
 
-  @GetMapping("/{filename}")
-  public ResponseEntity<?> redirectToOss(@PathVariable String filename) {
-    return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
-        .header("Location", ossHost + "/" + filename)
-        .build();
-  }
+    @GetMapping("/{filename}")
+    public ResponseEntity<?> redirectToOss(@PathVariable String filename) {
+        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+                .header("Location", fileService.generatePresignedUrlForDownload(filename))
+                .build();
+    }
 }

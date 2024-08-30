@@ -27,12 +27,19 @@ server:
 application:
   secret-key: ${JWT_SECRET_KEY}
   token-validity-day: 30
+  file:
+    storage-type: s3                    # s3 or oss
+    expiration: 5                       # minutes
   oss:
     host: https://healthy-future-dev.oss-cn-shanghai.aliyuncs.com
-    endpoint: https://oss-cn-shanghai.aliyuncs.com
     access-key-id: 111
     access-key-secret: 111
-    bucket-name: healthy-future-dev
+    bucket-name: healthy-future
+  aws:
+    region: ${AWS_REGION}
+    access-key-id: ${AWS_ACCESS_KEY_ID}
+    secret-access-key: ${AWS_SECRET_ACCESS_KEY}
+    bucket-name: visit-link-bucket
   map:
     key: 111
 
