@@ -3,8 +3,6 @@ logging:
     edu.stanford.fsi.reap: DEBUG
 
 application:
-  oss:
-    bucket-name: healthy-future-dev
   aws:
     bucket-name: visit-link-bucket-dev
 
