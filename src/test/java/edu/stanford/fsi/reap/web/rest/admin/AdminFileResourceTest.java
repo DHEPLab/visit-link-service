@@ -19,17 +19,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureMockMvc
-class OSSResourceTest {
+class AdminFileResourceTest {
 
   @InjectMocks
   private static MockMvc mockMvc;
   private static FileService fileService;
-  private static final String url = "/admin/oss";
+  private static final String url = "/admin/files";
 
   @BeforeAll
   public static void beforeAll() {
     fileService = mock(FileService.class);
-    OSSResource fileResource = new OSSResource(fileService);
+    AdminFileResource fileResource = new AdminFileResource(fileService);
     mockMvc = MockMvcBuilders.standaloneSetup(fileResource).build();
   }
 

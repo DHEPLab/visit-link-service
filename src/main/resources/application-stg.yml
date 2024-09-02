@@ -8,5 +8,5 @@ logging:
   config: classpath:logback-prod.xml
 
 application:
-  oss:
-    bucket-name: healthy-future-dev
+  aws:
+    bucket-name: visit-link-bucket-stg

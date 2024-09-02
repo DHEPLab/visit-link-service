@@ -1,28 +1,28 @@
 # Healthy Future Backend
 
-## 本地开发
+## Local Development
 
 ```
 $ cp src/main/resources/application-local.sample.yml src/main/resources/application-local.yml 
 ```
 
-在 src/main/resources/application-local.yml 文件配置 MySQL 和 Aliyun OSS
+Configure MySQL connection info in the src/main/resources/application-local.yml file.
 
-提前建好数据库 healthy --character_set_server=utf8mb4 --collation-server=utf8mb4_bin
+Create the database healthy --character_set_server=utf8mb4 --collation-server=utf8mb4_bin
 
 ```
 $ SPRING_PROFILES_ACTIVE=local ./gradlew bootRun
 ```
 
-默认用户:
+Default user credentials:
 * Username: admin
 * Password: admin123
 
-## 外部依赖
+## External Dependencies
 
-* Aliyun OSS，用来存储课程的图片和视频
+* AWS S3, used for storing course images and videos.
 
-## 部署脚本
+## Deployment Scripts
 
 ```
 $ ansible/build.sh

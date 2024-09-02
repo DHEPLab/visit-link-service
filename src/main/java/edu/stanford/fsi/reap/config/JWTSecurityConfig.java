@@ -93,7 +93,7 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatchers(
             "/admin/modules/**",
             "/admin/curriculums/**",
-            "/admin/oss/**",
+            "/admin/files/**",
             "/admin/users/admin",
             "/admin/users/supervisor/**")
         .hasAnyAuthority(AuthoritiesConstants.ADMIN,AuthoritiesConstants.SUPER_ADMIN)
