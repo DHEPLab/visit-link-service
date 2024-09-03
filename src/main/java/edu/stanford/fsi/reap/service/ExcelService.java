@@ -878,15 +878,15 @@ public class ExcelService {
                     continue;
                 }
                 if ("zh".equals(lang) && tag.split(",").length > 3) {
-                    errDTOS.add(getDTO(realName, (i - 1), "街道或乡镇最多只能添加3个"));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.areaInvalid", locale));
                     continue;
                 }
                 if (StringUtils.isEmpty(phone)) {
                     errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.phone", locale));
                     continue;
                 }
-                if ("zh".equals(lang) && !phone.matches("\\d{11}")) {
-                    errDTOS.add(getDTO(realName, (i - 1), "社区工作者电话:11位手机号码"));
+                if ("zh".equals(lang) && !phone.matches("\\d{11}") || !phone.matches("\\d{5,20}")) {
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.phoneInvalid", locale));
                     continue;
                 }
                 if (StringUtils.isEmpty(username)) {
