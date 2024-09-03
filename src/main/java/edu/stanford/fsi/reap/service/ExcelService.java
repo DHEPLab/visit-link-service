@@ -484,8 +484,8 @@ public class ExcelService {
         try {
             return classPathResource.getInputStream();
         } catch (Exception e) {
-            log.error("excel模板读取失败", e);
-            throw new RuntimeException("excel模板读取失败");
+            log.error("Excel template load failed", e);
+            throw new RuntimeException("Excel template load failed");
         }
     }
 
