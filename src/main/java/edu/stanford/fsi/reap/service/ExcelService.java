@@ -3,8 +3,8 @@ package edu.stanford.fsi.reap.service;
 import com.google.common.collect.Lists;
 import edu.stanford.fsi.reap.converter.StringListConverter;
 import edu.stanford.fsi.reap.dto.ErrDTO;
-import edu.stanford.fsi.reap.entity.*;
 import edu.stanford.fsi.reap.entity.Module;
+import edu.stanford.fsi.reap.entity.*;
 import edu.stanford.fsi.reap.entity.enumerations.*;
 import edu.stanford.fsi.reap.pojo.Domain;
 import edu.stanford.fsi.reap.pojo.VisitReportObjData;
@@ -24,7 +24,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
@@ -389,17 +389,17 @@ public class ExcelService {
      *
      * @param chwList
      */
-    public byte[] writeChwExcel(List<UnfilteredUser> chwList) {
-        return getDataReportChw(chwList, this::mapByteArray);
+    public byte[] writeChwExcel(List<UnfilteredUser> chwList, String lang) {
+        return getDataReportChw(chwList, this::mapByteArray, lang);
     }
 
-    private byte[] getDataReportChw(List<UnfilteredUser> chwList, Function<Workbook, byte[]> saveFileOrOther) {
+    private byte[] getDataReportChw(List<UnfilteredUser> chwList, Function<Workbook, byte[]> saveFileOrOther, String lang) {
         try (
                 InputStream inputStream = getTemplateResourceIO("static/excel/Healthy-Future-Report-CHW.xlsx");
                 Workbook workBook = new XSSFWorkbook(inputStream)
         ) {
 
-            addContentRowByCommunityHouseWorkers(workBook, chwList);
+            addContentRowByCommunityHouseWorkers(workBook, chwList, lang);
 
             return saveFileOrOther.apply(workBook);
         } catch (Exception e) {
@@ -408,7 +408,13 @@ public class ExcelService {
         }
     }
 
-    private void addContentRowByCommunityHouseWorkers(Workbook workbook, List<UnfilteredUser> chwList) {
+    private void addContentRowByCommunityHouseWorkers(Workbook workbook, List<UnfilteredUser> chwList, String lang) {
+        Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
+
+        Function<UnfilteredUser, String> getStatusString = u -> u.isDeleted()
+                ? localSource.getMessage("status.deleted", null, locale)
+                : localSource.getMessage("status.active", null, locale);
+
         Sheet sheet = workbook.getSheetAt(0);
         for (int i = 0; i < chwList.size(); i++) {
             UnfilteredUser user = chwList.get(i);
@@ -426,7 +432,7 @@ public class ExcelService {
             // CHW Phone number
             row.createCell(column++).setCellValue(user.getPhone());
             // CHW Status
-            row.createCell(column++).setCellValue(user.isDeletedString());
+            row.createCell(column++).setCellValue(getStatusString.apply(user));
             // CHW System ID
             row.createCell(column++).setCellValue(user.getId());
             // Supervisor ID of this CHW
@@ -463,12 +469,10 @@ public class ExcelService {
         }
     }
 
-    private byte[] mapByteArray(Workbook workBook) {
-        try (
-                FileOutputStream out = new FileOutputStream("/home/jbf/Downloads/" + UUID.randomUUID().toString() + ".xlsx")
-        ) {
-            workBook.write(out);
-            return null;
+    private byte[] mapByteArray(Workbook workbook) {
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            workbook.write(bos);
+            return bos.toByteArray();
         } catch (IOException e) {
             log.error("work book to byte array ", e);
             throw new RuntimeException("work book to byte array " + e.getMessage());

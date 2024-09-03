@@ -42,8 +42,4 @@ abstract class AbstractAuditingEntity implements Serializable {
 
   @Column(name = "project_id")
   private Long projectId;
-
-  public String isDeletedString() {
-    return deleted ? "注销" : "正常";
-  }
 }
