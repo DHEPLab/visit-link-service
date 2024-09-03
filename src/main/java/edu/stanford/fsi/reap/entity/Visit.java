@@ -1,14 +1,11 @@
 package edu.stanford.fsi.reap.entity;
 
 import edu.stanford.fsi.reap.entity.enumerations.VisitStatus;
-
 import java.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -26,6 +23,7 @@ public class Visit extends AbstractAuditingEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
   @Builder.Default @NotNull private Boolean deleted = false;
 
   @NotNull private LocalDateTime visitTime;
@@ -46,14 +44,11 @@ public class Visit extends AbstractAuditingEntity {
   @Builder.Default @NotNull private Integer nextModuleIndex = 0;
 
   @Builder.Default
-  @NotNull
-  @Enumerated(EnumType.STRING)
+  @NotNull @Enumerated(EnumType.STRING)
   @Column(length = 15)
   private VisitStatus status = VisitStatus.NOT_STARTED;
 
-  @ManyToOne
-  @NotNull
-  private User chw;
+  @ManyToOne @NotNull private User chw;
 
   private LocalDateTime startTime;
 
@@ -66,7 +61,6 @@ public class Visit extends AbstractAuditingEntity {
   private String deleteReason;
 
   private Double distance;
-
 
   public Visit yearMonthDay(LocalDateTime visitTime) {
     this.year = visitTime.getYear();

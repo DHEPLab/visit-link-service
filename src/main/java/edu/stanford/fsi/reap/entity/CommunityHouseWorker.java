@@ -6,9 +6,10 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
@@ -23,8 +24,7 @@ public class CommunityHouseWorker extends AbstractAuditingEntity {
   private Long id;
 
   @Column(length = 50)
-  @NotNull
-  private String identity;
+  @NotNull private String identity;
 
   @Column(columnDefinition = "json")
   @Convert(converter = StringListConverter.class)

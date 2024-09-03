@@ -11,18 +11,15 @@ import lombok.Data;
 @Data
 public class AppCarerDTO {
 
-  @NotNull
-  @Size(min = 2, max = 10)
+  @NotNull @Size(min = 2, max = 10)
   private String name;
 
-  @NotNull
-  private String phone;
+  @NotNull private String phone;
 
   @Size(max = 20)
   private String wechat;
 
-  @NotNull
-  private FamilyTies familyTies;
+  @NotNull private FamilyTies familyTies;
 
   private boolean master = false;
 }

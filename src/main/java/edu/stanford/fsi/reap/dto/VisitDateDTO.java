@@ -1,6 +1,8 @@
 package edu.stanford.fsi.reap.dto;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 public interface VisitDateDTO {
   Integer getYear();
 

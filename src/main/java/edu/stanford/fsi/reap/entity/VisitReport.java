@@ -2,12 +2,11 @@ package edu.stanford.fsi.reap.entity;
 
 import edu.stanford.fsi.reap.converter.VisitReportObjDataConverter;
 import edu.stanford.fsi.reap.pojo.VisitReportObjData;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.SQLDeleteAll;
 import org.hibernate.annotations.Where;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -23,12 +22,8 @@ public class VisitReport extends AbstractNormalEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull
-  @Convert(converter = VisitReportObjDataConverter.class)
+  @NotNull @Convert(converter = VisitReportObjDataConverter.class)
   private VisitReportObjData visitReportObjData;
 
-  @NotNull
-  @OneToOne
-  private Visit visit;
-
+  @NotNull @OneToOne private Visit visit;
 }

@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.fsi.reap.dto.AddressWrapper;
-import edu.stanford.fsi.reap.dto.AppBabyDTO;
 import edu.stanford.fsi.reap.dto.AppCarerDTO;
 import edu.stanford.fsi.reap.dto.AppCreateBabyDTO;
 import edu.stanford.fsi.reap.dto.AppLessonDTO;
@@ -17,12 +16,18 @@ import edu.stanford.fsi.reap.dto.BabyWrapper;
 import edu.stanford.fsi.reap.dto.CloseAccountReasonWrapper;
 import edu.stanford.fsi.reap.dto.RemarkWrapper;
 import edu.stanford.fsi.reap.dto.VisitResultDTO;
-import edu.stanford.fsi.reap.entity.*;
+import edu.stanford.fsi.reap.entity.Baby;
+import edu.stanford.fsi.reap.entity.Carer;
+import edu.stanford.fsi.reap.entity.Chw;
+import edu.stanford.fsi.reap.entity.Curriculum;
 import edu.stanford.fsi.reap.entity.enumerations.BabyStage;
 import edu.stanford.fsi.reap.entity.enumerations.FamilyTies;
 import edu.stanford.fsi.reap.entity.enumerations.Gender;
-import edu.stanford.fsi.reap.entity.enumerations.VisitStatus;
-import edu.stanford.fsi.reap.repository.*;
+import edu.stanford.fsi.reap.repository.BabyRepository;
+import edu.stanford.fsi.reap.repository.BabyUpdateInfoRepository;
+import edu.stanford.fsi.reap.repository.CarerModifyRecordRepository;
+import edu.stanford.fsi.reap.repository.CarerRepository;
+import edu.stanford.fsi.reap.repository.VisitRepository;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.BabyService;
 import edu.stanford.fsi.reap.service.LessonService;
@@ -40,7 +45,6 @@ import org.mockito.InjectMocks;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
@@ -76,31 +80,32 @@ class AppBabyResourceTest {
     carerModifyRecordRepository = mock(CarerModifyRecordRepository.class);
     babyService = mock(BabyService.class);
     modelMapper = mock(ModelMapper.class);
-    babyUpdateInfoRepository=mock(BabyUpdateInfoRepository.class);
+    babyUpdateInfoRepository = mock(BabyUpdateInfoRepository.class);
     when(babyRepository.findByIdAndChwIdAndDeletedFalse(11L, null))
-            .thenReturn(Optional.ofNullable(Baby.builder().build()));
+        .thenReturn(Optional.ofNullable(Baby.builder().build()));
     resource =
-            new AppBabyResource(
-                    lessonService,
-                    babyRepository,
-                    babyService,
-                    carerRepository,
-                    visitRepository,
-                    modelMapper,
-                    carerModifyRecordRepository,
-                    babyUpdateInfoRepository);
+        new AppBabyResource(
+            lessonService,
+            babyRepository,
+            babyService,
+            carerRepository,
+            visitRepository,
+            modelMapper,
+            carerModifyRecordRepository,
+            babyUpdateInfoRepository);
     mockMvc =
-            MockMvcBuilders.standaloneSetup(resource)
-                    .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-                    .setControllerAdvice(new BasicExceptionHandling())
-                    .build();
+        MockMvcBuilders.standaloneSetup(resource)
+            .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
+            .setControllerAdvice(new BasicExceptionHandling())
+            .build();
   }
 
   @Test
   void should_get_no_curriculum_message() throws Exception {
     when(babyRepository.findByIdAndChwIdAndDeletedFalseAndApprovedTrue(100L, null))
         .thenReturn(Optional.of(new Baby()));
-    mockMvc.perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
         .andDo(print())
         .andExpect(status().isNotFound());
   }
@@ -108,13 +113,16 @@ class AppBabyResourceTest {
   @Test
   void should_get_has_not_started_lesson_message() throws Exception {
     when(babyRepository.findByIdAndChwIdAndDeletedFalse(100L, null))
-            .thenReturn(Optional.of(Baby.builder().curriculum(new Curriculum()).build()));
+        .thenReturn(Optional.of(Baby.builder().curriculum(new Curriculum()).build()));
     when(visitRepository.findByBabyIdAndNotStarted(100L))
         .thenReturn(Collections.singletonList(mock(VisitResultDTO.class)));
-    mockMvc.perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
+    mockMvc
+        .perform(MockMvcRequestBuilders.get("/api/babies/100/lesson"))
         .andDo(print())
         .andExpect(status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.jsonPath("$.detail").value("Visit cannot be scheduled since there is an unfinished visit."));
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("$.detail")
+                .value("Visit cannot be scheduled since there is an unfinished visit."));
   }
 
   @Test
@@ -124,16 +132,16 @@ class AppBabyResourceTest {
             SecurityUtils.getUserId(),
             "admin",
             PageRequest.of(0, 20, Sort.by(new Sort.Order(Sort.Direction.DESC, "createdAt")))))
-            .thenReturn(Page.empty());
+        .thenReturn(Page.empty());
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.get("/api/babies")
-                            .param("name", "admin")
-                            .param("pageNumber", "1")
-                            .param("pageSize", "1"))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.get("/api/babies")
+                .param("name", "admin")
+                .param("pageNumber", "1")
+                .param("pageSize", "1"))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -141,15 +149,14 @@ class AppBabyResourceTest {
   public void should_get_bad_baby_visitDateRange_when_baby_no_curriculum() throws Exception {
     Baby baby = new Baby();
     Optional<Baby> optionalBaby = Optional.of(baby);
-    when(babyRepository.findByIdAndChwIdAndDeletedFalse(
-            2L, SecurityUtils.getUserId()))
-            .thenReturn(optionalBaby);
+    when(babyRepository.findByIdAndChwIdAndDeletedFalse(2L, SecurityUtils.getUserId()))
+        .thenReturn(optionalBaby);
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.get("/api/babies/{id}/visit-date-range", 2)
-                            .param("id", String.valueOf(2L)))
-            .andDo(print())
-            .andExpect(status().is4xxClientError());
+        .perform(
+            MockMvcRequestBuilders.get("/api/babies/{id}/visit-date-range", 2)
+                .param("id", String.valueOf(2L)))
+        .andDo(print())
+        .andExpect(status().is4xxClientError());
   }
 
   @Test
@@ -159,21 +166,20 @@ class AppBabyResourceTest {
     Optional<Baby> optionalBaby = Optional.of(baby);
     baby.setCurriculum(new Curriculum());
     Optional<List<LocalDate>> optionalLocalDateList =
-            Optional.of(Collections.singletonList(LocalDate.now()));
+        Optional.of(Collections.singletonList(LocalDate.now()));
 
-    when(babyRepository.findByIdAndChwIdAndDeletedFalse(
-            2L, SecurityUtils.getUserId()))
-            .thenReturn(optionalBaby);
+    when(babyRepository.findByIdAndChwIdAndDeletedFalse(2L, SecurityUtils.getUserId()))
+        .thenReturn(optionalBaby);
 
     when(lessonService.visitDateRange(baby, LocalDate.now())).thenReturn(optionalLocalDateList);
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.get("/api/babies/{id}/visit-date-range", 2)
-                            .param("id", String.valueOf(2L)))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(
+            MockMvcRequestBuilders.get("/api/babies/{id}/visit-date-range", 2)
+                .param("id", String.valueOf(2L)))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 
   @Test
@@ -181,12 +187,12 @@ class AppBabyResourceTest {
   public void should_get_babiesAvailableForCreateVisit() throws Exception {
     String dateStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.get("/api/babies/available-for-visit")
-                            .param("visitDate", dateStr))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(
+            MockMvcRequestBuilders.get("/api/babies/available-for-visit")
+                .param("visitDate", dateStr))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 
   @Test
@@ -197,19 +203,19 @@ class AppBabyResourceTest {
     when(visitRepository.findByBabyIdAndNotStarted(2L)).thenReturn(visitResultDTOS);
     when(visitRepository.findCountByBabyIdAndStatusAndRemarkIsNull(2L)).thenReturn(2);
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/babies/{id}/visits", 2L))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.numberOfNoRemark").value(2));
+        .perform(MockMvcRequestBuilders.get("/api/babies/{id}/visits", 2L))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.numberOfNoRemark").value(2));
   }
 
   @Test
   @WithMockUser
   public void should_get_availableLesson_param_400() throws Exception {
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/babies/{id}/lesson", 2L))
-            .andDo(print())
-            .andExpect(status().is4xxClientError());
+        .perform(MockMvcRequestBuilders.get("/api/babies/{id}/lesson", 2L))
+        .andDo(print())
+        .andExpect(status().is4xxClientError());
   }
 
   @Test
@@ -222,19 +228,18 @@ class AppBabyResourceTest {
     appLessonDTO.setName("testAppLessonDTO");
     Optional<AppLessonDTO> optionalAppLessonDTO = Optional.of(appLessonDTO);
 
-    when(babyRepository.findByIdAndChwIdAndDeletedFalse(
-            2L, SecurityUtils.getUserId()))
-            .thenReturn(optionalBaby);
+    when(babyRepository.findByIdAndChwIdAndDeletedFalse(2L, SecurityUtils.getUserId()))
+        .thenReturn(optionalBaby);
 
     when(lessonService.findAvailable(
             baby, DateRange.checkBaseline(LocalDate.now(), LocalDateTime.now())))
-            .thenReturn(optionalAppLessonDTO);
+        .thenReturn(optionalAppLessonDTO);
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/babies/{id}/lesson", 2L))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("testAppLessonDTO"));
+        .perform(MockMvcRequestBuilders.get("/api/babies/{id}/lesson", 2L))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("testAppLessonDTO"));
   }
 
   @Test
@@ -247,20 +252,20 @@ class AppBabyResourceTest {
     returnBaby.setName("returnBaby");
     returnBaby.setStage(BabyStage.BIRTH);
     returnBaby.setBirthday(
-            LocalDate.parse("2020-02-02", DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+        LocalDate.parse("2020-02-02", DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
     when(babyService.createFromApp(
             appCreateBaby, Chw.builder().id(SecurityUtils.getUserId()).build()))
-            .thenReturn(returnBaby);
+        .thenReturn(returnBaby);
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.post("/api/babies")
-                            .content(objectMapper.writeValueAsString(appCreateBaby))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("returnBaby"));
+        .perform(
+            MockMvcRequestBuilders.post("/api/babies")
+                .content(objectMapper.writeValueAsString(appCreateBaby))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("returnBaby"));
   }
 
   @Test
@@ -271,12 +276,12 @@ class AppBabyResourceTest {
     carer.setPhone("17805202360");
     carer.setFamilyTies(FamilyTies.BROTHER);
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.post("/api/babies/{id}/carers", 2L)
-                            .content(objectMapper.writeValueAsString(carer))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.post("/api/babies/{id}/carers", 2L)
+                .content(objectMapper.writeValueAsString(carer))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -296,12 +301,12 @@ class AppBabyResourceTest {
     when(carerRepository.findOneByBabyIdAndMasterIsTrue(2L)).thenReturn(Optional.of(carer));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/babies/{id}/carers/{carerId}", 2L, 2L)
-                            .content(objectMapper.writeValueAsString(carerDTO))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isBadRequest());
+        .perform(
+            MockMvcRequestBuilders.put("/api/babies/{id}/carers/{carerId}", 2L, 2L)
+                .content(objectMapper.writeValueAsString(carerDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -320,21 +325,21 @@ class AppBabyResourceTest {
     when(carerRepository.findOneByBabyIdAndMasterIsTrue(2L)).thenReturn(Optional.of(carer));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/babies/{id}/carers/{carerId}", 2L, 2L)
-                            .content(objectMapper.writeValueAsString(carerDTO))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/babies/{id}/carers/{carerId}", 2L, 2L)
+                .content(objectMapper.writeValueAsString(carerDTO))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
   @WithMockUser
   public void should_delete_babyCarer() throws Exception {
     mockMvc
-            .perform(MockMvcRequestBuilders.delete("/api/babies/{id}/carers/{carerId}", 2L, 2L))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(MockMvcRequestBuilders.delete("/api/babies/{id}/carers/{carerId}", 2L, 2L))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -344,12 +349,12 @@ class AppBabyResourceTest {
     wrapper.setReason("reason");
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/babies/{id}/close", 2L)
-                            .content(objectMapper.writeValueAsString(wrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/babies/{id}/close", 2L)
+                .content(objectMapper.writeValueAsString(wrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -361,12 +366,12 @@ class AppBabyResourceTest {
     wrapper.setStage(BabyStage.BIRTH);
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/babies/{id}", 2L)
-                            .content(objectMapper.writeValueAsString(wrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/babies/{id}", 2L)
+                .content(objectMapper.writeValueAsString(wrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -376,12 +381,12 @@ class AppBabyResourceTest {
     wrapper.setRemark("remark");
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/babies/{id}/remark", 2L)
-                            .content(objectMapper.writeValueAsString(wrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/babies/{id}/remark", 2L)
+                .content(objectMapper.writeValueAsString(wrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -392,12 +397,12 @@ class AppBabyResourceTest {
     wrapper.setLocation("location");
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/babies/{id}/address", 2L)
-                            .content(objectMapper.writeValueAsString(wrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/babies/{id}/address", 2L)
+                .content(objectMapper.writeValueAsString(wrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -409,15 +414,15 @@ class AppBabyResourceTest {
     BabyDetailDTO babyDetailDTO = new BabyDetailDTO();
 
     when(babyRepository.findByIdAndChwIdAndDeletedFalse(2L, SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(baby));
+        .thenReturn(Optional.of(baby));
 
     when(modelMapper.map(baby, BabyDetailDTO.class)).thenReturn(babyDetailDTO);
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/babies/{id}", 2L))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(MockMvcRequestBuilders.get("/api/babies/{id}", 2L))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 
   @Test
@@ -425,12 +430,12 @@ class AppBabyResourceTest {
   public void should_get_appBabyCarers() throws Exception {
 
     when(carerRepository.findByBabyIdAndBabyChwIdOrderByMasterDesc(2L, SecurityUtils.getUserId()))
-            .thenReturn(new ArrayList<>());
+        .thenReturn(new ArrayList<>());
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/babies/{id}/carers", 2L))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(MockMvcRequestBuilders.get("/api/babies/{id}/carers", 2L))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 }

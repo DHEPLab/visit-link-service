@@ -22,7 +22,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @RestController
 @RequestMapping
 @Slf4j
@@ -73,5 +75,4 @@ public class AccountJWTResource {
     httpHeaders.add(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + jwt);
     return new ResponseEntity<>(new JWTToken(jwt), httpHeaders, HttpStatus.OK);
   }
-
 }

@@ -1,13 +1,12 @@
 package edu.stanford.fsi.reap.entity;
 
-import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -20,18 +19,17 @@ import java.time.LocalDateTime;
 @SQLDelete(sql = "UPDATE account_operation_record SET deleted = true WHERE id = ?")
 public class AccountOperationRecord extends AbstractAuditingEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private Long accountId;
+  private Long accountId;
 
-    private String accountType;
+  private String accountType;
 
-    private LocalDateTime closeTime;
+  private LocalDateTime closeTime;
 
-    private LocalDateTime revertTime;
+  private LocalDateTime revertTime;
 
-    private Boolean revert;
-
+  private Boolean revert;
 }

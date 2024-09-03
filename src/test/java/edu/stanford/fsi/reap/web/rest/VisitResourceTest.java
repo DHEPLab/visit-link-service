@@ -44,8 +44,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @AutoConfigureMockMvc
 class VisitResourceTest {
 
-  @InjectMocks
-  private static VisitResource resource;
+  @InjectMocks private static VisitResource resource;
   private static MockMvc mockMvc;
   private static final ObjectMapper objectMapper = new ObjectMapper();
   private static VisitRepository repository;
@@ -70,13 +69,21 @@ class VisitResourceTest {
     visitReportService = mock(VisitReportService.class);
     sysErrorLogRepository = mock(SysErrorLogRepository.class);
     lessonRepository = mock(LessonRepository.class);
-    babyUpdateInfoRepository=mock(BabyUpdateInfoRepository.class);
+    babyUpdateInfoRepository = mock(BabyUpdateInfoRepository.class);
     when(repository.findByIdAndChwIdOrBabyChwId(1L, null))
-            .thenReturn(Optional.ofNullable(Visit.builder().status(VisitStatus.DONE).build()));
+        .thenReturn(Optional.ofNullable(Visit.builder().status(VisitStatus.DONE).build()));
     when(repository.findByIdAndChwIdOrBabyChwId(2L, null))
-            .thenReturn(Optional.ofNullable(Visit.builder().status(VisitStatus.EXPIRED).build()));
-    resource = new VisitResource(lessonService, visitService, repository, babyRepository,
-        questionnaireRepository, sysErrorLogRepository, lessonRepository,babyUpdateInfoRepository);
+        .thenReturn(Optional.ofNullable(Visit.builder().status(VisitStatus.EXPIRED).build()));
+    resource =
+        new VisitResource(
+            lessonService,
+            visitService,
+            repository,
+            babyRepository,
+            questionnaireRepository,
+            sysErrorLogRepository,
+            lessonRepository,
+            babyUpdateInfoRepository);
     mockMvc = MockMvcBuilders.standaloneSetup(resource).build();
   }
 
@@ -89,12 +96,12 @@ class VisitResourceTest {
     map.put("visitTime", "2020-10-10T23:12:12");
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.post("/api/visits")
-                            .content(objectMapper.writeValueAsString(map))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isBadRequest());
+        .perform(
+            MockMvcRequestBuilders.post("/api/visits")
+                .content(objectMapper.writeValueAsString(map))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -106,12 +113,12 @@ class VisitResourceTest {
     map.put("visitTime", "2020-10-10T20:12:12");
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.post("/api/visits")
-                            .content(objectMapper.writeValueAsString(map))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().is4xxClientError());
+        .perform(
+            MockMvcRequestBuilders.post("/api/visits")
+                .content(objectMapper.writeValueAsString(map))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().is4xxClientError());
   }
 
   @Test
@@ -124,7 +131,7 @@ class VisitResourceTest {
 
     when(babyRepository.findByIdAndChwIdAndDeletedFalseAndApprovedTrue(
             3L, SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(new Baby()));
+        .thenReturn(Optional.of(new Baby()));
 
     Baby baby = Baby.builder().id(3L).build();
     Lesson lesson = Lesson.builder().id(3L).build();
@@ -150,13 +157,13 @@ class VisitResourceTest {
     when(repository.findById(3L)).thenReturn(Optional.of(visit));
 
     when(lessonService.visitDateRange(visit.getBaby(), visit.getLesson(), LocalDate.now()))
-            .thenReturn(Optional.of(Collections.singletonList(LocalDate.now())));
+        .thenReturn(Optional.of(Collections.singletonList(LocalDate.now())));
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/visits/{id}/date-range", 3L))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(MockMvcRequestBuilders.get("/api/visits/{id}/date-range", 3L))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 
   @Test
@@ -168,15 +175,15 @@ class VisitResourceTest {
     visit.setStatus(VisitStatus.EXPIRED);
 
     when(repository.findByIdAndChwIdOrBabyChwId(2L, SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(visit));
+        .thenReturn(Optional.of(visit));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/visits/{id}", 2L)
-                            .content(objectMapper.writeValueAsString(map))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isBadRequest());
+        .perform(
+            MockMvcRequestBuilders.put("/api/visits/{id}", 2L)
+                .content(objectMapper.writeValueAsString(map))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -188,15 +195,15 @@ class VisitResourceTest {
     visit.setStatus(VisitStatus.NOT_STARTED);
 
     when(repository.findByIdAndChwIdOrBabyChwId(2L, SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(visit));
+        .thenReturn(Optional.of(visit));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/visits/{id}", 2L)
-                            .content(objectMapper.writeValueAsString(map))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/visits/{id}", 2L)
+                .content(objectMapper.writeValueAsString(map))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -208,15 +215,15 @@ class VisitResourceTest {
     Visit visit = new Visit();
     visit.setStatus(VisitStatus.EXPIRED);
     when(repository.findByIdAndChwIdOrBabyChwId(2L, SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(visit));
+        .thenReturn(Optional.of(visit));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/visits/{id}/status", 2L)
-                            .content(objectMapper.writeValueAsString(wrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isBadRequest());
+        .perform(
+            MockMvcRequestBuilders.put("/api/visits/{id}/status", 2L)
+                .content(objectMapper.writeValueAsString(wrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -227,15 +234,15 @@ class VisitResourceTest {
     Visit visit = new Visit();
     visit.setStatus(VisitStatus.NOT_STARTED);
     when(repository.findByIdAndChwIdOrBabyChwId(2L, SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(visit));
+        .thenReturn(Optional.of(visit));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/visits/{id}/status", 2L)
-                            .content(objectMapper.writeValueAsString(wrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/visits/{id}/status", 2L)
+                .content(objectMapper.writeValueAsString(wrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -246,15 +253,15 @@ class VisitResourceTest {
     Visit visit = new Visit();
     visit.setStatus(VisitStatus.DONE);
     when(repository.findByIdAndChwIdOrBabyChwId(2L, SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(visit));
+        .thenReturn(Optional.of(visit));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/visits/{id}/remark", 2L)
-                            .content(objectMapper.writeValueAsString(wrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isBadRequest());
+        .perform(
+            MockMvcRequestBuilders.put("/api/visits/{id}/remark", 2L)
+                .content(objectMapper.writeValueAsString(wrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -265,15 +272,15 @@ class VisitResourceTest {
     Visit visit = new Visit();
     visit.setStatus(VisitStatus.NOT_STARTED);
     when(repository.findByIdAndChwIdOrBabyChwId(2L, SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(visit));
+        .thenReturn(Optional.of(visit));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/visits/{id}/remark", 2L)
-                            .content(objectMapper.writeValueAsString(wrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/visits/{id}/remark", 2L)
+                .content(objectMapper.writeValueAsString(wrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -282,10 +289,10 @@ class VisitResourceTest {
     when(visitService.markedDates(SecurityUtils.getUserId())).thenReturn(new ArrayList<>());
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/visits/marked-dates", 2L))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(MockMvcRequestBuilders.get("/api/visits/marked-dates", 2L))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 
   @Test
@@ -294,50 +301,49 @@ class VisitResourceTest {
     LocalDate date = LocalDate.now();
     when(repository.findByDateAndChwId(
             date.getYear(), date.getMonthValue(), date.getDayOfMonth(), SecurityUtils.getUserId()))
-            .thenReturn(new ArrayList<>());
+        .thenReturn(new ArrayList<>());
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.get("/api/visits")
-                            .param("date", date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(
+            MockMvcRequestBuilders.get("/api/visits")
+                .param("date", date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 
   @Test
   @WithMockUser
   public void should_get_visit_param_400() throws Exception {
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/visits/{id}", 2L))
-            .andDo(print())
-            .andExpect(status().is4xxClientError());
+        .perform(MockMvcRequestBuilders.get("/api/visits/{id}", 2L))
+        .andDo(print())
+        .andExpect(status().is4xxClientError());
   }
 
   @Test
   @WithMockUser
   public void should_get_visit_success() throws Exception {
     when(visitService.findById(2L, SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(new VisitDetailDTO()));
+        .thenReturn(Optional.of(new VisitDetailDTO()));
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/visits/{id}", 2L))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(MockMvcRequestBuilders.get("/api/visits/{id}", 2L))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 
   @Test
   @WithMockUser
   public void should_get_nextVisits_success() throws Exception {
     when(visitService.findNext(SecurityUtils.getUserId()))
-            .thenReturn(Optional.of(new VisitDetailDTO()));
+        .thenReturn(Optional.of(new VisitDetailDTO()));
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/visits/next"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(MockMvcRequestBuilders.get("/api/visits/next"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
-
 }

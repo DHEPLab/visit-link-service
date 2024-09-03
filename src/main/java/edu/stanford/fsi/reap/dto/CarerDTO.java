@@ -6,16 +6,16 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Data
 public class CarerDTO {
 
-  @NotNull
-  @Size(min = 2, max = 10)
+  @NotNull @Size(min = 2, max = 10)
   private String name;
 
-  @NotNull
-  private String phone;
+  @NotNull private String phone;
 
   @Size(max = 20)
   private String wechat;

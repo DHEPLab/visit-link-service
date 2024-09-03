@@ -13,7 +13,9 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
@@ -28,20 +30,16 @@ public class Lesson extends AbstractAuditingEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String number;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String name;
 
-  @NotNull
-  @Size(max = 200)
+  @NotNull @Size(max = 200)
   private String description;
 
-  @NotNull
-  @Enumerated(EnumType.STRING)
+  @NotNull @Enumerated(EnumType.STRING)
   @Column(length = 10)
   private BabyStage stage;
 
@@ -55,8 +53,7 @@ public class Lesson extends AbstractAuditingEntity {
   @Convert(converter = DomainListConverter.class)
   private List<Domain> modules;
 
-  @ManyToOne
-  private Questionnaire questionnaire;
+  @ManyToOne private Questionnaire questionnaire;
 
   @Size(max = 100)
   private String questionnaireAddress;

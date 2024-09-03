@@ -3,7 +3,7 @@ package edu.stanford.fsi.reap.security;
 /** Constants for Spring Security authorities. */
 public final class AuthoritiesConstants {
 
-  public final static String SUPER_ADMIN="ROLE_SUPER_ADMIN";
+  public static final String SUPER_ADMIN = "ROLE_SUPER_ADMIN";
 
   public static final String ADMIN = "ROLE_ADMIN";
 

@@ -13,11 +13,9 @@ import edu.stanford.fsi.reap.entity.LessonSchedule;
 import edu.stanford.fsi.reap.entity.enumerations.CurriculumBranch;
 import edu.stanford.fsi.reap.pojo.Domain;
 import edu.stanford.fsi.reap.repository.*;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -42,81 +40,114 @@ class CurriculumServiceTest {
     LessonScheduleRepository scheduleRepository = mock(LessonScheduleRepository.class);
     VisitRepository visitRepository = mock(VisitRepository.class);
 
-    when(repository.findById(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID)).thenReturn(Optional.of(Curriculum.builder()
-            .id(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID)
-            .branch(CurriculumBranch.MASTER)
-            .published(false)
-            .build()));
+    when(repository.findById(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID))
+        .thenReturn(
+            Optional.of(
+                Curriculum.builder()
+                    .id(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID)
+                    .branch(CurriculumBranch.MASTER)
+                    .published(false)
+                    .build()));
 
-    when(repository.findById(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID_2)).thenReturn(Optional.of(Curriculum.builder()
-            .id(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID_2)
-            .branch(CurriculumBranch.MASTER)
-            .published(false)
-            .build()));
+    when(repository.findById(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID_2))
+        .thenReturn(
+            Optional.of(
+                Curriculum.builder()
+                    .id(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID_2)
+                    .branch(CurriculumBranch.MASTER)
+                    .published(false)
+                    .build()));
 
-    when(repository.findById(MASTER_BRANCH_PUBLISHED_CURRICULUM_ID)).thenReturn(Optional.of(Curriculum.builder()
-            .id(MASTER_BRANCH_PUBLISHED_CURRICULUM_ID)
-            .branch(CurriculumBranch.MASTER)
-            .published(true)
-            .build()));
-
-    when(repository.findById(DRAFT_BRANCH_CURRICULUM_ID)).thenReturn(Optional.of(Curriculum.builder()
-            .id(DRAFT_BRANCH_CURRICULUM_ID)
-            .branch(CurriculumBranch.DRAFT)
-            .source(Curriculum.builder()
+    when(repository.findById(MASTER_BRANCH_PUBLISHED_CURRICULUM_ID))
+        .thenReturn(
+            Optional.of(
+                Curriculum.builder()
                     .id(MASTER_BRANCH_PUBLISHED_CURRICULUM_ID)
                     .branch(CurriculumBranch.MASTER)
                     .published(true)
-                    .build())
-            .published(false)
-            .build()));
+                    .build()));
 
-    when(repository.save(any())).then(invocation -> {
-      Curriculum curriculum = invocation.getArgument(0);
-      if (curriculum.getId() == null) {
-        curriculum.setId(NEW_CURRICULUM_ID);
-      }
-      return curriculum;
-    });
+    when(repository.findById(DRAFT_BRANCH_CURRICULUM_ID))
+        .thenReturn(
+            Optional.of(
+                Curriculum.builder()
+                    .id(DRAFT_BRANCH_CURRICULUM_ID)
+                    .branch(CurriculumBranch.DRAFT)
+                    .source(
+                        Curriculum.builder()
+                            .id(MASTER_BRANCH_PUBLISHED_CURRICULUM_ID)
+                            .branch(CurriculumBranch.MASTER)
+                            .published(true)
+                            .build())
+                    .published(false)
+                    .build()));
 
-    when(lessonRepository.save(any())).then(invocation -> {
-      Lesson lesson = invocation.getArgument(0);
-      if (lesson.getId() == null) {
-        lesson.setId(NEW_LESSON_ID);
-      }
-      return lesson;
-    });
+    when(repository.save(any()))
+        .then(
+            invocation -> {
+              Curriculum curriculum = invocation.getArgument(0);
+              if (curriculum.getId() == null) {
+                curriculum.setId(NEW_CURRICULUM_ID);
+              }
+              return curriculum;
+            });
 
-    when(lessonRepository.findById(2L)).thenReturn(Optional.of(Lesson.builder()
-            .id(2L)
-            .number("L1")
-            .source(Lesson.builder().id(22L).build())
-            .build()));
+    when(lessonRepository.save(any()))
+        .then(
+            invocation -> {
+              Lesson lesson = invocation.getArgument(0);
+              if (lesson.getId() == null) {
+                lesson.setId(NEW_LESSON_ID);
+              }
+              return lesson;
+            });
 
-    when(scheduleRepository.findById(3L)).thenReturn(Optional.of(LessonSchedule.builder()
-            .id(3L)
-            .lessons(Collections.singletonList(new Domain(null, "L1")))
-            .source(LessonSchedule.builder().id(33L).build())
-            .build()));
+    when(lessonRepository.findById(2L))
+        .thenReturn(
+            Optional.of(
+                Lesson.builder()
+                    .id(2L)
+                    .number("L1")
+                    .source(Lesson.builder().id(22L).build())
+                    .build()));
 
-    when(scheduleRepository.save(any())).then(invocation -> {
-      LessonSchedule schedule = invocation.getArgument(0);
-      if (schedule.getId() == null) {
-        schedule.setId(NEW_SCHEDULE_ID);
-      }
-      return schedule;
-    });
+    when(scheduleRepository.findById(3L))
+        .thenReturn(
+            Optional.of(
+                LessonSchedule.builder()
+                    .id(3L)
+                    .lessons(Collections.singletonList(new Domain(null, "L1")))
+                    .source(LessonSchedule.builder().id(33L).build())
+                    .build()));
 
-    service = new CurriculumService(repository, visitRepository, lessonRepository, scheduleRepository, mock(BabyRepository.class));
+    when(scheduleRepository.save(any()))
+        .then(
+            invocation -> {
+              LessonSchedule schedule = invocation.getArgument(0);
+              if (schedule.getId() == null) {
+                schedule.setId(NEW_SCHEDULE_ID);
+              }
+              return schedule;
+            });
+
+    service =
+        new CurriculumService(
+            repository,
+            visitRepository,
+            lessonRepository,
+            scheduleRepository,
+            mock(BabyRepository.class));
   }
 
   @Test
   public void should_filter_invalid_lessons() {
     Lesson lesson = Lesson.builder().number("L1").build();
-    LessonSchedule schedule = LessonSchedule.builder()
+    LessonSchedule schedule =
+        LessonSchedule.builder()
             .lessons(Arrays.asList(new Domain(null, "L1"), new Domain(null, "invalid")))
             .build();
-    CurriculumDTO curriculumDTO = CurriculumDTO.builder()
+    CurriculumDTO curriculumDTO =
+        CurriculumDTO.builder()
             .name(NAME)
             .description(DESCRIPTION)
             .lessons(Collections.singletonList(lesson))
@@ -131,8 +162,10 @@ class CurriculumServiceTest {
   @Test
   public void should_create_master_branch_and_unpublished() {
     Lesson lesson = Lesson.builder().number("L1").build();
-    LessonSchedule schedule = LessonSchedule.builder().lessons(Collections.singletonList(new Domain(null, "L1"))).build();
-    CurriculumDTO curriculumDTO = CurriculumDTO.builder()
+    LessonSchedule schedule =
+        LessonSchedule.builder().lessons(Collections.singletonList(new Domain(null, "L1"))).build();
+    CurriculumDTO curriculumDTO =
+        CurriculumDTO.builder()
             .name(NAME)
             .description(DESCRIPTION)
             .lessons(Collections.singletonList(lesson))
@@ -160,14 +193,17 @@ class CurriculumServiceTest {
 
   @Test
   public void should_update_master_branch_and_unpublished() {
-    CurriculumDTO curriculumDTO = CurriculumDTO.builder()
+    CurriculumDTO curriculumDTO =
+        CurriculumDTO.builder()
             .id(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID)
             .name(NAME)
             .description(DESCRIPTION)
             .lessons(Collections.singletonList(Lesson.builder().number("L1").build()))
-            .schedules(Collections.singletonList(LessonSchedule.builder()
-                    .lessons(Collections.singletonList(new Domain(null, "L1")))
-                    .build()))
+            .schedules(
+                Collections.singletonList(
+                    LessonSchedule.builder()
+                        .lessons(Collections.singletonList(new Domain(null, "L1")))
+                        .build()))
             .build();
 
     Optional<CurriculumResultDTO> optional = service.draft(curriculumDTO);
@@ -180,13 +216,16 @@ class CurriculumServiceTest {
 
   @Test
   public void should_create_master_branch_and_publish() {
-    LessonSchedule schedule = LessonSchedule.builder()
+    LessonSchedule schedule =
+        LessonSchedule.builder()
             .lessons(Arrays.asList(new Domain(null, "L2"), new Domain(null, "L1")))
             .build();
-    CurriculumDTO curriculumDTO = CurriculumDTO.builder()
+    CurriculumDTO curriculumDTO =
+        CurriculumDTO.builder()
             .name(NAME)
             .description(DESCRIPTION)
-            .lessons(Arrays.asList(
+            .lessons(
+                Arrays.asList(
                     Lesson.builder().number("L1").startOfApplicableDays(10).build(),
                     Lesson.builder().number("L2").startOfApplicableDays(20).build()))
             .schedules(Collections.singletonList(schedule))
@@ -216,14 +255,17 @@ class CurriculumServiceTest {
 
   @Test
   public void should_update_master_branch_and_publish() {
-    CurriculumDTO curriculumDTO = CurriculumDTO.builder()
+    CurriculumDTO curriculumDTO =
+        CurriculumDTO.builder()
             .id(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID_2)
             .name(NAME)
             .description(DESCRIPTION)
             .lessons(Collections.singletonList(Lesson.builder().number("L1").build()))
-            .schedules(Collections.singletonList(LessonSchedule.builder()
-                    .lessons(Collections.singletonList(new Domain(null, "L1")))
-                    .build()))
+            .schedules(
+                Collections.singletonList(
+                    LessonSchedule.builder()
+                        .lessons(Collections.singletonList(new Domain(null, "L1")))
+                        .build()))
             .build();
 
     Optional<CurriculumResultDTO> optional = service.publish(curriculumDTO);
@@ -236,14 +278,18 @@ class CurriculumServiceTest {
 
   @Test
   public void should_create_draft_branch_and_unpublished() {
-    CurriculumDTO curriculumDTO = CurriculumDTO.builder().id(MASTER_BRANCH_PUBLISHED_CURRICULUM_ID)
+    CurriculumDTO curriculumDTO =
+        CurriculumDTO.builder()
+            .id(MASTER_BRANCH_PUBLISHED_CURRICULUM_ID)
             .name(NAME)
             .description(DESCRIPTION)
             .lessons(Collections.singletonList(Lesson.builder().id(2L).number("L1").build()))
-            .schedules(Collections.singletonList(LessonSchedule.builder()
-                    .id(2L)
-                    .lessons(Collections.singletonList(new Domain(null, "L1")))
-                    .build()))
+            .schedules(
+                Collections.singletonList(
+                    LessonSchedule.builder()
+                        .id(2L)
+                        .lessons(Collections.singletonList(new Domain(null, "L1")))
+                        .build()))
             .build();
 
     Optional<CurriculumResultDTO> optional = service.draft(curriculumDTO);
@@ -260,15 +306,18 @@ class CurriculumServiceTest {
 
   @Test
   public void should_publish_draft_branch() {
-    CurriculumDTO curriculumDTO = CurriculumDTO.builder()
+    CurriculumDTO curriculumDTO =
+        CurriculumDTO.builder()
             .id(DRAFT_BRANCH_CURRICULUM_ID)
             .name(NAME)
             .description(DESCRIPTION)
             .lessons(Collections.singletonList(Lesson.builder().id(2L).number("L1").build()))
-            .schedules(Collections.singletonList(LessonSchedule.builder()
-                    .id(3L)
-                    .lessons(Collections.singletonList(new Domain(null, "L1")))
-                    .build()))
+            .schedules(
+                Collections.singletonList(
+                    LessonSchedule.builder()
+                        .id(3L)
+                        .lessons(Collections.singletonList(new Domain(null, "L1")))
+                        .build()))
             .build();
 
     Optional<CurriculumResultDTO> optional = service.publish(curriculumDTO);

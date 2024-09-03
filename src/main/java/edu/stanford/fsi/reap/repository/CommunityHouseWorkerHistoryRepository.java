@@ -5,12 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CommunityHouseWorkerHistoryRepository extends JpaRepository<CommunityHouseWorkerHistory, Long> {
+public interface CommunityHouseWorkerHistoryRepository
+    extends JpaRepository<CommunityHouseWorkerHistory, Long> {
 
-    @Override
-    CommunityHouseWorkerHistory save(CommunityHouseWorkerHistory entity);
+  @Override
+  CommunityHouseWorkerHistory save(CommunityHouseWorkerHistory entity);
 
-    @Override
-    void deleteById(Long id);
-
+  @Override
+  void deleteById(Long id);
 }

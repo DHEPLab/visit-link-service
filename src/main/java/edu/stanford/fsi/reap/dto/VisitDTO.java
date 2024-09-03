@@ -7,15 +7,16 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class VisitDTO {
 
-  @NotNull
-  private LocalDateTime visitTime;
+  @NotNull private LocalDateTime visitTime;
 
   @NotNull private Long babyId;
 

@@ -1,6 +1,5 @@
 package edu.stanford.fsi.reap.web.rest.admin;
 
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,18 +17,14 @@ import edu.stanford.fsi.reap.repository.BabyRepository;
 import edu.stanford.fsi.reap.repository.CurriculumRepository;
 import edu.stanford.fsi.reap.service.BabyService;
 import edu.stanford.fsi.reap.service.CurriculumService;
-
 import java.util.*;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -43,8 +38,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 @AutoConfigureMockMvc
 class CurriculumResourceTest {
 
-  @InjectMocks
-  private static MockMvc mockMvc;
+  @InjectMocks private static MockMvc mockMvc;
   private static final String url = "/admin/curriculums";
   private static ObjectMapper objectMapper;
   private static CurriculumService service;
@@ -60,15 +54,17 @@ class CurriculumResourceTest {
     babyService = mock(BabyService.class);
 
     CurriculumResource curriculumResource =
-            new CurriculumResource(service, repository, babyRepository, babyService);
-    mockMvc = MockMvcBuilders.standaloneSetup(curriculumResource)
+        new CurriculumResource(service, repository, babyRepository, babyService);
+    mockMvc =
+        MockMvcBuilders.standaloneSetup(curriculumResource)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-            .setViewResolvers(new ViewResolver() {
-              @Override
-              public View resolveViewName(String viewName, Locale locale) throws Exception {
-                return new MappingJackson2JsonView();
-              }
-            })
+            .setViewResolvers(
+                new ViewResolver() {
+                  @Override
+                  public View resolveViewName(String viewName, Locale locale) throws Exception {
+                    return new MappingJackson2JsonView();
+                  }
+                })
             .build();
     objectMapper = new ObjectMapper();
   }
@@ -78,42 +74,42 @@ class CurriculumResourceTest {
   void publishCurriculum() throws Exception {
     Domain modules = new Domain();
     Lesson lesson =
-            Lesson.builder()
-                    .number("test")
-                    .name("test")
-                    .description("test")
-                    .stage(BabyStage.EDC)
-                    .startOfApplicableDays(1)
-                    .endOfApplicableDays(10)
-                    .modules(Collections.singletonList(modules))
-                    .build();
+        Lesson.builder()
+            .number("test")
+            .name("test")
+            .description("test")
+            .stage(BabyStage.EDC)
+            .startOfApplicableDays(1)
+            .endOfApplicableDays(10)
+            .modules(Collections.singletonList(modules))
+            .build();
     LessonSchedule lessonSchedule =
-            LessonSchedule.builder()
-                    .name("test")
-                    .stage(BabyStage.EDC)
-                    .startOfApplicableDays(1)
-                    .endOfApplicableDays(10)
-                    .lessons(Collections.singletonList(modules))
-                    .build();
+        LessonSchedule.builder()
+            .name("test")
+            .stage(BabyStage.EDC)
+            .startOfApplicableDays(1)
+            .endOfApplicableDays(10)
+            .lessons(Collections.singletonList(modules))
+            .build();
     CurriculumDTO curriculumDTO =
-            CurriculumDTO.builder()
-                    .name("test")
-                    .description("test")
-                    .lessons(Collections.singletonList(lesson))
-                    .schedules(Collections.singletonList(lessonSchedule))
-                    .build();
+        CurriculumDTO.builder()
+            .name("test")
+            .description("test")
+            .lessons(Collections.singletonList(lesson))
+            .schedules(Collections.singletonList(lessonSchedule))
+            .build();
 
     CurriculumResultDTO curriculumResultDTO = new CurriculumResultDTO();
     when(service.publish(curriculumDTO)).thenReturn(Optional.of(curriculumResultDTO));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.post(url)
-                            .content(objectMapper.writeValueAsString(curriculumDTO))
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.post(url)
+                .content(objectMapper.writeValueAsString(curriculumDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8"))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -121,50 +117,50 @@ class CurriculumResourceTest {
   void saveCurriculumDraft() throws Exception {
     Domain modules = new Domain();
     Lesson lesson =
-            Lesson.builder()
-                    .number("test")
-                    .name("test")
-                    .description("test")
-                    .stage(BabyStage.EDC)
-                    .startOfApplicableDays(1)
-                    .endOfApplicableDays(10)
-                    .modules(Collections.singletonList(modules))
-                    .build();
+        Lesson.builder()
+            .number("test")
+            .name("test")
+            .description("test")
+            .stage(BabyStage.EDC)
+            .startOfApplicableDays(1)
+            .endOfApplicableDays(10)
+            .modules(Collections.singletonList(modules))
+            .build();
     LessonSchedule lessonSchedule =
-            LessonSchedule.builder()
-                    .name("test")
-                    .stage(BabyStage.EDC)
-                    .startOfApplicableDays(1)
-                    .endOfApplicableDays(10)
-                    .lessons(Collections.singletonList(modules))
-                    .build();
+        LessonSchedule.builder()
+            .name("test")
+            .stage(BabyStage.EDC)
+            .startOfApplicableDays(1)
+            .endOfApplicableDays(10)
+            .lessons(Collections.singletonList(modules))
+            .build();
     CurriculumDTO curriculumDTO =
-            CurriculumDTO.builder()
-                    .name("test")
-                    .description("test")
-                    .lessons(Collections.singletonList(lesson))
-                    .schedules(Collections.singletonList(lessonSchedule))
-                    .build();
+        CurriculumDTO.builder()
+            .name("test")
+            .description("test")
+            .lessons(Collections.singletonList(lesson))
+            .schedules(Collections.singletonList(lessonSchedule))
+            .build();
 
     CurriculumResultDTO curriculumResultDTO = new CurriculumResultDTO();
     when(service.draft(curriculumDTO)).thenReturn(Optional.of(curriculumResultDTO));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.post(url + "/draft")
-                            .content(objectMapper.writeValueAsString(curriculumDTO))
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.post(url + "/draft")
+                .content(objectMapper.writeValueAsString(curriculumDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8"))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
   @WithMockUser
   void getCurriculums() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.get(url)
-            .param("search", "test"))
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(MockMvcRequestBuilders.get(url).param("search", "test"))
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -174,12 +170,12 @@ class CurriculumResourceTest {
 
     when(service.findById(1L)).thenReturn(Optional.of(curriculumResultDTO));
     when(repository.findFirstBySourceId(1L))
-            .thenReturn(Optional.ofNullable(Curriculum.builder().build()));
+        .thenReturn(Optional.ofNullable(Curriculum.builder().build()));
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get(url + "/{id}", 1L))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(MockMvcRequestBuilders.get(url + "/{id}", 1L))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -188,9 +184,9 @@ class CurriculumResourceTest {
     Curriculum curriculum = Curriculum.builder().build();
     when(repository.findById(1L)).thenReturn(Optional.ofNullable(curriculum));
     mockMvc
-            .perform(MockMvcRequestBuilders.delete(url + "/{id}", 1L))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(MockMvcRequestBuilders.delete(url + "/{id}", 1L))
+        .andDo(print())
+        .andExpect(status().isOk());
     assert curriculum != null;
     verify(service, times(1)).delete(curriculum);
   }
@@ -198,8 +194,9 @@ class CurriculumResourceTest {
   @Test
   @WithMockUser
   void getBabiesByCurriculumId() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.get(url + "/{id}/babies", 1L))
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(MockMvcRequestBuilders.get(url + "/{id}/babies", 1L))
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -210,30 +207,33 @@ class CurriculumResourceTest {
     List<Baby> centrosDeCustos = Arrays.asList(new Baby(), new Baby());
     Page<Baby> pagedResponse = new PageImpl<>(centrosDeCustos, paginacao, centrosDeCustos.size());
 
-    when(babyRepository.findByCurriculumIdIsNotAndSearchAndOrderByIdDesc(eq(1L), eq("test"), anyLong(), any()))
-            .thenReturn(pagedResponse);
+    when(babyRepository.findByCurriculumIdIsNotAndSearchAndOrderByIdDesc(
+            eq(1L), eq("test"), anyLong(), any()))
+        .thenReturn(pagedResponse);
 
-    mockMvc.perform(MockMvcRequestBuilders.get(url + "/{id}/not_assigned_babies", 1L)
-            .param("search", "test"))
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url + "/{id}/not_assigned_babies", 1L)
+                .param("search", "test"))
+        .andExpect(status().isOk());
   }
 
   @Test
   @WithMockUser
   void assignCurriculumToBabies() throws Exception {
-    Long[] longs = new Long[]{2L, 3L};
+    Long[] longs = new Long[] {2L, 3L};
 
     Curriculum curriculum = Curriculum.builder().build();
     when(repository.findById(1L)).thenReturn(Optional.ofNullable(curriculum));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.post(url + "/{id}/babies", 1L)
-                            .content(objectMapper.writeValueAsString(longs))
-                            .characterEncoding("UTF-8")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.post(url + "/{id}/babies", 1L)
+                .content(objectMapper.writeValueAsString(longs))
+                .characterEncoding("UTF-8")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
 
     verify(babyService, times(1)).assignCurriculum(curriculum, longs);
   }

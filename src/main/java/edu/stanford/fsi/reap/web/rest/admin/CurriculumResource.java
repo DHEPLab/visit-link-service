@@ -87,14 +87,15 @@ public class CurriculumResource {
 
   @GetMapping("/{id}/babies")
   public Page<AssignBabyDTO> getBabiesByCurriculumId(@PathVariable Long id, Pageable pageable) {
-    return babyRepository.findByCurriculumId(id, SecurityUtils.getProjectId() ,pageable);
+    return babyRepository.findByCurriculumId(id, SecurityUtils.getProjectId(), pageable);
   }
 
   @GetMapping("/{id}/not_assigned_babies")
   public Page<Baby> getCurriculumNotAssignedBabies(
       @PathVariable Long id, String search, Pageable pageable) {
     Page<Baby> babies =
-        babyRepository.findByCurriculumIdIsNotAndSearchAndOrderByIdDesc(id, search, SecurityUtils.getProjectId(), pageable);
+        babyRepository.findByCurriculumIdIsNotAndSearchAndOrderByIdDesc(
+            id, search, SecurityUtils.getProjectId(), pageable);
     babies.getContent().forEach(mapper -> mapper.setChw(null));
     return babies;
   }

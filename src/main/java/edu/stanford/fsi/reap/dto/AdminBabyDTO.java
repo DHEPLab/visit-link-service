@@ -2,14 +2,15 @@ package edu.stanford.fsi.reap.dto;
 
 import edu.stanford.fsi.reap.entity.enumerations.ActionFromApp;
 import edu.stanford.fsi.reap.entity.enumerations.Gender;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -46,27 +47,27 @@ public class AdminBabyDTO {
 
   private Boolean deleted;
 
-//  Long getId();
-//
-//  String getIdentity();
-//
-//  String getName();
-//
-//  Gender getGender();
-//
-//  String getArea();
-//
-//  String getChw();
-//  Long getChwId();
-//
-//  Integer getVisitCount();
-//
-//  String getCurrentLessonName();
-//
-//  ActionFromApp getActionFromApp();
-//
-//  LocalDateTime getLastModifiedAt();
-//  LocalDateTime getCreatedAt();
-//
-//  Boolean getDeleted();
+  //  Long getId();
+  //
+  //  String getIdentity();
+  //
+  //  String getName();
+  //
+  //  Gender getGender();
+  //
+  //  String getArea();
+  //
+  //  String getChw();
+  //  Long getChwId();
+  //
+  //  Integer getVisitCount();
+  //
+  //  String getCurrentLessonName();
+  //
+  //  ActionFromApp getActionFromApp();
+  //
+  //  LocalDateTime getLastModifiedAt();
+  //  LocalDateTime getCreatedAt();
+  //
+  //  Boolean getDeleted();
 }

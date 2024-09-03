@@ -11,16 +11,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/files")
 public class FileResource {
-    private final FileService fileService;
+  private final FileService fileService;
 
-    public FileResource(FileService fileService) {
-        this.fileService = fileService;
-    }
+  public FileResource(FileService fileService) {
+    this.fileService = fileService;
+  }
 
-    @GetMapping("/{filename}")
-    public ResponseEntity<?> redirectToOss(@PathVariable String filename) {
-        return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
-                .header("Location", fileService.generatePresignedUrlForDownload(filename))
-                .build();
-    }
+  @GetMapping("/{filename}")
+  public ResponseEntity<?> redirectToOss(@PathVariable String filename) {
+    return ResponseEntity.status(HttpStatus.MOVED_PERMANENTLY)
+        .header("Location", fileService.generatePresignedUrlForDownload(filename))
+        .build();
+  }
 }

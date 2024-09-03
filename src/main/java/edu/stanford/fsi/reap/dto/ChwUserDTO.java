@@ -2,7 +2,6 @@ package edu.stanford.fsi.reap.dto;
 
 import edu.stanford.fsi.reap.entity.User;
 import lombok.Data;
-import lombok.Getter;
 
 @Data
 public class ChwUserDTO {
@@ -14,14 +13,9 @@ public class ChwUserDTO {
     this.babyCount = babyCount;
   }
 
-  /**
-   * 应完成
-   */
+  /** 应完成 */
   private Integer shouldFinish;
 
-  /**
-   * 已完成
-   */
+  /** 已完成 */
   private Integer hasFinish;
-
 }

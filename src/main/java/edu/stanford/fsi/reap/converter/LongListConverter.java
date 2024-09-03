@@ -1,9 +1,8 @@
 package edu.stanford.fsi.reap.converter;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-
-import javax.persistence.AttributeConverter;
 import java.util.List;
+import javax.persistence.AttributeConverter;
 
 public class LongListConverter extends JsonArrayConverter<Long>
     implements AttributeConverter<List<Long>, String> {

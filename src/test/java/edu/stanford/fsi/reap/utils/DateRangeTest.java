@@ -118,7 +118,8 @@ class DateRangeTest {
 
   @Test
   public void should_date_range_contain_visit_date() {
-    List<LocalDate> range = Arrays.asList(LocalDate.parse("2021-05-13"), LocalDate.parse("2021-05-29"));
+    List<LocalDate> range =
+        Arrays.asList(LocalDate.parse("2021-05-13"), LocalDate.parse("2021-05-29"));
     assertTrue(DateRange.contains(range, LocalDate.parse("2021-05-15")));
     assertTrue(DateRange.contains(range, LocalDate.parse("2021-05-13")));
     assertTrue(DateRange.contains(range, LocalDate.parse("2021-05-29")));

@@ -5,6 +5,11 @@ import edu.stanford.fsi.reap.entity.Project;
 import edu.stanford.fsi.reap.entity.User;
 import edu.stanford.fsi.reap.repository.ProjectRepository;
 import edu.stanford.fsi.reap.repository.UserRepository;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.DisabledException;
@@ -16,12 +21,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 /** Authenticate a user from the database. */
 @Component("userDetailsService")
 public class DomainUserDetailsService implements UserDetailsService {
@@ -32,9 +31,10 @@ public class DomainUserDetailsService implements UserDetailsService {
 
   private final ProjectRepository projectRepository;
 
-  public DomainUserDetailsService(UserRepository userRepository,ProjectRepository projectRepository) {
+  public DomainUserDetailsService(
+      UserRepository userRepository, ProjectRepository projectRepository) {
     this.userRepository = userRepository;
-    this.projectRepository=projectRepository;
+    this.projectRepository = projectRepository;
   }
 
   @Override
@@ -60,6 +60,11 @@ public class DomainUserDetailsService implements UserDetailsService {
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
     return new CurrentUser(
-        username, user.getPassword(), grantedAuthorities, user.getId(), new Date(),user.getProjectId());
+        username,
+        user.getPassword(),
+        grantedAuthorities,
+        user.getId(),
+        new Date(),
+        user.getProjectId());
   }
 }

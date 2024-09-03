@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface UserHistoryRepository extends JpaRepository<UserHistory, Long> {
-    @Override
-    UserHistory save(UserHistory entity);
+  @Override
+  UserHistory save(UserHistory entity);
 
-    @Override
-    void deleteById(Long id);
+  @Override
+  void deleteById(Long id);
 }

@@ -12,50 +12,49 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class ChwHistoryHandlerFilter implements IHistoryHandlerFilter {
-    @Autowired
-    private CommunityHouseWorkerHistoryRepository communityHouseWorkerHistoryRepository;
+  @Autowired private CommunityHouseWorkerHistoryRepository communityHouseWorkerHistoryRepository;
 
-    @Autowired
-    private CommunityHouseWorkerRepository communityHouseWorkerRepository;
+  @Autowired private CommunityHouseWorkerRepository communityHouseWorkerRepository;
 
-    @Autowired
-    private BabyHistoryHandlerFilter babyFilter;
+  @Autowired private BabyHistoryHandlerFilter babyFilter;
 
-    @Autowired
-    private ModelMapper modelMapper;
+  @Autowired private ModelMapper modelMapper;
 
-    @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void recordUpdateHistory(Class repository, Object target) {
-        if (checkRepository(repository)) {
-            CommunityHouseWorker communityHouseWorker = (CommunityHouseWorker) target;
-            saveHistoryRecord(communityHouseWorker.getId());
-        } else {
-            babyFilter.recordUpdateHistory(repository, target);
-        }
+  @Override
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public void recordUpdateHistory(Class repository, Object target) {
+    if (checkRepository(repository)) {
+      CommunityHouseWorker communityHouseWorker = (CommunityHouseWorker) target;
+      saveHistoryRecord(communityHouseWorker.getId());
+    } else {
+      babyFilter.recordUpdateHistory(repository, target);
     }
+  }
 
-    @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void recordDelHistory(Class repository, Long id) {
-        if (checkRepository(repository)) {
-            saveHistoryRecord(id);
-        } else {
-            babyFilter.recordDelHistory(repository, id);
-        }
+  @Override
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public void recordDelHistory(Class repository, Long id) {
+    if (checkRepository(repository)) {
+      saveHistoryRecord(id);
+    } else {
+      babyFilter.recordDelHistory(repository, id);
     }
+  }
 
-    private boolean checkRepository(Class repository) {
-        return repository.equals(CommunityHouseWorkerRepository.class) ? true : false;
-    }
+  private boolean checkRepository(Class repository) {
+    return repository.equals(CommunityHouseWorkerRepository.class) ? true : false;
+  }
 
-
-    private void saveHistoryRecord(Long id) {
-        communityHouseWorkerRepository.findById(id).ifPresent((curChw) -> {
-            CommunityHouseWorkerHistory communityHouseWorkerHistory = modelMapper.map(curChw, CommunityHouseWorkerHistory.class);
-            communityHouseWorkerHistory.setHistoryId(curChw.getId());
-            communityHouseWorkerHistory.setId(null);
-            communityHouseWorkerHistoryRepository.save(communityHouseWorkerHistory);
-        });
-    }
+  private void saveHistoryRecord(Long id) {
+    communityHouseWorkerRepository
+        .findById(id)
+        .ifPresent(
+            (curChw) -> {
+              CommunityHouseWorkerHistory communityHouseWorkerHistory =
+                  modelMapper.map(curChw, CommunityHouseWorkerHistory.class);
+              communityHouseWorkerHistory.setHistoryId(curChw.getId());
+              communityHouseWorkerHistory.setId(null);
+              communityHouseWorkerHistoryRepository.save(communityHouseWorkerHistory);
+            });
+  }
 }

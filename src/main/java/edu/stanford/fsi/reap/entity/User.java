@@ -10,7 +10,9 @@ import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
@@ -25,14 +27,12 @@ public class User extends AbstractAuditingEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull
-  @Size(min = 1, max = 50)
+  @NotNull @Size(min = 1, max = 50)
   @Column(length = 50, unique = true, nullable = false)
   private String username;
 
   @JsonIgnore
-  @NotNull
-  @Size(min = 60, max = 60)
+  @NotNull @Size(min = 60, max = 60)
   @Column(length = 60, name = "password_hash")
   private String password;
 
@@ -41,8 +41,7 @@ public class User extends AbstractAuditingEntity {
   private String realName;
 
   @Column(length = 20)
-  @NotNull
-  private String phone;
+  @NotNull private String phone;
 
   @Column(length = 50, nullable = false)
   private String role;

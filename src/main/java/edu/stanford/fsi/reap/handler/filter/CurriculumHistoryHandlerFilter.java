@@ -13,50 +13,49 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class CurriculumHistoryHandlerFilter implements IHistoryHandlerFilter {
 
-    @Autowired
-    private CurriculumRepository curriculumRepository;
+  @Autowired private CurriculumRepository curriculumRepository;
 
-    @Autowired
-    private CurriculumHistoryRepository curriculumHistoryRepository;
+  @Autowired private CurriculumHistoryRepository curriculumHistoryRepository;
 
-    @Autowired
-    private CarerHistoryHandlerFilter carerHistoryHandlerFilter;
+  @Autowired private CarerHistoryHandlerFilter carerHistoryHandlerFilter;
 
-    @Autowired
-    private ModelMapper modelMapper;
+  @Autowired private ModelMapper modelMapper;
 
-    @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void recordUpdateHistory(Class repository, Object target) {
-        if (checkRepository(repository)) {
-            Curriculum curriculum = (Curriculum) target;
-            saveHistoryRecord(curriculum.getId());
-        } else {
-            carerHistoryHandlerFilter.recordUpdateHistory(repository, target);
-        }
+  @Override
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public void recordUpdateHistory(Class repository, Object target) {
+    if (checkRepository(repository)) {
+      Curriculum curriculum = (Curriculum) target;
+      saveHistoryRecord(curriculum.getId());
+    } else {
+      carerHistoryHandlerFilter.recordUpdateHistory(repository, target);
     }
+  }
 
-    @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void recordDelHistory(Class repository, Long id) {
-        if (checkRepository(repository)) {
-            saveHistoryRecord(id);
-        } else {
-            carerHistoryHandlerFilter.recordDelHistory(repository, id);
-        }
+  @Override
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public void recordDelHistory(Class repository, Long id) {
+    if (checkRepository(repository)) {
+      saveHistoryRecord(id);
+    } else {
+      carerHistoryHandlerFilter.recordDelHistory(repository, id);
     }
+  }
 
-    private boolean checkRepository(Class repository) {
-        return repository.equals(CurriculumRepository.class) ? true : false;
-    }
+  private boolean checkRepository(Class repository) {
+    return repository.equals(CurriculumRepository.class) ? true : false;
+  }
 
-
-    private void saveHistoryRecord(Long id) {
-        curriculumRepository.findById(id).ifPresent(curCurriculum -> {
-            CurriculumHistory curriculumHistory = modelMapper.map(curCurriculum, CurriculumHistory.class);
-            curriculumHistory.setHistoryId(curriculumHistory.getId());
-            curriculumHistory.setId(null);
-            curriculumHistoryRepository.save(curriculumHistory);
-        });
-    }
+  private void saveHistoryRecord(Long id) {
+    curriculumRepository
+        .findById(id)
+        .ifPresent(
+            curCurriculum -> {
+              CurriculumHistory curriculumHistory =
+                  modelMapper.map(curCurriculum, CurriculumHistory.class);
+              curriculumHistory.setHistoryId(curriculumHistory.getId());
+              curriculumHistory.setId(null);
+              curriculumHistoryRepository.save(curriculumHistory);
+            });
+  }
 }

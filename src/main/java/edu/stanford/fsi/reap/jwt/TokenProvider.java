@@ -7,7 +7,6 @@ import io.jsonwebtoken.*;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +33,8 @@ public class TokenProvider {
 
   private UserRepository userRepository;
 
-  public TokenProvider(UserRepository userRepository){
-    this.userRepository=userRepository;
+  public TokenProvider(UserRepository userRepository) {
+    this.userRepository = userRepository;
   }
 
   public String createToken(Authentication authentication, boolean rememberMe) {
@@ -69,12 +68,18 @@ public class TokenProvider {
 
     Object userIdObject = claims.get("userId");
     Long userId = userIdObject == null ? null : Long.valueOf(claims.get("userId").toString());
-    User loginUser =userRepository.findOneById(userId);
-    if (loginUser==null){
+    User loginUser = userRepository.findOneById(userId);
+    if (loginUser == null) {
       throw new AuthorizationServiceException("用户不存在或已删除");
     }
     CurrentUser principal =
-        new CurrentUser(claims.getSubject(), "", authorities, userId, claims.getIssuedAt(),loginUser.getProjectId());
+        new CurrentUser(
+            claims.getSubject(),
+            "",
+            authorities,
+            userId,
+            claims.getIssuedAt(),
+            loginUser.getProjectId());
     return new UsernamePasswordAuthenticationToken(principal, token, authorities);
   }
 

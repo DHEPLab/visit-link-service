@@ -7,26 +7,24 @@ import javax.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.util.StringUtils;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Data
 public class UserDTO {
 
   private Long id;
 
   @Size(min = 2, max = 20)
-  @NotNull
-  private String username;
+  @NotNull private String username;
 
   @Size(min = 6, max = 32)
-  @NotNull
-  private String password;
+  @NotNull private String password;
 
-  @NotNull
-  @Size(min = 2, max = 10)
+  @NotNull @Size(min = 2, max = 10)
   private String realName;
 
-  @NotNull
-  private String phone;
+  @NotNull private String phone;
 
   @NotNull private String role;
 

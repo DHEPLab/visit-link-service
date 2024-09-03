@@ -1,14 +1,13 @@
 package edu.stanford.fsi.reap.entity;
 
 import edu.stanford.fsi.reap.entity.enumerations.VisitStatus;
-import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
+import java.time.LocalDateTime;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDateTime;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 /** Family Visit */
 @EqualsAndHashCode(callSuper = true)
@@ -24,6 +23,7 @@ public class VisitHistory extends AbstractHistoryEntity {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
+
   @Builder.Default @NotNull private Boolean deleted = false;
 
   @NotNull private LocalDateTime visitTime;
@@ -46,14 +46,11 @@ public class VisitHistory extends AbstractHistoryEntity {
   private Long historyId;
 
   @Builder.Default
-  @NotNull
-  @Enumerated(EnumType.STRING)
+  @NotNull @Enumerated(EnumType.STRING)
   @Column(length = 15)
   private VisitStatus status = VisitStatus.NOT_STARTED;
 
-  @ManyToOne
-  @NotNull
-  private User chw;
+  @ManyToOne @NotNull private User chw;
 
   private LocalDateTime startTime;
 

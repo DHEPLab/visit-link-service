@@ -16,6 +16,14 @@ import edu.stanford.fsi.reap.service.ExcelService;
 import edu.stanford.fsi.reap.service.UserService;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
 import edu.stanford.fsi.reap.web.rest.errors.LoginAlreadyUsedException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -27,16 +35,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/admin/users")
@@ -70,28 +68,29 @@ public class UserResource {
     this.chwRepository = chwRepository;
     this.modelMapper = modelMapper;
     this.chwUserRepository = chwUserRepository;
-    this.visitRepository=visitRepository;
+    this.visitRepository = visitRepository;
     this.excelService = excelService;
   }
 
   @GetMapping("/project/{id}")
-  public ResponseEntity<AdminDTO> getAdminUser(@PathVariable("id")Long projectId){
-        return ResponseEntity.ok(userService.getAdminUser(projectId));
+  public ResponseEntity<AdminDTO> getAdminUser(@PathVariable("id") Long projectId) {
+    return ResponseEntity.ok(userService.getAdminUser(projectId));
   }
 
   @PostMapping("/check")
-  public Map<String,Object> check(@RequestParam(name = "records") MultipartFile records,
-                                  @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
+  public Map<String, Object> check(
+      @RequestParam(name = "records") MultipartFile records,
+      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
     if (records.isEmpty()) {
       throw new BadRequestAlertException("error.excel.empty");
     }
     return excelService.checkChws(records, lang);
   }
 
-
   @PostMapping("/import")
-  public ResponseEntity importChws(@RequestParam(name = "records") MultipartFile records,
-                                   @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
+  public ResponseEntity importChws(
+      @RequestParam(name = "records") MultipartFile records,
+      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
 
     excelService.importChws(records, lang);
     return ResponseEntity.ok().build();
@@ -104,19 +103,19 @@ public class UserResource {
         .ifPresent(
             consumer -> {
               if (!consumer.getId().equals(chw.getId())) {
-                  throw new BadRequestAlertException("error.chw.identity.exists", chw.getIdentity());
+                throw new BadRequestAlertException("error.chw.identity.exists", chw.getIdentity());
               }
             });
   }
 
   @PostMapping
   public ResponseEntity<User> createUser(@Valid @RequestBody UserDTO userDTO)
-          throws URISyntaxException {
+      throws URISyntaxException {
     if (!SecurityUtils.hasAuthorityAdmin() && !userDTO.roleChw()) {
       throw new AccessDeniedException("You cannot add users other than chw roles");
     }
     if (userRepository.findOneByUsername(userDTO.getUsername()).isPresent()
-            || userRepository.findCountByUsernameAndDeletedTrue(userDTO.getUsername()) > 0) {
+        || userRepository.findCountByUsernameAndDeletedTrue(userDTO.getUsername()) > 0) {
       throw new LoginAlreadyUsedException(userDTO.getUsername());
     }
 
@@ -138,11 +137,9 @@ public class UserResource {
   }
 
   @PostMapping("createUsersInBatch")
-  public ResponseEntity<List<User>> createUsersInBatch(@Valid @RequestBody UserDTO userDTO){
-
+  public ResponseEntity<List<User>> createUsersInBatch(@Valid @RequestBody UserDTO userDTO) {
 
     return ResponseEntity.ok().build();
-
   }
 
   @PutMapping("/{id}")
@@ -169,12 +166,10 @@ public class UserResource {
 
   @Data
   static class ChangeUserVM {
-    @NotNull
-    @Size(min = 2, max = 10)
+    @NotNull @Size(min = 2, max = 10)
     private String realName;
 
-    @NotNull
-    private String phone;
+    @NotNull private String phone;
 
     @Valid private CommunityHouseWorker chw;
   }
@@ -193,8 +188,7 @@ public class UserResource {
 
   @Data
   static class PasswordVM {
-    @NotNull
-    @Size(min = Constants.PASSWORD_MIN_LENGTH, max = Constants.PASSWORD_MAX_LENGTH)
+    @NotNull @Size(min = Constants.PASSWORD_MIN_LENGTH, max = Constants.PASSWORD_MAX_LENGTH)
     private String password;
   }
 
@@ -210,7 +204,8 @@ public class UserResource {
 
   @GetMapping("/chw/not_assigned/babies")
   public Page<Baby> getNotAssignedBabies(String search, Pageable pageable) {
-    return babyRepository.findByChwIsNullAndSearchOrderByIdDesc(search,SecurityUtils.getProjectId(), pageable);
+    return babyRepository.findByChwIsNullAndSearchOrderByIdDesc(
+        search, SecurityUtils.getProjectId(), pageable);
   }
 
   @GetMapping("/chw")
@@ -219,12 +214,18 @@ public class UserResource {
     if (!SecurityUtils.hasAuthorityAdmin()) {
       supervisorId = SecurityUtils.getUserId();
     }
-    Page<ChwUserDTO> result = userRepository.findChwBySearch(search, supervisorId, SecurityUtils.getProjectId() ,pageable);
-    if (ObjectUtil.isNotEmpty(result)&&CollUtil.isNotEmpty(result.getContent())) {
-      result.getContent().forEach(target -> {
-        target.setShouldFinish(visitRepository.countByChw(target.getUser()));
-        target.setHasFinish(visitRepository.countByChwAndStatus(target.getUser(), VisitStatus.DONE));
-      });
+    Page<ChwUserDTO> result =
+        userRepository.findChwBySearch(
+            search, supervisorId, SecurityUtils.getProjectId(), pageable);
+    if (ObjectUtil.isNotEmpty(result) && CollUtil.isNotEmpty(result.getContent())) {
+      result
+          .getContent()
+          .forEach(
+              target -> {
+                target.setShouldFinish(visitRepository.countByChw(target.getUser()));
+                target.setHasFinish(
+                    visitRepository.countByChwAndStatus(target.getUser(), VisitStatus.DONE));
+              });
     }
     return result;
   }
@@ -246,12 +247,12 @@ public class UserResource {
 
   @GetMapping("/supervisor/not_assigned/chw")
   public List<User> getNotAssignedChwList(String search) {
-    return userRepository.findNotAssignedChwBySearch(search,SecurityUtils.getProjectId());
+    return userRepository.findNotAssignedChwBySearch(search, SecurityUtils.getProjectId());
   }
 
   @GetMapping("/supervisor")
   public Page<SupervisorUserDTO> getSupervisorList(Pageable pageable) {
-    return userRepository.findAllSupervisor(SecurityUtils.getProjectId(),pageable);
+    return userRepository.findAllSupervisor(SecurityUtils.getProjectId(), pageable);
   }
 
   @DeleteMapping("/supervisor/{id}")
@@ -262,23 +263,23 @@ public class UserResource {
   @GetMapping("/supervisor/{id}/chw")
   public List<User> getSupervisorChwList(@PathVariable Long id) {
     return userRepository
-            .findById(id)
-            .map(userRepository::findAllByChwSupervisor)
-            .orElse(new ArrayList<>());
+        .findById(id)
+        .map(userRepository::findAllByChwSupervisor)
+        .orElse(new ArrayList<>());
   }
 
   @PostMapping("/supervisor/{id}/chw")
   public void assignChwToSupervisor(@PathVariable Long id, @RequestBody Long[] chwIds) {
     userRepository
-            .findById(id)
-            .ifPresent(
-                    user -> {
-                      if (user.roleSupervisor()) {
-                        userService.assignChwToSupervisor(user, chwIds);
-                      } else {
-                        log.warn("be assign user {} role is not ROLE_SUPERVISOR", id);
-                      }
-                    });
+        .findById(id)
+        .ifPresent(
+            user -> {
+              if (user.roleSupervisor()) {
+                userService.assignChwToSupervisor(user, chwIds);
+              } else {
+                log.warn("be assign user {} role is not ROLE_SUPERVISOR", id);
+              }
+            });
   }
 
   @GetMapping("/admin")
@@ -291,10 +292,10 @@ public class UserResource {
   @GetMapping("/{id}")
   public ResponseEntity<User> getUser(@PathVariable Long id) {
     return userRepository
-            .findById(id)
-            .filter(user -> SecurityUtils.hasAuthorityAdmin() || ownResponsibleChw(user))
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+        .findById(id)
+        .filter(user -> SecurityUtils.hasAuthorityAdmin() || ownResponsibleChw(user))
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
   }
 
   private boolean ownResponsibleChw(User user) {

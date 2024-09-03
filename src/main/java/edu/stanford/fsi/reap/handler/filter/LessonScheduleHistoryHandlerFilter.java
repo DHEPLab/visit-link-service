@@ -13,50 +13,49 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class LessonScheduleHistoryHandlerFilter implements IHistoryHandlerFilter {
 
-    @Autowired
-    private LessonScheduleRepository lessonScheduleRepository;
+  @Autowired private LessonScheduleRepository lessonScheduleRepository;
 
-    @Autowired
-    private LessonScheduleHistoryRepository lessonScheduleHistoryRepository;
+  @Autowired private LessonScheduleHistoryRepository lessonScheduleHistoryRepository;
 
-    @Autowired
-    private CurriculumHistoryHandlerFilter curriculumHistoryHandlerFilter;
+  @Autowired private CurriculumHistoryHandlerFilter curriculumHistoryHandlerFilter;
 
-    @Autowired
-    private ModelMapper modelMapper;
+  @Autowired private ModelMapper modelMapper;
 
-    @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void recordUpdateHistory(Class repository, Object target) {
-        if (checkRepository(repository)) {
-            LessonSchedule lessonSchedule = (LessonSchedule) target;
-            saveHistoryRecord(lessonSchedule.getId());
-        } else {
-            curriculumHistoryHandlerFilter.recordUpdateHistory(repository, target);
-        }
+  @Override
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public void recordUpdateHistory(Class repository, Object target) {
+    if (checkRepository(repository)) {
+      LessonSchedule lessonSchedule = (LessonSchedule) target;
+      saveHistoryRecord(lessonSchedule.getId());
+    } else {
+      curriculumHistoryHandlerFilter.recordUpdateHistory(repository, target);
     }
+  }
 
-    @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void recordDelHistory(Class repository, Long id) {
-        if (checkRepository(repository)) {
-            saveHistoryRecord(id);
-        } else {
-            curriculumHistoryHandlerFilter.recordDelHistory(repository, id);
-        }
+  @Override
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public void recordDelHistory(Class repository, Long id) {
+    if (checkRepository(repository)) {
+      saveHistoryRecord(id);
+    } else {
+      curriculumHistoryHandlerFilter.recordDelHistory(repository, id);
     }
+  }
 
-    private boolean checkRepository(Class repository) {
-        return repository.equals(LessonSchedule.class) ? true : false;
-    }
+  private boolean checkRepository(Class repository) {
+    return repository.equals(LessonSchedule.class) ? true : false;
+  }
 
-
-    private void saveHistoryRecord(Long id) {
-        lessonScheduleRepository.findById(id).ifPresent(curLessonSchedule -> {
-            LessonScheduleHistory lessonScheduleHistory = modelMapper.map(curLessonSchedule, LessonScheduleHistory.class);
-            lessonScheduleHistory.setId(null);
-            lessonScheduleHistory.setHistoryId(curLessonSchedule.getId());
-            lessonScheduleHistoryRepository.save(lessonScheduleHistory);
-        });
-    }
+  private void saveHistoryRecord(Long id) {
+    lessonScheduleRepository
+        .findById(id)
+        .ifPresent(
+            curLessonSchedule -> {
+              LessonScheduleHistory lessonScheduleHistory =
+                  modelMapper.map(curLessonSchedule, LessonScheduleHistory.class);
+              lessonScheduleHistory.setId(null);
+              lessonScheduleHistory.setHistoryId(curLessonSchedule.getId());
+              lessonScheduleHistoryRepository.save(lessonScheduleHistory);
+            });
+  }
 }

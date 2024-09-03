@@ -14,7 +14,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
@@ -30,12 +32,10 @@ public class LessonSchedule extends AbstractNormalEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String name;
 
-  @NotNull
-  @Enumerated(EnumType.STRING)
+  @NotNull @Enumerated(EnumType.STRING)
   @Column(length = 10)
   private BabyStage stage;
 

@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import edu.stanford.fsi.reap.dto.ReportDTO;
 import edu.stanford.fsi.reap.service.VisitReportService;
+import java.time.LocalDate;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -25,12 +24,11 @@ import java.time.LocalDate;
 public class HealthyFutureApplicationTest {
 
   @Autowired private MockMvc mockMvc;
-  @Autowired
-  VisitReportService visitReportService;
+  @Autowired VisitReportService visitReportService;
 
   @Test
   public void test1() throws Exception {
-    visitReportService.report(new ReportDTO(LocalDate.of(2018,1,1), LocalDate.now()));
+    visitReportService.report(new ReportDTO(LocalDate.of(2018, 1, 1), LocalDate.now()));
   }
 
   @Test

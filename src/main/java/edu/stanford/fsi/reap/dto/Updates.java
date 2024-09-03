@@ -1,10 +1,9 @@
 package edu.stanford.fsi.reap.dto;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -16,11 +15,10 @@ public class Updates {
   private LocalDateTime lastModifiedAt;
 
   public static Updates isTheLatest() {
-      return new Updates(false, null);
-    }
+    return new Updates(false, null);
+  }
 
   public static Updates haveUpdate(LocalDateTime lastModifiedAt) {
-      return new Updates(true, lastModifiedAt);
-    }
-
+    return new Updates(true, lastModifiedAt);
+  }
 }

@@ -8,12 +8,11 @@ import edu.stanford.fsi.reap.entity.enumerations.Gender;
 import edu.stanford.fsi.reap.utils.BabyAge;
 import java.time.LocalDate;
 import java.util.List;
-
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Data
 public class AppBabyDTO {
 
@@ -51,9 +50,9 @@ public class AppBabyDTO {
     this.area = baby.getArea();
     this.location = baby.getLocation();
     this.approved = baby.getApproved();
-    this.latitude=baby.getLatitude();
-    this.longitude=baby.getLongitude();
-    this.showLocation=baby.getShowLocation();
+    this.latitude = baby.getLatitude();
+    this.longitude = baby.getLongitude();
+    this.showLocation = baby.getShowLocation();
     this.pastEdc = BabyAge.pastEdc(baby.getStage(), baby.getEdc(), LocalDate.now());
     if (masterCarer != null) {
       carerName = masterCarer.getName();
@@ -134,5 +133,4 @@ public class AppBabyDTO {
     if (nextShouldVisitDTO == null)
       nextShouldVisitDTO = NextShouldVisitDTO.builder().visitDateRange(null).lesson(null).build();
   }
-
 }

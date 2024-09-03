@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuestionnaireHistoryRepository extends JpaRepository<QuestionnaireHistory, Long> {
-    @Override
-    QuestionnaireHistory save(QuestionnaireHistory entity);
+  @Override
+  QuestionnaireHistory save(QuestionnaireHistory entity);
 
-    @Override
-    void deleteById(Long id);
+  @Override
+  void deleteById(Long id);
 }

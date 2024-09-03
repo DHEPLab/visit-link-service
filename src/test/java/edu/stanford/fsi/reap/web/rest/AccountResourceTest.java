@@ -13,9 +13,7 @@ import edu.stanford.fsi.reap.entity.User;
 import edu.stanford.fsi.reap.repository.UserRepository;
 import edu.stanford.fsi.reap.service.UserService;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
-
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -32,8 +30,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @AutoConfigureMockMvc
 class AccountResourceTest {
 
-  @InjectMocks
-  private static AccountResource resource;
+  @InjectMocks private static AccountResource resource;
   private static UserService userService;
   private static MockMvc mockMvc;
   private static PasswordEncoder passwordEncoder;
@@ -55,21 +52,21 @@ class AccountResourceTest {
     user.setUsername("admin");
     when(userService.getCurrentLogin()).thenReturn(user);
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/account/profile"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("admin"));
+        .perform(MockMvcRequestBuilders.get("/api/account/profile"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("admin"));
   }
 
   @Test
   @WithMockUser
   public void should_get_profile_put_param_400() throws Exception {
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/account/profile")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isBadRequest());
+        .perform(
+            MockMvcRequestBuilders.put("/api/account/profile")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -85,23 +82,23 @@ class AccountResourceTest {
     when(userService.getCurrentUser()).thenReturn(Optional.of(user));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/account/profile")
-                            .content(profileWrapperJsonStr)
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/account/profile")
+                .content(profileWrapperJsonStr)
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
   @WithMockUser
   public void should_change_accountPassword_param_400() throws Exception {
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/account/password")
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isBadRequest());
+        .perform(
+            MockMvcRequestBuilders.put("/api/account/password")
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isBadRequest());
   }
 
   @Test
@@ -117,15 +114,15 @@ class AccountResourceTest {
     when(userService.getCurrentLogin()).thenReturn(user);
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/account/password")
-                            .content(objectMapper.writeValueAsString(passwordWrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(
-                    result ->
-                            assertTrue(result.getResolvedException() instanceof BadRequestAlertException));
+        .perform(
+            MockMvcRequestBuilders.put("/api/account/password")
+                .content(objectMapper.writeValueAsString(passwordWrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(result.getResolvedException() instanceof BadRequestAlertException));
   }
 
   @Test
@@ -141,12 +138,11 @@ class AccountResourceTest {
     when(userService.getCurrentLogin()).thenReturn(user);
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.put("/api/account/password")
-                            .content(objectMapper.writeValueAsString(passwordWrapper))
-                            .contentType(MediaType.APPLICATION_JSON))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(
+            MockMvcRequestBuilders.put("/api/account/password")
+                .content(objectMapper.writeValueAsString(passwordWrapper))
+                .contentType(MediaType.APPLICATION_JSON))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
-
 }

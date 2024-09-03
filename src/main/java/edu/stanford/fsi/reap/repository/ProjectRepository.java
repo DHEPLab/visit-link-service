@@ -5,16 +5,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ProjectRepository  extends JpaRepository<Project, Long> {
+public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    @Override
-    Project save(Project entity);
+  @Override
+  Project save(Project entity);
 
-    @Override
-    void deleteById(Long id);
+  @Override
+  void deleteById(Long id);
 
-    long countByName(String name);
+  long countByName(String name);
 
-    long countByCode(String code);
-
+  long countByCode(String code);
 }

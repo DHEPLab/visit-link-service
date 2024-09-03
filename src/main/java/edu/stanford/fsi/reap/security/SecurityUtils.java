@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 /** Utility class for Spring Security. */
 public final class SecurityUtils {
 
-  public final static Long DEFAULT_PROJECT_ID=-1L;
+  public static final Long DEFAULT_PROJECT_ID = -1L;
 
   /**
    * Get the login of the current user.
@@ -43,7 +43,7 @@ public final class SecurityUtils {
     return getUserId(authentication);
   }
 
-  public static Long getProjectId(){
+  public static Long getProjectId() {
     SecurityContext securityContext = SecurityContextHolder.getContext();
     Authentication authentication = securityContext.getAuthentication();
     return getProjectId(authentication);

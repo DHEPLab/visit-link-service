@@ -11,16 +11,15 @@ import edu.stanford.fsi.reap.repository.ModuleRepository;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.LessonService;
 import edu.stanford.fsi.reap.service.ModuleService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/resources")
@@ -67,15 +66,17 @@ public class LessonResourcesResource {
     return Updates.isTheLatest();
   }
 
-
   @GetMapping("/modules")
   public ModulePackage downloadModules() {
     List<Module> modules = moduleRepository.findByBranchAndPublishedTrue(CurriculumBranch.MASTER);
     List<String> media = new ArrayList<>();
-    Long projectId= SecurityUtils.getProjectId();
-    modules.stream().filter(target -> {
-      return target.getProjectId() != null && target.getProjectId().equals(projectId);
-    }).forEach(module -> media.addAll(moduleService.media(module.getComponents())));
+    Long projectId = SecurityUtils.getProjectId();
+    modules.stream()
+        .filter(
+            target -> {
+              return target.getProjectId() != null && target.getProjectId().equals(projectId);
+            })
+        .forEach(module -> media.addAll(moduleService.media(module.getComponents())));
     return new ModulePackage(modules, media);
   }
 
@@ -86,6 +87,4 @@ public class LessonResourcesResource {
     List<Module> modules = moduleRepository.findByBranchAndPublishedTrue(CurriculumBranch.MASTER);
     return lessonService.appOfflineLessons(lessons, modules);
   }
-
-
 }

@@ -1,11 +1,10 @@
 package edu.stanford.fsi.reap.entity;
 
 import edu.stanford.fsi.reap.converter.BabyConverter;
-import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -16,23 +15,21 @@ import javax.validation.constraints.NotNull;
 @SQLDelete(sql = "UPDATE baby_modify_record SET deleted = true WHERE id = ?")
 public class BabyModifyRecord extends AbstractNormalEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private Long userId;
+  private Long userId;
 
-    private Long babyId;
+  private Long babyId;
 
-    @NotNull
-    @Convert(converter = BabyConverter.class)
-    private Baby oldBabyJson;
+  @NotNull @Convert(converter = BabyConverter.class)
+  private Baby oldBabyJson;
 
-    @NotNull
-    @Convert(converter = BabyConverter.class)
-    private Baby newBabyJson;
+  @NotNull @Convert(converter = BabyConverter.class)
+  private Baby newBabyJson;
 
-    private String changedColumn;
+  private String changedColumn;
 
-    private Boolean approved;
+  private Boolean approved;
 }

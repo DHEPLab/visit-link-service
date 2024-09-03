@@ -1,13 +1,12 @@
 package edu.stanford.fsi.reap.entity;
 
 import edu.stanford.fsi.reap.entity.enumerations.ErrorLogType;
-import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -23,17 +22,13 @@ public class ErrorLog extends AbstractNormalEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne
-  private User user;
+  @ManyToOne private User user;
 
-  @NotNull
-  @Enumerated(EnumType.STRING)
+  @NotNull @Enumerated(EnumType.STRING)
   private ErrorLogType type;
 
   private Long typeId;
 
-  @NotNull
-  @Size(max = 500)
+  @NotNull @Size(max = 500)
   private String msg;
-
 }

@@ -5,9 +5,9 @@ import lombok.Data;
 @Data
 public class ErrDTO {
 
-    private String name;
+  private String name;
 
-    private Integer number;
+  private Integer number;
 
-    private String matters;
+  private String matters;
 }

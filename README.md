@@ -3,7 +3,7 @@
 ## Local Development
 
 ```
-$ cp src/main/resources/application-local.sample.yml src/main/resources/application-local.yml 
+$ cp src/main/resources/application-local.sample.yml src/main/resources/application-local.yml
 ```
 
 Configure MySQL connection info in the src/main/resources/application-local.yml file.
@@ -13,6 +13,13 @@ Create the database healthy --character_set_server=utf8mb4 --collation-server=ut
 ```
 $ SPRING_PROFILES_ACTIVE=local ./gradlew bootRun
 ```
+
+IDEA config:
+* Run -> Edit Configurations -> Gradle -> bootRun -> VM Options: -Dspring.profiles.active=local
+* Change the Java format indentation to 2 spaces which is same as spotless config
+  * Settings => Editor -> Code Style -> Java -> Tabs and Indents -> Indent: 2
+  * Settings => Editor -> Code Style -> Java -> Tabs and Indents -> Tab: 2
+  * Settings => Editor -> Code Style -> Java -> Tabs and Indents -> Continuation indent: 4
 
 Default user credentials:
 * Username: admin

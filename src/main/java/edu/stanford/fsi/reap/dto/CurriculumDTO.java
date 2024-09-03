@@ -12,7 +12,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Data
 @Builder
 @NoArgsConstructor
@@ -21,12 +23,10 @@ public class CurriculumDTO {
 
   private Long id;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String name;
 
-  @NotNull
-  @Size(max = 200)
+  @NotNull @Size(max = 200)
   private String description;
 
   @NotEmpty @Valid private List<Lesson> lessons;

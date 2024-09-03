@@ -6,5 +6,5 @@ import lombok.Data;
 @Data
 public class ProjectStatusDTO {
 
-    private Integer status= Constants.PROJECT_VALID;
+  private Integer status = Constants.PROJECT_VALID;
 }

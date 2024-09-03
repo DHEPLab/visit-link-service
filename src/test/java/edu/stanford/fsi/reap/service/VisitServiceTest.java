@@ -1,22 +1,21 @@
 package edu.stanford.fsi.reap.service;
 
-import edu.stanford.fsi.reap.dto.VisitDTO;
-import edu.stanford.fsi.reap.dto.VisitDateDTO;
-import edu.stanford.fsi.reap.entity.Visit;
-import edu.stanford.fsi.reap.entity.enumerations.VisitStatus;
-import edu.stanford.fsi.reap.repository.*;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+
+import edu.stanford.fsi.reap.dto.VisitDTO;
+import edu.stanford.fsi.reap.dto.VisitDateDTO;
+import edu.stanford.fsi.reap.entity.Visit;
+import edu.stanford.fsi.reap.entity.enumerations.VisitStatus;
+import edu.stanford.fsi.reap.repository.*;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 class VisitServiceTest {
 
@@ -32,7 +31,8 @@ class VisitServiceTest {
     QuestionnaireRecordRepository questionnaireRecordRepository =
         mock(QuestionnaireRecordRepository.class);
     VisitReportService visitReportService = mock(VisitReportService.class);
-    VisitPositionRecordRepository visitPositionRecordRepository = mock(VisitPositionRecordRepository.class);
+    VisitPositionRecordRepository visitPositionRecordRepository =
+        mock(VisitPositionRecordRepository.class);
 
     when(visitRepository.save(any()))
         .then(
@@ -80,8 +80,16 @@ class VisitServiceTest {
             });
     when(visitRepository.findDateByChwId(4L)).thenReturn(dates);
 
-    service = new VisitService(carerRepository, lessonService, visitRepository, excelService, exportVisitRepository,
-            questionnaireRecordRepository, visitReportService, visitPositionRecordRepository);
+    service =
+        new VisitService(
+            carerRepository,
+            lessonService,
+            visitRepository,
+            excelService,
+            exportVisitRepository,
+            questionnaireRecordRepository,
+            visitReportService,
+            visitPositionRecordRepository);
   }
 
   @Test

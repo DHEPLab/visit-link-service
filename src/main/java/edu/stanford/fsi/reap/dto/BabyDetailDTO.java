@@ -5,7 +5,9 @@ import java.time.LocalDateTime;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class BabyDetailDTO extends Baby {
@@ -13,5 +15,5 @@ public class BabyDetailDTO extends Baby {
   private int days;
   private boolean deleted;
   private LocalDateTime lastModifiedAt;
-  private boolean canCreate=false;
+  private boolean canCreate = false;
 }

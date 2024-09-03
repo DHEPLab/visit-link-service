@@ -11,9 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ProjectCreateResultDTO {
 
-    private Long projectId;
+  private Long projectId;
 
-    private String username;
+  private String username;
 
-    private String password;
+  private String password;
 }

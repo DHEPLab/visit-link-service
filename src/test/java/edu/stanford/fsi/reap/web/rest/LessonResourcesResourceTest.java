@@ -18,11 +18,9 @@ import edu.stanford.fsi.reap.repository.LessonRepository;
 import edu.stanford.fsi.reap.repository.ModuleRepository;
 import edu.stanford.fsi.reap.service.LessonService;
 import edu.stanford.fsi.reap.service.ModuleService;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -39,15 +37,14 @@ class LessonResourcesResourceTest {
   private static final ModuleRepository moduleRepository = mock(ModuleRepository.class);
   private static final LessonRepository lessonRepository = mock(LessonRepository.class);
   private static final LessonService lessonService = mock(LessonService.class);
-  @InjectMocks
-  private static LessonResourcesResource lessonResourcesResource;
+  @InjectMocks private static LessonResourcesResource lessonResourcesResource;
   private static MockMvc mockMvc;
 
   @BeforeAll
   public static void beforeAll() {
     lessonResourcesResource =
-            new LessonResourcesResource(
-                    mock(ModuleService.class), moduleRepository, lessonRepository, lessonService);
+        new LessonResourcesResource(
+            mock(ModuleService.class), moduleRepository, lessonRepository, lessonService);
     mockMvc = MockMvcBuilders.standaloneSetup(lessonResourcesResource).build();
   }
 
@@ -59,11 +56,11 @@ class LessonResourcesResourceTest {
     lesson.setLastModifiedAt(LocalDateTime.of(2020, 1, 2, 10, 1));
 
     when(moduleRepository.findFirstByBranchAndPublishedTrueOrderByLastModifiedAtDesc(any()))
-            .thenReturn(Optional.of(module));
+        .thenReturn(Optional.of(module));
 
     when(lessonRepository
             .findFirstByCurriculumBranchAndCurriculumPublishedTrueOrderByLastModifiedAtDesc(any()))
-            .thenReturn(Optional.of(lesson));
+        .thenReturn(Optional.of(lesson));
 
     Updates updates = lessonResourcesResource.checkForUpdates(null);
     assertFalse(updates.isUpdated());
@@ -79,13 +76,12 @@ class LessonResourcesResourceTest {
     lesson.setLastModifiedAt(LocalDateTime.of(2020, 1, 2, 10, 0));
 
     when(moduleRepository.findFirstByBranchAndPublishedTrueOrderByLastModifiedAtDesc(any()))
-            .thenReturn(Optional.of(module));
+        .thenReturn(Optional.of(module));
 
     when(lessonRepository
             .findFirstByCurriculumBranchAndCurriculumPublishedTrueOrderByLastModifiedAtDesc(any()))
-            .thenReturn(Optional.of(lesson));
-    Updates updates =
-            lessonResourcesResource.checkForUpdates(LocalDateTime.of(2020, 1, 2, 9, 0));
+        .thenReturn(Optional.of(lesson));
+    Updates updates = lessonResourcesResource.checkForUpdates(LocalDateTime.of(2020, 1, 2, 9, 0));
     assertTrue(updates.isUpdated());
   }
 
@@ -93,12 +89,12 @@ class LessonResourcesResourceTest {
   @WithMockUser
   public void should_check_forUpdates_isTheLatest() throws Exception {
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.get("/api/resources/check-for-updates")
-                            .param("lastUpdateAt", "2020-10-10T12:12:12"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.updated").value(false));
+        .perform(
+            MockMvcRequestBuilders.get("/api/resources/check-for-updates")
+                .param("lastUpdateAt", "2020-10-10T12:12:12"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.updated").value(false));
   }
 
   @Test
@@ -108,15 +104,15 @@ class LessonResourcesResourceTest {
     lesson.setLastModifiedAt(LocalDateTime.now());
     when(lessonRepository
             .findFirstByCurriculumBranchAndCurriculumPublishedTrueOrderByLastModifiedAtDesc(
-                    CurriculumBranch.MASTER))
-            .thenReturn(Optional.of(lesson));
+                CurriculumBranch.MASTER))
+        .thenReturn(Optional.of(lesson));
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.get("/api/resources/check-for-updates")
-                            .param("lastUpdateAt", "2020-10-10T12:12:12"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.updated").value(true));
+        .perform(
+            MockMvcRequestBuilders.get("/api/resources/check-for-updates")
+                .param("lastUpdateAt", "2020-10-10T12:12:12"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.updated").value(true));
   }
 
   @Test
@@ -127,36 +123,36 @@ class LessonResourcesResourceTest {
 
     when(lessonRepository
             .findFirstByCurriculumBranchAndCurriculumPublishedTrueOrderByLastModifiedAtDesc(
-                    CurriculumBranch.MASTER))
-            .thenReturn(Optional.of(lesson));
+                CurriculumBranch.MASTER))
+        .thenReturn(Optional.of(lesson));
 
     Module module = new Module();
     module.setLastModifiedAt(LocalDateTime.now());
 
     when(moduleRepository.findFirstByBranchAndPublishedTrueOrderByLastModifiedAtDesc(
             CurriculumBranch.MASTER))
-            .thenReturn(Optional.of(module));
+        .thenReturn(Optional.of(module));
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.get("/api/resources/check-for-updates")
-                            .param("lastUpdateAt", "2020-10-10T12:12:12"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.updated").value(true));
+        .perform(
+            MockMvcRequestBuilders.get("/api/resources/check-for-updates")
+                .param("lastUpdateAt", "2020-10-10T12:12:12"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.updated").value(true));
   }
 
   @Test
   @WithMockUser
   public void should_downloadModules() throws Exception {
     when(moduleRepository.findByBranchAndPublishedTrue(CurriculumBranch.MASTER))
-            .thenReturn(new ArrayList<Module>());
+        .thenReturn(new ArrayList<Module>());
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/resources/modules"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(MockMvcRequestBuilders.get("/api/resources/modules"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 
   @Test
@@ -165,20 +161,20 @@ class LessonResourcesResourceTest {
     ArrayList<Lesson> lessons = new ArrayList<>();
 
     when(lessonRepository.findByCurriculumBranchAndCurriculumPublishedTrue(CurriculumBranch.MASTER))
-            .thenReturn(lessons);
+        .thenReturn(lessons);
 
     ArrayList<Module> modules = new ArrayList<>();
 
     when(moduleRepository.findByBranchAndPublishedTrue(CurriculumBranch.MASTER))
-            .thenReturn(modules);
+        .thenReturn(modules);
 
     when(lessonService.appOfflineLessons(lessons, modules))
-            .thenReturn(new ArrayList<AppOfflineLessonDTO>());
+        .thenReturn(new ArrayList<AppOfflineLessonDTO>());
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get("/api/resources/lessons"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
+        .perform(MockMvcRequestBuilders.get("/api/resources/lessons"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()));
   }
 }

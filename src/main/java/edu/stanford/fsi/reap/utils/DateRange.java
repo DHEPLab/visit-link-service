@@ -119,7 +119,7 @@ public class DateRange {
   public static boolean contains(List<LocalDate> range, LocalDate visitDate) {
     LocalDate start = range.get(0);
     LocalDate end = range.get(1);
-    return (start.isBefore(visitDate) || start.isEqual(visitDate)) &&
-        (end.isAfter(visitDate) || end.isEqual(visitDate));
+    return (start.isBefore(visitDate) || start.isEqual(visitDate))
+        && (end.isAfter(visitDate) || end.isEqual(visitDate));
   }
 }

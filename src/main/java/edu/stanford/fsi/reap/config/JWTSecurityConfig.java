@@ -20,7 +20,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.zalando.problem.spring.web.advice.security.SecurityProblemSupport;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
@@ -83,11 +85,19 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .antMatchers("/api/authenticate", "/admin/authenticate", "/api/files/**", "/api/visits/notStartVisit","/init/baby/location") // "/admin/babies/**" "/admin/report/**"
+        .antMatchers(
+            "/api/authenticate",
+            "/admin/authenticate",
+            "/api/files/**",
+            "/api/visits/notStartVisit",
+            "/init/baby/location") // "/admin/babies/**" "/admin/report/**"
         .permitAll()
         .antMatchers("/api/account/**")
         .hasAnyAuthority(
-            AuthoritiesConstants.ADMIN, AuthoritiesConstants.SUPERVISOR, AuthoritiesConstants.CHW,AuthoritiesConstants.SUPER_ADMIN)
+            AuthoritiesConstants.ADMIN,
+            AuthoritiesConstants.SUPERVISOR,
+            AuthoritiesConstants.CHW,
+            AuthoritiesConstants.SUPER_ADMIN)
         .antMatchers("/api/**")
         .hasAnyAuthority(AuthoritiesConstants.CHW)
         .antMatchers(
@@ -96,9 +106,12 @@ public class JWTSecurityConfig extends WebSecurityConfigurerAdapter {
             "/admin/files/**",
             "/admin/users/admin",
             "/admin/users/supervisor/**")
-        .hasAnyAuthority(AuthoritiesConstants.ADMIN,AuthoritiesConstants.SUPER_ADMIN)
+        .hasAnyAuthority(AuthoritiesConstants.ADMIN, AuthoritiesConstants.SUPER_ADMIN)
         .antMatchers("/admin/**")
-        .hasAnyAuthority(AuthoritiesConstants.ADMIN, AuthoritiesConstants.SUPERVISOR,AuthoritiesConstants.SUPER_ADMIN)
+        .hasAnyAuthority(
+            AuthoritiesConstants.ADMIN,
+            AuthoritiesConstants.SUPERVISOR,
+            AuthoritiesConstants.SUPER_ADMIN)
         .and()
         .apply(securityConfigurerAdapter());
   }

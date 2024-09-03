@@ -14,53 +14,49 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 public class BabyHistoryHandlerFilter implements IHistoryHandlerFilter {
 
-    @Autowired
-    private BabyRepository babyRepository;
+  @Autowired private BabyRepository babyRepository;
 
-    @Autowired
-    private BabyHistoryRepository babyHistoryRepository;
+  @Autowired private BabyHistoryRepository babyHistoryRepository;
 
-    @Autowired
-    private ModuleHistoryHandlerFilter moduleFilter;
+  @Autowired private ModuleHistoryHandlerFilter moduleFilter;
 
-    @Autowired
-    private ModelMapper modelMapper;
+  @Autowired private ModelMapper modelMapper;
 
-
-    @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void recordUpdateHistory(Class repository, Object target) {
-        if (checkRepository(repository)) {
-            Baby baby = (Baby) target;
-            saveHistoryRecord(baby.getId());
-        } else {
-            moduleFilter.recordUpdateHistory(repository, target);
-        }
-
+  @Override
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public void recordUpdateHistory(Class repository, Object target) {
+    if (checkRepository(repository)) {
+      Baby baby = (Baby) target;
+      saveHistoryRecord(baby.getId());
+    } else {
+      moduleFilter.recordUpdateHistory(repository, target);
     }
+  }
 
-    @Override
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void recordDelHistory(Class repository, Long id) {
-        if (checkRepository(repository)) {
-            saveHistoryRecord(id);
-        } else {
-            moduleFilter.recordDelHistory(repository, id);
-        }
+  @Override
+  @Transactional(isolation = Isolation.REPEATABLE_READ)
+  public void recordDelHistory(Class repository, Long id) {
+    if (checkRepository(repository)) {
+      saveHistoryRecord(id);
+    } else {
+      moduleFilter.recordDelHistory(repository, id);
     }
+  }
 
-    private boolean checkRepository(Class repository) {
-        return repository.equals(BabyRepository.class) ? true : false;
-    }
+  private boolean checkRepository(Class repository) {
+    return repository.equals(BabyRepository.class) ? true : false;
+  }
 
-
-    private void saveHistoryRecord(Long id) {
-        babyRepository.findById(id).ifPresent(curBaby -> {
-            BabyHistory babyHistory = modelMapper.map(curBaby,BabyHistory.class);
-            BeanUtils.copyProperties(curBaby, babyHistory);
-            babyHistory.setHistoryId(curBaby.getId());
-            babyHistory.setId(null);
-            babyHistoryRepository.save(babyHistory);
-        });
-    }
+  private void saveHistoryRecord(Long id) {
+    babyRepository
+        .findById(id)
+        .ifPresent(
+            curBaby -> {
+              BabyHistory babyHistory = modelMapper.map(curBaby, BabyHistory.class);
+              BeanUtils.copyProperties(curBaby, babyHistory);
+              babyHistory.setHistoryId(curBaby.getId());
+              babyHistory.setId(null);
+              babyHistoryRepository.save(babyHistory);
+            });
+  }
 }

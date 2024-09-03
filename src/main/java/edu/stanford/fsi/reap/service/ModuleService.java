@@ -1,5 +1,7 @@
 package edu.stanford.fsi.reap.service;
 
+import static edu.stanford.fsi.reap.entity.enumerations.CurriculumBranch.MASTER;
+
 import cn.hutool.core.util.StrUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.stanford.fsi.reap.entity.Module;
@@ -7,17 +9,16 @@ import edu.stanford.fsi.reap.entity.enumerations.CurriculumBranch;
 import edu.stanford.fsi.reap.pojo.Component;
 import edu.stanford.fsi.reap.repository.ModuleRepository;
 import edu.stanford.fsi.reap.security.SecurityUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import static edu.stanford.fsi.reap.entity.enumerations.CurriculumBranch.MASTER;
-
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Service
 @Transactional
 public class ModuleService {
@@ -47,8 +48,8 @@ public class ModuleService {
       module.setVersionKey(generateVersionKey());
       module.setBranch(MASTER);
       module.setPublished(true);
-      if (module.getProjectId()==null){
-          module.setProjectId(SecurityUtils.getProjectId());
+      if (module.getProjectId() == null) {
+        module.setProjectId(SecurityUtils.getProjectId());
       }
       return repository.save(module);
     }
@@ -66,8 +67,8 @@ public class ModuleService {
               // Module that directly update their published status
               copy(module, db);
               db.setPublished(true);
-              if (module.getProjectId()==null){
-                  module.setProjectId(SecurityUtils.getProjectId());
+              if (module.getProjectId() == null) {
+                module.setProjectId(SecurityUtils.getProjectId());
               }
               return repository.save(db);
             })
@@ -139,10 +140,9 @@ public class ModuleService {
           if (component.mediaType()) {
             Component.Media value =
                 objectMapper.convertValue(component.getValue(), Component.Media.class);
-              if (value != null && StrUtil.isNotEmpty(value.getFile())) {
-                  media.add(value.getFile());
-              }
-
+            if (value != null && StrUtil.isNotEmpty(value.getFile())) {
+              media.add(value.getFile());
+            }
           }
 
           if (component.switchType()) {

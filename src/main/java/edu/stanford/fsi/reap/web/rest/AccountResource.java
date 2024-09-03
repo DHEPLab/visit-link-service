@@ -11,7 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @RequestMapping("/api/account")
 @RestController
 public class AccountResource {
@@ -21,14 +23,14 @@ public class AccountResource {
   private final PasswordEncoder passwordEncoder;
 
   public AccountResource(
-          UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+      UserService userService, UserRepository userRepository, PasswordEncoder passwordEncoder) {
     this.userService = userService;
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
   }
 
   @GetMapping("encode/{psw}")
-  public String generatePswEncode(@PathVariable("psw")String psw){
+  public String generatePswEncode(@PathVariable("psw") String psw) {
     return passwordEncoder.encode(psw);
   }
 
@@ -40,13 +42,13 @@ public class AccountResource {
   @PutMapping("/profile")
   public void changeProfile(@Valid @RequestBody ProfileWrapper profileWrapper) {
     userService
-            .getCurrentUser()
-            .ifPresent(
-                    user -> {
-                      user.setRealName(profileWrapper.getRealName());
-                      user.setPhone(profileWrapper.getPhone());
-                      userRepository.save(user);
-                    });
+        .getCurrentUser()
+        .ifPresent(
+            user -> {
+              user.setRealName(profileWrapper.getRealName());
+              user.setPhone(profileWrapper.getPhone());
+              userRepository.save(user);
+            });
   }
 
   @PutMapping("/password")
@@ -57,5 +59,4 @@ public class AccountResource {
     }
     userService.changePassword(passwordWrapper.getPassword());
   }
-
 }

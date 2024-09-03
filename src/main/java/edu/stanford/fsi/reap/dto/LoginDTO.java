@@ -8,12 +8,10 @@ import lombok.Data;
 @Data
 public class LoginDTO {
 
-  @NotNull
-  @Size(min = 1, max = 50)
+  @NotNull @Size(min = 1, max = 50)
   private String username;
 
-  @NotNull
-  @Size(min = 6, max = 64)
+  @NotNull @Size(min = 6, max = 64)
   private String password;
 
   private boolean rememberMe;

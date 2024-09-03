@@ -6,9 +6,9 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LessonHistoryRepository extends JpaRepository<LessonHistory, Long> {
-    @Override
-    LessonHistory save(LessonHistory entity);
+  @Override
+  LessonHistory save(LessonHistory entity);
 
-    @Override
-    void deleteById(Long id);
+  @Override
+  void deleteById(Long id);
 }

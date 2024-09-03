@@ -9,7 +9,9 @@ import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Getter
 public class CurrentUser extends User {
   private final Long userId;
@@ -25,7 +27,7 @@ public class CurrentUser extends User {
       Long projectId) {
     super(username, password, grantedAuthorities);
     this.userId = userId;
-    this.projectId=projectId;
+    this.projectId = projectId;
     if (issuedAt != null) {
       Instant instant = issuedAt.toInstant();
       ZoneId zoneId = ZoneId.systemDefault();

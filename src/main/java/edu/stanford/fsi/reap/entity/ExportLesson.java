@@ -4,21 +4,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.stanford.fsi.reap.converter.DomainListConverter;
 import edu.stanford.fsi.reap.entity.enumerations.BabyStage;
 import edu.stanford.fsi.reap.pojo.Domain;
-import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
-/**
- * ClassName: ExportLesson
- * Description:
- * author: huangwenxing 2021-4-26
- */
+/** ClassName: ExportLesson Description: author: huangwenxing 2021-4-26 */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
@@ -30,25 +25,20 @@ import java.util.List;
 @Where(clause = AbstractAuditingEntity.NOT_DELETED)
 public class ExportLesson extends AbstractAuditingEntity {
 
-
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String number;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String name;
 
-  @NotNull
-  @Size(max = 200)
+  @NotNull @Size(max = 200)
   private String description;
 
-  @NotNull
-  @Enumerated(EnumType.STRING)
+  @NotNull @Enumerated(EnumType.STRING)
   @Column(length = 10)
   private BabyStage stage;
 
@@ -62,8 +52,7 @@ public class ExportLesson extends AbstractAuditingEntity {
   @Convert(converter = DomainListConverter.class)
   private List<Domain> modules;
 
-  @ManyToOne
-  private Questionnaire questionnaire;
+  @ManyToOne private Questionnaire questionnaire;
 
   @Size(max = 100)
   private String questionnaireAddress;
@@ -134,5 +123,4 @@ public class ExportLesson extends AbstractAuditingEntity {
         + source
         + '}';
   }
-
 }

@@ -4,7 +4,9 @@ import edu.stanford.fsi.reap.entity.Baby;
 import edu.stanford.fsi.reap.entity.enumerations.BabyStage;
 import java.time.LocalDate;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 public class BabyAge {
 
   /** The day of month */

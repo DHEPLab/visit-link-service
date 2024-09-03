@@ -1,6 +1,13 @@
 package edu.stanford.fsi.reap.web.rest.admin;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import edu.stanford.fsi.reap.service.FileService;
+import java.net.URL;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -10,19 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.net.URL;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @AutoConfigureMockMvc
 class AdminFileResourceTest {
 
-  @InjectMocks
-  private static MockMvc mockMvc;
+  @InjectMocks private static MockMvc mockMvc;
   private static FileService fileService;
   private static final String url = "/admin/files";
 
@@ -39,8 +37,8 @@ class AdminFileResourceTest {
     when(fileService.generatePresignedUrlForUpload(any())).thenReturn(new URL("http://test"));
 
     mockMvc
-            .perform(MockMvcRequestBuilders.get(url + "/upload-pre-signed-url").param("format", "Test"))
-            .andDo(print())
-            .andExpect(status().isOk());
+        .perform(MockMvcRequestBuilders.get(url + "/upload-pre-signed-url").param("format", "Test"))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 }

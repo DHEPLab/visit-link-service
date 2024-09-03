@@ -1,5 +1,7 @@
 package edu.stanford.fsi.reap.service;
 
+import static edu.stanford.fsi.reap.entity.enumerations.CurriculumBranch.MASTER;
+
 import edu.stanford.fsi.reap.dto.CurriculumDTO;
 import edu.stanford.fsi.reap.dto.CurriculumResultDTO;
 import edu.stanford.fsi.reap.entity.Baby;
@@ -12,17 +14,14 @@ import edu.stanford.fsi.reap.pojo.Domain;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.utils.Diff;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static edu.stanford.fsi.reap.entity.enumerations.CurriculumBranch.MASTER;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -103,8 +102,8 @@ public class CurriculumService {
     Curriculum curriculum =
         Curriculum.builder().branch(CurriculumBranch.DRAFT).published(false).source(source).build();
     mapper(dto, curriculum);
-    if (curriculum.getProjectId()==null){
-        curriculum.setProjectId(SecurityUtils.getProjectId());
+    if (curriculum.getProjectId() == null) {
+      curriculum.setProjectId(SecurityUtils.getProjectId());
     }
     repository.save(curriculum);
 
@@ -132,8 +131,8 @@ public class CurriculumService {
   private CurriculumResultDTO publishDraftBranch(CurriculumDTO draft, Curriculum source) {
     mapper(draft, source);
     onUpdate(source);
-    if(source.getProjectId()==null){
-        source.setProjectId(SecurityUtils.getProjectId());
+    if (source.getProjectId() == null) {
+      source.setProjectId(SecurityUtils.getProjectId());
     }
     repository.save(source);
 
@@ -217,13 +216,13 @@ public class CurriculumService {
   }
 
   private CurriculumResultDTO create(CurriculumDTO dto, boolean published) {
-      Curriculum curriculum = Curriculum.builder().branch(MASTER).published(published).build();
-      mapper(dto, curriculum);
-      if (curriculum.getProjectId()==null){
-          curriculum.setProjectId(SecurityUtils.getProjectId());
-      }
-      repository.save(curriculum);
-      return save(curriculum, dto.getLessons(), dto.getSchedules());
+    Curriculum curriculum = Curriculum.builder().branch(MASTER).published(published).build();
+    mapper(dto, curriculum);
+    if (curriculum.getProjectId() == null) {
+      curriculum.setProjectId(SecurityUtils.getProjectId());
+    }
+    repository.save(curriculum);
+    return save(curriculum, dto.getLessons(), dto.getSchedules());
   }
 
   private int saveLessons(Curriculum curriculum, List<Lesson> lessons) {
@@ -239,8 +238,8 @@ public class CurriculumService {
 
     for (Lesson lesson : lessons) {
       lesson.setCurriculum(curriculum);
-      if (lesson.getProjectId()==null){
-          lesson.setProjectId(SecurityUtils.getProjectId());
+      if (lesson.getProjectId() == null) {
+        lesson.setProjectId(SecurityUtils.getProjectId());
       }
       lessonRepository.save(lesson);
     }

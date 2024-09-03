@@ -6,10 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * 对象属性名到其值的映射工具
- * 可用来比较值发生了变化的属性
- */
+/** 对象属性名到其值的映射工具 可用来比较值发生了变化的属性 */
 public class FieldValueUtil {
 
   /**
@@ -19,8 +16,7 @@ public class FieldValueUtil {
    * @param fieldName 属性名的集合
    * @return 属性集合
    */
-  public static Set<Field> getFieldsByField(
-      Object object, Set<String> fieldName) {
+  public static Set<Field> getFieldsByField(Object object, Set<String> fieldName) {
     if (object == null || fieldName == null || fieldName.isEmpty()) {
       return new HashSet<>(0);
     }

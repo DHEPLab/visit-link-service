@@ -1,18 +1,19 @@
 package edu.stanford.fsi.reap.entity;
 
+import static edu.stanford.fsi.reap.entity.enumerations.CurriculumBranch.MASTER;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.stanford.fsi.reap.entity.enumerations.CurriculumBranch;
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import static edu.stanford.fsi.reap.entity.enumerations.CurriculumBranch.MASTER;
-
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Builder
@@ -27,12 +28,10 @@ public class Curriculum extends AbstractAuditingEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String name;
 
-  @NotNull
-  @Size(max = 200)
+  @NotNull @Size(max = 200)
   private String description;
 
   @Enumerated(EnumType.STRING)
@@ -42,7 +41,6 @@ public class Curriculum extends AbstractAuditingEntity {
   @Builder.Default private boolean published = false;
 
   @JsonIgnore @ManyToOne private Curriculum source;
-
 
   public boolean draftBranch() {
     return CurriculumBranch.DRAFT.equals(branch);

@@ -18,10 +18,8 @@ import edu.stanford.fsi.reap.repository.UserRepository;
 import edu.stanford.fsi.reap.service.CarerModifyRecordService;
 import edu.stanford.fsi.reap.service.CarerService;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
-
 import java.util.Objects;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -37,8 +35,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 @AutoConfigureMockMvc
 class CarerResourceTest {
 
-  @InjectMocks
-  private static CarerResource carerResource;
+  @InjectMocks private static CarerResource carerResource;
   private static CarerRepository repository;
   private static CarerService service;
   private static MockMvc mockMvc;
@@ -56,7 +53,14 @@ class CarerResourceTest {
     carerModifyRecordRepository = mock(CarerModifyRecordRepository.class);
     carerModifyRecordService = mock(CarerModifyRecordService.class);
 
-    carerResource = new CarerResource(repository, service, modelMapper, carerModifyRecordRepository, userRepository,carerModifyRecordService);
+    carerResource =
+        new CarerResource(
+            repository,
+            service,
+            modelMapper,
+            carerModifyRecordRepository,
+            userRepository,
+            carerModifyRecordService);
     mockMvc = MockMvcBuilders.standaloneSetup(carerResource).build();
 
     objectMapper = new ObjectMapper();
@@ -66,14 +70,14 @@ class CarerResourceTest {
   @WithMockUser
   void createCarer() throws Exception {
     Baby baby =
-            Baby.builder()
-                    .id(1L)
-                    .name("test1")
-                    .gender(Gender.MALE)
-                    .stage(BabyStage.BIRTH)
-                    .area("上海")
-                    .location("静安")
-                    .build();
+        Baby.builder()
+            .id(1L)
+            .name("test1")
+            .gender(Gender.MALE)
+            .stage(BabyStage.BIRTH)
+            .area("上海")
+            .location("静安")
+            .build();
 
     CarerDTO carerDTO = new CarerDTO();
     carerDTO.setName("test");
@@ -83,41 +87,41 @@ class CarerResourceTest {
     carerDTO.setBaby(baby);
 
     when(service.save(any()))
-            .thenAnswer(
-                    obj -> {
-                      Carer carer = obj.getArgument(0);
-                      carer.setId(1L);
-                      return carer;
-                    });
+        .thenAnswer(
+            obj -> {
+              Carer carer = obj.getArgument(0);
+              carer.setId(1L);
+              return carer;
+            });
 
     mockMvc
-            .perform(
-                    MockMvcRequestBuilders.post(url + "/carers")
-                            .content(objectMapper.writeValueAsString(carerDTO))
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON)
-                            .characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isOk())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("test"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.phone").value("13217499804"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.wechat").value("wechat"))
-            .andReturn();
+        .perform(
+            MockMvcRequestBuilders.post(url + "/carers")
+                .content(objectMapper.writeValueAsString(carerDTO))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8"))
+        .andDo(print())
+        .andExpect(status().isOk())
+        .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("test"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.phone").value("13217499804"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.wechat").value("wechat"))
+        .andReturn();
   }
 
   @Test
   @WithMockUser
   void updateCarer() throws Exception {
     Baby baby =
-            Baby.builder()
-                    .id(1L)
-                    .name("test1")
-                    .gender(Gender.MALE)
-                    .stage(BabyStage.BIRTH)
-                    .area("上海")
-                    .location("静安")
-                    .build();
+        Baby.builder()
+            .id(1L)
+            .name("test1")
+            .gender(Gender.MALE)
+            .stage(BabyStage.BIRTH)
+            .area("上海")
+            .location("静安")
+            .build();
 
     CarerDTO carerDTO = new CarerDTO();
     carerDTO.setName("test");
@@ -127,7 +131,7 @@ class CarerResourceTest {
     carerDTO.setBaby(baby);
 
     when(repository.findOneByBabyIdAndMasterIsTrue(baby.getId()))
-            .thenReturn(Optional.ofNullable(Carer.builder().id(1L).build()));
+        .thenReturn(Optional.ofNullable(Carer.builder().id(1L).build()));
 
     /*
         mockMvc.perform(MockMvcRequestBuilders
@@ -142,12 +146,12 @@ class CarerResourceTest {
 
     try {
       mockMvc
-              .perform(
-                      MockMvcRequestBuilders.put(url + "/carers/{id}", 1L)
-                              .content(objectMapper.writeValueAsString(carerDTO))
-                              .characterEncoding("UTF-8")
-                              .contentType(MediaType.APPLICATION_JSON))
-              .andDo(print());
+          .perform(
+              MockMvcRequestBuilders.put(url + "/carers/{id}", 1L)
+                  .content(objectMapper.writeValueAsString(carerDTO))
+                  .characterEncoding("UTF-8")
+                  .contentType(MediaType.APPLICATION_JSON))
+          .andDo(print());
     } catch (Exception e) {
       assert Objects.equals(((BadRequestAlertException) e.getCause()).getDetail(), "请至少设置一个主看护人");
     } finally {
@@ -159,13 +163,13 @@ class CarerResourceTest {
 
       carerDTO.setMaster(true);
       mockMvc
-              .perform(
-                      MockMvcRequestBuilders.put(url + "/carers/{id}", 1L)
-                              .content(objectMapper.writeValueAsString(carerDTO))
-                              .characterEncoding("UTF-8")
-                              .contentType(MediaType.APPLICATION_JSON))
-              .andDo(print())
-              .andExpect(status().isOk());
+          .perform(
+              MockMvcRequestBuilders.put(url + "/carers/{id}", 1L)
+                  .content(objectMapper.writeValueAsString(carerDTO))
+                  .characterEncoding("UTF-8")
+                  .contentType(MediaType.APPLICATION_JSON))
+          .andDo(print())
+          .andExpect(status().isOk());
     }
   }
 
@@ -173,25 +177,25 @@ class CarerResourceTest {
   @WithMockUser
   void deleteCarer() throws Exception {
     when(repository.findById(1L))
-            .thenReturn(
-                    Optional.ofNullable(
-                            Carer.builder().phone("13217499804").name("text").master(true).build()));
+        .thenReturn(
+            Optional.ofNullable(
+                Carer.builder().phone("13217499804").name("text").master(true).build()));
 
     try {
       mockMvc.perform(MockMvcRequestBuilders.delete(url + "/carers/{id}", 1L)).andDo(print());
     } catch (Exception e) {
       assert Objects.equals(
-              ((BadRequestAlertException) e.getCause()).getDetail(), "主看护人不可删除，请更换主看护人后进行此操作");
+          ((BadRequestAlertException) e.getCause()).getDetail(), "主看护人不可删除，请更换主看护人后进行此操作");
     } finally {
       when(repository.findById(1L))
-              .thenReturn(
-                      Optional.ofNullable(
-                              Carer.builder().phone("13217499804").name("text").master(false).build()));
+          .thenReturn(
+              Optional.ofNullable(
+                  Carer.builder().phone("13217499804").name("text").master(false).build()));
 
       mockMvc
-              .perform(MockMvcRequestBuilders.delete(url + "/carers/{id}", 1L))
-              .andDo(print())
-              .andExpect(status().isOk());
+          .perform(MockMvcRequestBuilders.delete(url + "/carers/{id}", 1L))
+          .andDo(print())
+          .andExpect(status().isOk());
 
       verify(repository, times(1)).deleteById(any());
     }

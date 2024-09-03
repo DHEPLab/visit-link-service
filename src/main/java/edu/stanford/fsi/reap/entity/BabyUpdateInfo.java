@@ -1,12 +1,11 @@
 package edu.stanford.fsi.reap.entity;
 
-import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -15,13 +14,13 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @Entity
 @SQLDelete(sql = "UPDATE baby_update_info SET deleted = true WHERE id = ?")
-public class BabyUpdateInfo extends AbstractNormalEntity{
+public class BabyUpdateInfo extends AbstractNormalEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private Long babyId;
+  private Long babyId;
 
-    private Boolean updateNormal;
+  private Boolean updateNormal;
 }

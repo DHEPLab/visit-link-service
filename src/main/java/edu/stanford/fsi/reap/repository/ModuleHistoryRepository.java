@@ -7,10 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ModuleHistoryRepository extends JpaRepository<ModuleHistory, Long> {
 
-    @Override
-    ModuleHistory save(ModuleHistory entity);
+  @Override
+  ModuleHistory save(ModuleHistory entity);
 
-    @Override
-    void deleteById(Long id);
-
+  @Override
+  void deleteById(Long id);
 }

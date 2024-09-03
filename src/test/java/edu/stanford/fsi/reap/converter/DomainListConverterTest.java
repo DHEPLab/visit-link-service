@@ -14,8 +14,7 @@ public class DomainListConverterTest {
   @Test
   void should_convert_json_array_to_domain_list() {
     List<Domain> domains =
-        converter.convertToEntityAttribute(
-            "[{\"value\":\"36\",\"label\":\"MuQinYingYang001\"}]");
+        converter.convertToEntityAttribute("[{\"value\":\"36\",\"label\":\"MuQinYingYang001\"}]");
     assertEquals(Collections.singletonList(new Domain("36", "MuQinYingYang001")), domains);
   }
 

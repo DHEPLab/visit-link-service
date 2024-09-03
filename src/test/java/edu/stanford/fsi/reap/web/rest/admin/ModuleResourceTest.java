@@ -19,11 +19,9 @@ import edu.stanford.fsi.reap.repository.LessonRepository;
 import edu.stanford.fsi.reap.repository.ModuleRepository;
 import edu.stanford.fsi.reap.service.ModuleService;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
-
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -43,8 +41,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 @AutoConfigureMockMvc
 class ModuleResourceTest {
 
-  @InjectMocks
-  private static MockMvc mockMvc;
+  @InjectMocks private static MockMvc mockMvc;
   public static ModuleResource resource;
   public static ModuleRepository repository;
   private static ModuleService service;
@@ -57,18 +54,24 @@ class ModuleResourceTest {
     repository = mock(ModuleRepository.class);
     service = mock(ModuleService.class);
     lessonRepository = mock(LessonRepository.class);
-    when(repository.findByNumberAndBranch("M1", CurriculumBranch.MASTER)).thenReturn(Optional.of(Module.builder().id(1L).versionKey("VERSION_KEY").build()));
-    when(repository.findById(2L)).thenReturn(
+    when(repository.findByNumberAndBranch("M1", CurriculumBranch.MASTER))
+        .thenReturn(Optional.of(Module.builder().id(1L).versionKey("VERSION_KEY").build()));
+    when(repository.findById(2L))
+        .thenReturn(
             Optional.of(Module.builder().id(2L).versionKey("VERSION_KEY").branch(DRAFT).build()));
-    resource = new ModuleResource(lessonRepository, repository, mock(ModuleService.class), new ModelMapper());
-    mockMvc = MockMvcBuilders.standaloneSetup(resource)
+    resource =
+        new ModuleResource(
+            lessonRepository, repository, mock(ModuleService.class), new ModelMapper());
+    mockMvc =
+        MockMvcBuilders.standaloneSetup(resource)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
-            .setViewResolvers(new ViewResolver() {
-              @Override
-              public View resolveViewName(String viewName, Locale locale) throws Exception {
-                return new MappingJackson2JsonView();
-              }
-            })
+            .setViewResolvers(
+                new ViewResolver() {
+                  @Override
+                  public View resolveViewName(String viewName, Locale locale) throws Exception {
+                    return new MappingJackson2JsonView();
+                  }
+                })
             .build();
   }
 
@@ -76,7 +79,8 @@ class ModuleResourceTest {
   @WithMockUser
   void publishModule() throws Exception {
     Component component = new Component();
-    Module module = Module.builder()
+    Module module =
+        Module.builder()
             .name("test")
             .number("test")
             .description("test")
@@ -85,34 +89,42 @@ class ModuleResourceTest {
             .components(Collections.singletonList(component))
             .build();
 
-    when(repository.findByNumberAndBranch(module.getNumber(), MASTER)).thenReturn(Optional.of(module));
+    when(repository.findByNumberAndBranch(module.getNumber(), MASTER))
+        .thenReturn(Optional.of(module));
     when(repository.findById(1L)).thenReturn(Optional.of(module));
-    when(service.cleanUpTheExtraPageFooter(module.getComponents())).thenReturn(module.getComponents());
+    when(service.cleanUpTheExtraPageFooter(module.getComponents()))
+        .thenReturn(module.getComponents());
     when(service.publish(module)).thenReturn(module);
 
-    mockMvc.perform(MockMvcRequestBuilders.post(url)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(module))
-            .characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(result ->
-                    assertTrue(result.getResolvedException() instanceof BadRequestAlertException));
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(module))
+                .characterEncoding("UTF-8"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(result.getResolvedException() instanceof BadRequestAlertException));
 
     module.setId(1L);
-    mockMvc.perform(MockMvcRequestBuilders.post(url)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(objectMapper.writeValueAsString(module))
-            .characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(module))
+                .characterEncoding("UTF-8"))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
   @WithMockUser
   void saveModuleDraft() throws Exception {
     Component component = new Component();
-    Module module = Module.builder()
+    Module module =
+        Module.builder()
             .name("test")
             .number("test")
             .description("test")
@@ -121,44 +133,52 @@ class ModuleResourceTest {
             .components(Collections.singletonList(component))
             .build();
 
-    when(repository.findByNumberAndBranch(module.getNumber(), MASTER)).thenReturn(Optional.of(new Module()));
+    when(repository.findByNumberAndBranch(module.getNumber(), MASTER))
+        .thenReturn(Optional.of(new Module()));
 
-    mockMvc.perform(
+    mockMvc
+        .perform(
             MockMvcRequestBuilders.post(url + "/draft")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(module))
-                    .characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(result ->
-                    assertTrue(result.getResolvedException() instanceof BadRequestAlertException));
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(module))
+                .characterEncoding("UTF-8"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(result.getResolvedException() instanceof BadRequestAlertException));
 
-    when(service.cleanUpTheExtraPageFooter(module.getComponents())).thenReturn(module.getComponents());
+    when(service.cleanUpTheExtraPageFooter(module.getComponents()))
+        .thenReturn(module.getComponents());
     when(service.draft(module)).thenReturn(module);
     module.setId(1L);
-    mockMvc.perform(
+    mockMvc
+        .perform(
             MockMvcRequestBuilders.post(url + "/draft")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(module))
-                    .characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isOk());
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(module))
+                .characterEncoding("UTF-8"))
+        .andDo(print())
+        .andExpect(status().isOk());
   }
 
   @Test
   @WithMockUser
   void getModules() throws Exception {
-    mockMvc.perform(MockMvcRequestBuilders.get(url)
-            .param("search", "test")
-            .param("published", String.valueOf(false)))
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(
+            MockMvcRequestBuilders.get(url)
+                .param("search", "test")
+                .param("published", String.valueOf(false)))
+        .andExpect(status().isOk());
   }
 
   @Test
   @WithMockUser
   void getModule() throws Exception {
     Component component = new Component();
-    Module module = Module.builder()
+    Module module =
+        Module.builder()
             .id(1L)
             .name("test")
             .number("test")
@@ -170,19 +190,22 @@ class ModuleResourceTest {
             .build();
 
     when(repository.findById(module.getId())).thenReturn(Optional.of(module));
-    when(repository.findOneByVersionKeyAndBranch(module.getVersionKey(), DRAFT)).thenReturn(Optional.of(module));
+    when(repository.findOneByVersionKeyAndBranch(module.getVersionKey(), DRAFT))
+        .thenReturn(Optional.of(module));
 
     try {
-      mockMvc.perform(MockMvcRequestBuilders.get(url + "/{id}", 1L).characterEncoding("UTF-8"))
-              .andDo(print())
-              .andExpect(status().isBadRequest());
+      mockMvc
+          .perform(MockMvcRequestBuilders.get(url + "/{id}", 1L).characterEncoding("UTF-8"))
+          .andDo(print())
+          .andExpect(status().isBadRequest());
     } catch (Exception e) {
     } finally {
       module.setBranch(DRAFT);
-      mockMvc.perform(MockMvcRequestBuilders.get(url + "/{id}", 1L).characterEncoding("UTF-8"))
-              .andDo(print())
-              .andExpect(status().isOk())
-              .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L));
+      mockMvc
+          .perform(MockMvcRequestBuilders.get(url + "/{id}", 1L).characterEncoding("UTF-8"))
+          .andDo(print())
+          .andExpect(status().isOk())
+          .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(1L));
     }
   }
 
@@ -190,7 +213,8 @@ class ModuleResourceTest {
   @WithMockUser
   void deleteModule() throws Exception {
     Component component = new Component();
-    Module module = Module.builder()
+    Module module =
+        Module.builder()
             .id(1L)
             .published(true)
             .name("test")
@@ -206,15 +230,19 @@ class ModuleResourceTest {
 
     when(lessonRepository.countByModuleId(1L)).thenReturn(2L);
 
-    mockMvc.perform(MockMvcRequestBuilders.delete(url + "/{id}", 1L).characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isBadRequest())
-            .andExpect(result -> assertTrue(result.getResolvedException() instanceof BadRequestAlertException));
+    mockMvc
+        .perform(MockMvcRequestBuilders.delete(url + "/{id}", 1L).characterEncoding("UTF-8"))
+        .andDo(print())
+        .andExpect(status().isBadRequest())
+        .andExpect(
+            result ->
+                assertTrue(result.getResolvedException() instanceof BadRequestAlertException));
 
     module.setBranch(DRAFT);
-    mockMvc.perform(MockMvcRequestBuilders.delete(url + "/{id}", 1L).characterEncoding("UTF-8"))
-            .andDo(print())
-            .andExpect(status().isOk());
+    mockMvc
+        .perform(MockMvcRequestBuilders.delete(url + "/{id}", 1L).characterEncoding("UTF-8"))
+        .andDo(print())
+        .andExpect(status().isOk());
 
     verify(repository, times(1)).deleteById(1L);
   }

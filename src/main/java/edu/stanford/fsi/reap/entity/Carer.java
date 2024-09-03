@@ -25,12 +25,10 @@ public class Carer extends AbstractAuditingEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull
-  @Size(min = 2, max = 10)
+  @NotNull @Size(min = 2, max = 10)
   private String name;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String phone;
 
   @Size(max = 20)

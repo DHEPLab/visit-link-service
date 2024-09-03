@@ -7,10 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CurriculumHistoryRepository extends JpaRepository<CurriculumHistory, Long> {
 
-    @Override
-    CurriculumHistory save(CurriculumHistory entity);
+  @Override
+  CurriculumHistory save(CurriculumHistory entity);
 
-    @Override
-    void deleteById(Long id);
-
+  @Override
+  void deleteById(Long id);
 }

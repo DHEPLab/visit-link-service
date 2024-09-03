@@ -4,16 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.stanford.fsi.reap.converter.QuestionConverter;
 import edu.stanford.fsi.reap.entity.enumerations.QuestionnaireBranch;
 import edu.stanford.fsi.reap.pojo.Question;
-import lombok.*;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
-
+import java.util.List;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
+import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -29,8 +28,7 @@ public class Questionnaire extends AbstractAuditingEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String name;
 
   @Valid
@@ -43,11 +41,7 @@ public class Questionnaire extends AbstractAuditingEntity {
   @Column(length = 10, nullable = false)
   private QuestionnaireBranch branch;
 
-  @Builder.Default
-  private boolean published = false;
+  @Builder.Default private boolean published = false;
 
-  @JsonIgnore
-  @ManyToOne
-  private Questionnaire source;
-
+  @JsonIgnore @ManyToOne private Questionnaire source;
 }

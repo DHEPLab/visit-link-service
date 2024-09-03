@@ -10,11 +10,6 @@ public class LoginAlreadyUsedException extends BadRequestAlertException {
   private static final String ERROR_KEY = "userexists";
 
   public LoginAlreadyUsedException(String login) {
-    super(
-            "error.userManagement.userExists",
-            ENTITY_NAME,
-            ERROR_KEY,
-            login
-    );
+    super("error.userManagement.userExists", ENTITY_NAME, ERROR_KEY, login);
   }
 }

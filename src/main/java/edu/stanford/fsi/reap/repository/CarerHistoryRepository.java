@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CarerHistoryRepository extends JpaRepository<CarerHistory, Long> {
 
-    @Override
-    CarerHistory save(CarerHistory entity);
+  @Override
+  CarerHistory save(CarerHistory entity);
 
-    @Override
-    void deleteById(Long id);
+  @Override
+  void deleteById(Long id);
 }

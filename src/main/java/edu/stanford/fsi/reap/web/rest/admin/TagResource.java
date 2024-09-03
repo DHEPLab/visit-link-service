@@ -2,12 +2,13 @@ package edu.stanford.fsi.reap.web.rest.admin;
 
 import edu.stanford.fsi.reap.entity.Tag;
 import edu.stanford.fsi.reap.repository.TagRepository;
+import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @RestController
 @RequestMapping("/admin/tags")
 public class TagResource {

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface VisitHistoryRepository extends JpaRepository<VisitHistory, Long> {
 
-    @Override
-    VisitHistory save(VisitHistory entity);
+  @Override
+  VisitHistory save(VisitHistory entity);
 
-    @Override
-    void deleteById(Long id);
+  @Override
+  void deleteById(Long id);
 }

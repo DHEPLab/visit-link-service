@@ -48,20 +48,16 @@ public class Module extends AbstractAuditingEntity {
 
   @Builder.Default private boolean published = false;
 
-  @NotNull
-  @Size(max = 40)
+  @NotNull @Size(max = 40)
   private String name;
 
-  @NotNull
-  @Size(max = 20)
+  @NotNull @Size(max = 20)
   private String number;
 
-  @NotNull
-  @Size(max = 200)
+  @NotNull @Size(max = 200)
   private String description;
 
-  @NotNull
-  @Column(length = 30)
+  @NotNull @Column(length = 30)
   private ModuleTopic topic;
 
   @Valid

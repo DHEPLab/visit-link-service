@@ -20,7 +20,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/** @author hookszhang */
+/**
+ * @author hookszhang
+ */
 @Service
 @Transactional(readOnly = true)
 @Slf4j
@@ -36,7 +38,8 @@ public class LessonService {
       LessonRepository repository,
       LessonScheduleRepository lessonScheduleRepository,
       ModuleRepository moduleRepository,
-      VisitRepository visitRepository, QuestionnaireRepository questionnaireRepository) {
+      VisitRepository visitRepository,
+      QuestionnaireRepository questionnaireRepository) {
     this.repository = repository;
     this.lessonScheduleRepository = lessonScheduleRepository;
     this.moduleRepository = moduleRepository;
@@ -132,7 +135,7 @@ public class LessonService {
         .map(schedule -> DateRange.visit(schedule, lesson, BabyAge.days(baby, baseline), baseline));
   }
 
-  /** 大纲区间 用 stage 两种 的 days时间区间匹配 第一个 大纲区间  */
+  /** 大纲区间 用 stage 两种 的 days时间区间匹配 第一个 大纲区间 */
   private Optional<LessonSchedule> matchSchedule(List<LessonSchedule> schedules, int days) {
     return schedules.stream().filter(schedule -> schedule.includes(days)).findFirst();
   }
@@ -166,9 +169,10 @@ public class LessonService {
   }
 
   public List<AppOfflineLessonDTO> appOfflineLessons(List<Lesson> lessons, List<Module> modules) {
-    Long projectId= SecurityUtils.getProjectId();
+    Long projectId = SecurityUtils.getProjectId();
     return lessons.stream()
-            .filter(target->{
+        .filter(
+            target -> {
               return target.getProjectId() != null && target.getProjectId().equals(projectId);
             })
         .map(
@@ -189,7 +193,7 @@ public class LessonService {
   }
 
   private AppOfflineLessonDTO.BasicQuestionnaire mapBasicQuestionnaire(Questionnaire qt) {
-    if(qt == null){
+    if (qt == null) {
       return null;
     }
     return new AppOfflineLessonDTO.BasicQuestionnaire(qt.getId(), qt.getName(), qt.getQuestions());
@@ -220,7 +224,7 @@ public class LessonService {
                             }
                           })
                       .collect(Collectors.toList()));
-              if (lesson.getProjectId()==null){
+              if (lesson.getProjectId() == null) {
                 lesson.setProjectId(SecurityUtils.getProjectId());
               }
               repository.save(lesson);
@@ -235,7 +239,8 @@ public class LessonService {
     return moduleRepository.findNamesInIdList(moduleIds);
   }
 
-  public Optional<List<LocalDate>> visitDateRange(Baby baby, ExportLesson lesson, LocalDate baseline) {
+  public Optional<List<LocalDate>> visitDateRange(
+      Baby baby, ExportLesson lesson, LocalDate baseline) {
     List<LessonSchedule> schedules =
         lessonScheduleRepository.findByCurriculumIdAndStage(
             baby.getCurriculum().getId(), baby.getStage());
@@ -247,5 +252,4 @@ public class LessonService {
         .findFirst()
         .map(schedule -> DateRange.visit(schedule, lesson, BabyAge.days(baby, baseline), baseline));
   }
-
 }
