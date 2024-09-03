@@ -31,6 +31,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Stream;
 
 @Service
 @Slf4j
@@ -714,8 +715,8 @@ public class ExcelService {
 
     @Transactional
     public void importChws(MultipartFile records, String lang) {
-        try (Workbook workBook = new XSSFWorkbook(records.getInputStream())) {
-            handleChwRecordRow(workBook.getSheetAt(0), lang);
+        try (Workbook workbook = new XSSFWorkbook(records.getInputStream())) {
+            handleChwRecordRow(workbook, lang);
         } catch (Exception e) {
             log.error("importContentRow ", e);
         }
@@ -773,38 +774,36 @@ public class ExcelService {
         return errDTO;
     }
 
-    private void handleChwRecordRow(Sheet sheet, String lang) {
+    private void handleChwRecordRow(Workbook workbook, String lang) {
+        Sheet sheet = workbook.getSheetAt(0);
+        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
+
         int endRow = sheet.getLastRowNum() + 1;
-        for (int i = 2; i < endRow; i++) {
+        for (int i = 2; i < endRow - 1; i++) {
             if (StringUtils.isEmpty(sheet.getRow(i).getCell(0).getStringCellValue())) {
                 break;
             }
             Row row = sheet.getRow(i);
-            row.getCell(0).setCellType(CellType.STRING);
-            row.getCell(1).setCellType(CellType.STRING);
-            row.getCell(2).setCellType(CellType.STRING);
-            row.getCell(3).setCellType(CellType.STRING);
-            row.getCell(4).setCellType(CellType.STRING);
-            row.getCell(5).setCellType(CellType.STRING);
-            String realName = row.getCell(0).getStringCellValue();
-            String identity = row.getCell(1).getStringCellValue();
-            String tag = row.getCell(2).getStringCellValue();
-            String phone = row.getCell(3).getStringCellValue();
-            String username = row.getCell(4).getStringCellValue();
-            String password = row.getCell(5).getStringCellValue();
+            String realName = safeGetStringCellValue(row.getCell(0), evaluator);
+            String identity = safeGetStringCellValue(row.getCell(1), evaluator);
+            String tag = safeGetStringCellValue(row.getCell(2), evaluator);
+            String phone = safeGetStringCellValue(row.getCell(3), evaluator);
+            String username = safeGetStringCellValue(row.getCell(4), evaluator);
+            String password = safeGetStringCellValue(row.getCell(5), evaluator);
+
             String[] split = tag.split(",");
             String encryptedPassword = passwordEncoder.encode(password);
             List<String> tags = Arrays.asList(split);
 
             if (!StringUtils.isEmpty(realName) &&
-                !StringUtils.isEmpty(identity) &&
-                !communityHouseWorkerRepository.findFirstByIdentity(identity).isPresent() &&
-                !StringUtils.isEmpty(tag) &&
-                !StringUtils.isEmpty(phone) &&
-                (!lang.equals("zh") || phone.matches("\\d{11}")) &&
-                !StringUtils.isEmpty(username) &&
-                !userRepository.findOneByUsername(username).isPresent() &&
-                !StringUtils.isEmpty(password)) {
+                    !StringUtils.isEmpty(identity) &&
+                    !communityHouseWorkerRepository.findFirstByIdentity(identity).isPresent() &&
+                    !StringUtils.isEmpty(tag) &&
+                    !StringUtils.isEmpty(phone) &&
+                    (!lang.equals("zh") || phone.matches("\\d{11}")) &&
+                    !StringUtils.isEmpty(username) &&
+                    !userRepository.findOneByUsername(username).isPresent() &&
+                    !StringUtils.isEmpty(password)) {
                 CommunityHouseWorker communityHouseWorker = new CommunityHouseWorker(null, identity, tags, null);
                 communityHouseWorker.setProjectId(SecurityUtils.getProjectId());
                 tagService.saveAll(tags);
@@ -823,14 +822,16 @@ public class ExcelService {
 
     public Map<String, Object> checkChws(MultipartFile records, String lang) {
         try (Workbook workBook = new XSSFWorkbook(records.getInputStream())) {
-            return checkChwRecordRow(workBook.getSheetAt(0), lang);
+            return checkChwRecordRow(workBook, lang);
         } catch (Exception e) {
             log.error("importContentRow ", e);
             throw new BadRequestAlertException("error.excel.dataInvalid");
         }
     }
 
-    private Map<String, Object> checkChwRecordRow(Sheet sheet, String lang) {
+    private Map<String, Object> checkChwRecordRow(Workbook workbook, String lang) {
+        Sheet sheet = workbook.getSheetAt(0);
+        FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
         Map<String, Object> map = new HashMap<>();
 
@@ -841,37 +842,27 @@ public class ExcelService {
         }
 
         int a = 0;
-        for (int i = 2; i < endRow; i++) {
+        for (int i = 2; i < endRow - 1; i++) {
             if (StringUtils.isEmpty(sheet.getRow(i).getCell(0).getStringCellValue())) {
                 break;
             }
             Row row = sheet.getRow(i);
             if (row != null) {
-                row.getCell(0).setCellType(CellType.STRING);
-                row.getCell(1).setCellType(CellType.STRING);
-                row.getCell(2).setCellType(CellType.STRING);
-                row.getCell(3).setCellType(CellType.STRING);
-                row.getCell(4).setCellType(CellType.STRING);
-                row.getCell(5).setCellType(CellType.STRING);
-                String realName = row.getCell(0).getStringCellValue();
-                String identity = row.getCell(1).getStringCellValue();
-                String tag = row.getCell(2).getStringCellValue();
-                String phone = row.getCell(3).getStringCellValue();
-                String username = row.getCell(4).getStringCellValue();
-                String password = row.getCell(5).getStringCellValue();
+                String realName = safeGetStringCellValue(row.getCell(0), evaluator);
+                String identity = safeGetStringCellValue(row.getCell(1), evaluator);
+                String tag = safeGetStringCellValue(row.getCell(2), evaluator);
+                String phone = safeGetStringCellValue(row.getCell(3), evaluator);
+                String username = safeGetStringCellValue(row.getCell(4), evaluator);
+                String password = safeGetStringCellValue(row.getCell(5), evaluator);
 
-                if (StringUtils.isEmpty(realName) &&
-                        StringUtils.isEmpty(identity) &&
-                        StringUtils.isEmpty(tag) &&
-                        StringUtils.isEmpty(phone) &&
-                        StringUtils.isEmpty(username) &&
-                        StringUtils.isEmpty(password)
-                )
+                if (Stream.of(realName, identity, tag, phone, username, password)
+                        .allMatch(StringUtils::isEmpty)) {
                     break;
+                }
 
                 a++;
                 if (StringUtils.isEmpty(realName)) {
-                    errDTOS.add(getLocaleDTO(realName, (i - 1),"error.excel.chw.name", locale));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.name", locale));
                     continue;
                 }
                 if (StringUtils.isEmpty(identity)) {
@@ -879,7 +870,7 @@ public class ExcelService {
                     continue;
                 }
                 if (communityHouseWorkerRepository.findFirstByIdentity(identity).isPresent()) {
-                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.chwIdExist", locale,identity));
+                    errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.chwIdExist", locale, identity));
                     continue;
                 }
                 if (StringUtils.isEmpty(tag)) {
@@ -915,5 +906,38 @@ public class ExcelService {
         map.put("errData", errDTOS);
         map.put("total", a);
         return map;
+    }
+
+    /**
+     * Safely retrieves the string value of a cell, handling different cell types such as string, numeric, boolean, and formula.
+     * This method is useful as `setCellType` is deprecated, and it provides a way to extract cell values in a consistent string format.
+     *
+     * @param cell      The Excel cell from which to retrieve the value.
+     * @param evaluator The FormulaEvaluator used to evaluate formula cells.
+     * @return The string representation of the cell's value. Returns an empty string if the cell is null or of an unsupported type.
+     */
+    private String safeGetStringCellValue(Cell cell, FormulaEvaluator evaluator) {
+        if (cell == null) {
+            return "";
+        }
+
+        DataFormatter formatter = new DataFormatter();
+
+        switch (cell.getCellType()) {
+            case STRING:
+                return cell.getStringCellValue();
+
+            case NUMERIC:
+                return formatter.formatCellValue(cell);
+
+            case BOOLEAN:
+                return cell.getBooleanCellValue() ? "1.0" : "0.0";
+
+            case FORMULA:
+                return formatter.formatCellValue(cell, evaluator);
+
+            default:
+                return "";
+        }
     }
 }
