@@ -21,6 +21,19 @@ IDEA config:
   * Settings => Editor -> Code Style -> Java -> Tabs and Indents -> Tab: 2
   * Settings => Editor -> Code Style -> Java -> Tabs and Indents -> Continuation indent: 4
 
+Enable the git hooks:
+We use the [lefthook](https://github.com/evilmartians/lefthook) as our git hook manager.
+You can use any tool to install the lefthook:
+```shell
+brew install lefthook
+go install github.com/evilmartians/lefthook@latest
+npm install -g lefthook
+```
+After you install the lefthook, you can run command `lefthook install` to init the hooks
+
+or you can run command `lefthook run pre-commit` and `lefthook run pre-push` to test the hooks running
+
+
 Default user credentials:
 * Username: admin
 * Password: admin123
