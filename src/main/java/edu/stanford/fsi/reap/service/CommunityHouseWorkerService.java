@@ -17,7 +17,6 @@ public class CommunityHouseWorkerService {
 
   public CommunityHouseWorkerService(
       UnfilteredUserRepository unfilteredUserRepository,
-      UserRepository userRepository,
       ExcelService excelService) {
     this.unfilteredUserRepository = unfilteredUserRepository;
     this.excelService = excelService;
@@ -30,6 +29,6 @@ public class CommunityHouseWorkerService {
         unfilteredUserRepository.findByRoleOrderByCreatedAtDesc(AuthoritiesConstants.CHW).stream()
             .filter(target -> target.getProjectId().equals(projectId))
             .collect(Collectors.toList());
-    return excelService.writeChwExcel(chwList, lang);
+    return excelService.generateChwExcel(chwList, lang);
   }
 }

@@ -16,13 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/admin/report")
-public class VisitReportResource {
+public class ReportResource {
 
   private final VisitReportService visitReportService;
   private final BabyService babyService;
   private final CommunityHouseWorkerService communityHouseWorkerService;
 
-  public VisitReportResource(
+  public ReportResource(
       VisitReportService visitReportService,
       BabyService babyRosterReport,
       CommunityHouseWorkerService communityHouseWorkerService) {
@@ -32,7 +32,7 @@ public class VisitReportResource {
   }
 
   @GetMapping
-  public ResponseEntity<byte[]> reportExcel(@Valid ReportDTO reportDTO) {
+  public ResponseEntity<byte[]> visitReportExcel(@Valid ReportDTO reportDTO) {
     byte[] ret = visitReportService.report(reportDTO);
     return ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_OCTET_STREAM)

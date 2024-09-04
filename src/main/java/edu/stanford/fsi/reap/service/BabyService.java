@@ -91,7 +91,7 @@ public class BabyService {
                   return target.getProjectId().equals(projectId);
                 })
             .collect(Collectors.toList());
-    return excelService.writeBabyRoster(list);
+    return excelService.generateBabyRoster(list);
   }
 
   public void assignChw(Chw chw, Long[] babyIds) {

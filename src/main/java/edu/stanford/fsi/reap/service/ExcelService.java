@@ -70,11 +70,11 @@ public class ExcelService {
   }
 
   /** 家访记录 */
-  public byte[] writeExcel(List<VisitReportObjData> visitReportObjData) {
-    return getDataReport(visitReportObjData, this::mapByteArray);
+  public byte[] generateVisitReportExcel(List<VisitReportObjData> visitReportObjData) {
+    return getVisitReport(visitReportObjData, this::mapByteArray);
   }
 
-  private byte[] getDataReport(
+  private byte[] getVisitReport(
       List<VisitReportObjData> visitReportObjData, Function<Workbook, byte[]> saveFileOrOther) {
     try (InputStream inputStream =
             getTemplateResourceIO("static/excel/Healthy-Future-Report.xlsx");
@@ -309,11 +309,11 @@ public class ExcelService {
   }
 
   /** Baby Roster */
-  public byte[] writeBabyRoster(List<Baby> babies) {
-    return getDataReportBaby(babies, this::mapByteArray);
+  public byte[] generateBabyRoster(List<Baby> babies) {
+    return getBabyReport(babies, this::mapByteArray);
   }
 
-  private byte[] getDataReportBaby(List<Baby> babies, Function<Workbook, byte[]> saveFileOrOther) {
+  private byte[] getBabyReport(List<Baby> babies, Function<Workbook, byte[]> saveFileOrOther) {
     try (InputStream inputStream =
             getTemplateResourceIO("static/excel/Healthy-Future-Report-Baby.xlsx");
         Workbook workBook = new XSSFWorkbook(inputStream)) {
@@ -432,11 +432,11 @@ public class ExcelService {
    *
    * @param chwList
    */
-  public byte[] writeChwExcel(List<UnfilteredUser> chwList, String lang) {
-    return getDataReportChw(chwList, this::mapByteArray, lang);
+  public byte[] generateChwExcel(List<UnfilteredUser> chwList, String lang) {
+    return getChwReport(chwList, this::mapByteArray, lang);
   }
 
-  private byte[] getDataReportChw(
+  private byte[] getChwReport(
       List<UnfilteredUser> chwList, Function<Workbook, byte[]> saveFileOrOther, String lang) {
     try (InputStream inputStream =
             getTemplateResourceIO("static/excel/Healthy-Future-Report-CHW.xlsx");
@@ -850,14 +850,6 @@ public class ExcelService {
         }
       }
     }
-  }
-
-  private ErrDTO getDTO(String name, Integer number, String matters) {
-    ErrDTO errDTO = new ErrDTO();
-    errDTO.setMatters(matters);
-    errDTO.setName(name);
-    errDTO.setNumber(number);
-    return errDTO;
   }
 
   private ErrDTO getLocaleDTO(

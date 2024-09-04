@@ -65,7 +65,7 @@ public class VisitReportService {
             .collect(Collectors.toList());
     // 遍历取出问卷内容记录，并根据titleNo进行排序
     sort(list);
-    return excelService.writeExcel(list);
+    return excelService.generateVisitReportExcel(list);
   }
 
   private void sort(List<VisitReportObjData> list) {
