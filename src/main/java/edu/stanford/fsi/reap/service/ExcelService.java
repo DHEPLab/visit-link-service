@@ -10,6 +10,7 @@ import edu.stanford.fsi.reap.pojo.Domain;
 import edu.stanford.fsi.reap.pojo.VisitReportObjData;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
+import edu.stanford.fsi.reap.utils.RegexConstant;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -803,7 +804,7 @@ public class ExcelService {
       handleBabyRecordRow(workBook.getSheetAt(0));
     } catch (Exception e) {
       log.error("importContentRow ", e);
-      throw new RuntimeException("导入失败，服务器异常，数据可能有问题！");
+      throw new RuntimeException("Import failed, server error, data may be corrupted!");
     }
   }
 
@@ -894,9 +895,10 @@ public class ExcelService {
           && !communityHouseWorkerRepository.findFirstByIdentity(identity).isPresent()
           && !StringUtils.isEmpty(tag)
           && !StringUtils.isEmpty(phone)
-          && (!lang.equals("zh") || phone.matches("\\d{11}"))
+          && phone.matches(RegexConstant.PHONE_REGEX)
           && !StringUtils.isEmpty(username)
           && !userRepository.findOneByUsername(username).isPresent()
+          && username.matches(RegexConstant.NAME_REGEX)
           && !StringUtils.isEmpty(password)) {
         CommunityHouseWorker communityHouseWorker =
             new CommunityHouseWorker(null, identity, tags, null);
@@ -985,12 +987,16 @@ public class ExcelService {
           errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.phone", locale));
           continue;
         }
-        if ("zh".equals(lang) && !phone.matches("\\d{11}") || !phone.matches("\\d{5,20}")) {
+        if (!phone.matches(RegexConstant.PHONE_REGEX)) {
           errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.phoneInvalid", locale));
           continue;
         }
         if (StringUtils.isEmpty(username)) {
           errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.username", locale));
+          continue;
+        }
+        if (!username.matches(RegexConstant.NAME_REGEX)) {
+          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.usernameInvalid", locale));
           continue;
         }
         if (userRepository.findOneByUsername(username).isPresent()) {
