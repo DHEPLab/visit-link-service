@@ -69,18 +69,20 @@ public class ExcelService {
     this.localSource = localSource;
   }
 
-  /** 家访记录 */
-  public byte[] generateVisitReportExcel(List<VisitReportObjData> visitReportObjData) {
-    return getVisitReport(visitReportObjData, this::mapByteArray);
+  /** Generate Visit Report */
+  public byte[] generateVisitReportExcel(List<VisitReportObjData> visitReportObjData, String lang) {
+    return getVisitReport(visitReportObjData, this::mapByteArray, lang);
   }
 
   private byte[] getVisitReport(
-      List<VisitReportObjData> visitReportObjData, Function<Workbook, byte[]> saveFileOrOther) {
+      List<VisitReportObjData> visitReportObjData,
+      Function<Workbook, byte[]> saveFileOrOther,
+      String lang) {
     try (InputStream inputStream =
             getTemplateResourceIO("static/excel/Healthy-Future-Report.xlsx");
         Workbook workBook = new XSSFWorkbook(inputStream)) {
 
-      addContentRow(workBook, visitReportObjData);
+      addContentRow(workBook, visitReportObjData, lang);
 
       return saveFileOrOther.apply(workBook);
     } catch (Exception e) {
@@ -89,8 +91,10 @@ public class ExcelService {
     }
   }
 
-  private void addContentRow(Workbook workbook, List<VisitReportObjData> allData) {
+  private void addContentRow(Workbook workbook, List<VisitReportObjData> allData, String lang) {
     Sheet sheet = workbook.getSheetAt(0);
+    Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
+
     int index = 1;
     for (VisitReportObjData itemRow : allData) {
       Row row = sheet.createRow(index);
@@ -115,7 +119,10 @@ public class ExcelService {
               itemRow.getVisit().getStatus() == VisitStatus.UNDONE
                   ? "Unfinished"
                   : itemRow.getVisit().getStatus().toString());
-      row.createCell(cellInt++).setCellValue(itemRow.getVisit().getDeleted() ? "是" : "否");
+      row.createCell(cellInt++)
+          .setCellValue(
+              getMessageByCondition(
+                  itemRow.getVisit().getDeleted(), "report.yes", "report.no", locale));
       row.createCell(cellInt++)
           .setCellValue(
               itemRow.getVisit().getDistance() == null ? 0 : itemRow.getVisit().getDistance());
@@ -147,7 +154,7 @@ public class ExcelService {
             module = itemRow.getModules().get(i);
             if (module != null) {
               row.createCell(cellInt++)
-                  .setCellValue(module.getNumber() + "/" + getTopicCN(module.getTopic()));
+                  .setCellValue(module.getNumber() + "/" + getTopicCN(module.getTopic(), locale));
             } else {
               row.createCell(cellInt++).setCellValue("");
             }
@@ -290,15 +297,17 @@ public class ExcelService {
                       + carer.getPhone()
                       + "/"
                       + carer.getFamilyTies().toString()
-                      + "/主看护人/"
+                      + "/"
+                      + localSource.getMessage("report.primaryCaregiver", null, locale)
+                      + "/"
                       + carer.getWechat());
           itemRow.getCarers().remove(carer);
         } else {
-          setCarers(itemRow, row, cellInt, 4);
+          setCarers(itemRow, row, cellInt, 4, locale);
           isNextToCell = true;
         }
         if (!isNextToCell) {
-          setCarers(itemRow, row, cellInt, 3);
+          setCarers(itemRow, row, cellInt, 3, locale);
         }
       } else {
         for (int i = 0; i < 4; i++) row.createCell(cellInt++).setCellValue("");
@@ -379,10 +388,10 @@ public class ExcelService {
       if (carers != null && carers.size() > 0) {
         for (int i = 0; i < 5; i++) {
           if (i >= carers.size()) {
-            // 没有看护人了 填空
+            // There are no caregivers left
             for (int j = 0; j < 5; j++) row.createCell(cellInt++).setCellValue("");
           } else {
-            // 5个一组填
+            // Groups of five
             Carer carer = carers.get(i);
             row.createCell(cellInt++).setCellValue(carer.isMaster());
             row.createCell(cellInt++).setCellValue(carer.getName());
@@ -451,15 +460,17 @@ public class ExcelService {
     }
   }
 
+  private String getMessageByCondition(
+      boolean condition, String trueCode, String falseCode, Locale locale) {
+    return localSource.getMessage(condition ? trueCode : falseCode, null, locale);
+  }
+
   private void addContentRowByCommunityHouseWorkers(
       Workbook workbook, List<UnfilteredUser> chwList, String lang) {
     Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
 
     Function<UnfilteredUser, String> getStatusString =
-        u ->
-            u.isDeleted()
-                ? localSource.getMessage("status.deleted", null, locale)
-                : localSource.getMessage("status.active", null, locale);
+        u -> getMessageByCondition(u.isDeleted(), "status.archived", "status.active", locale);
 
     Sheet sheet = workbook.getSheetAt(0);
     for (int i = 0; i < chwList.size(); i++) {
@@ -500,7 +511,7 @@ public class ExcelService {
     }
   }
 
-  private void setCarers(VisitReportObjData itemRow, Row row, int cellInt, int num) {
+  private void setCarers(VisitReportObjData itemRow, Row row, int cellInt, int num, Locale locale) {
     for (int i = 0; i < num; i++) {
       try {
         Carer carer = itemRow.getCarers().get(i);
@@ -512,7 +523,9 @@ public class ExcelService {
                       + carer.getPhone()
                       + "/"
                       + carer.getFamilyTies().toString()
-                      + "/非主看护人/"
+                      + "/"
+                      + localSource.getMessage("report.nonPrimaryCaregiver", null, locale)
+                      + "/"
                       + carer.getWechat());
         } else {
           row.createCell(cellInt++).setCellValue("");
@@ -543,17 +556,19 @@ public class ExcelService {
     }
   }
 
-  public byte[] writeNotStartExcel(List<ExportVisit> visit) {
-    return getNotStartDataReport(visit, this::mapByteArray);
+  public byte[] writeNotStartExcel(List<ExportVisit> visit, String lang) {
+    return getNotStartDataReport(visit, this::mapByteArray, lang);
   }
 
   private byte[] getNotStartDataReport(
-      List<ExportVisit> visitReportObjData, Function<Workbook, byte[]> saveFileOrOther) {
+      List<ExportVisit> visitReportObjData,
+      Function<Workbook, byte[]> saveFileOrOther,
+      String lang) {
     try (InputStream inputStream =
             getTemplateResourceIO("static/excel/Healthy-Future-Report-Not-Finished-Visit.xlsx");
         Workbook workBook = new XSSFWorkbook(inputStream)) {
 
-      addNotStartContentRow(workBook, visitReportObjData);
+      addNotStartContentRow(workBook, visitReportObjData, lang);
 
       return saveFileOrOther.apply(workBook);
     } catch (Exception e) {
@@ -562,8 +577,10 @@ public class ExcelService {
     }
   }
 
-  private void addNotStartContentRow(Workbook workbook, List<ExportVisit> allData) {
+  private void addNotStartContentRow(Workbook workbook, List<ExportVisit> allData, String lang) {
     Sheet sheet = workbook.getSheetAt(0);
+    Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
+
     int index = 1;
     for (ExportVisit itemRow : allData) {
       Row row = sheet.createRow(index);
@@ -586,7 +603,9 @@ public class ExcelService {
               itemRow.getStatus() == VisitStatus.UNDONE
                   ? "Unfinished"
                   : itemRow.getStatus().toString());
-      row.createCell(cellInt++).setCellValue(itemRow.getDeleted() ? "是" : "否");
+      row.createCell(cellInt++)
+          .setCellValue(
+              getMessageByCondition(itemRow.getDeleted(), "report.yes", "report.no", locale));
       row.createCell(cellInt++).setCellValue(itemRow.getLesson().getId());
       row.createCell(cellInt++).setCellValue(itemRow.getRemark());
       row.createCell(cellInt++).setCellValue(itemRow.getDeleteReason());
@@ -615,7 +634,9 @@ public class ExcelService {
               Module module1 = moduleRepository.findById(Long.parseLong(module.getValue())).get();
               row.createCell(cellInt++)
                   .setCellValue(
-                      module1.getNumber().toString() + "/" + getTopicCN(module1.getTopic()));
+                      module1.getNumber().toString()
+                          + "/"
+                          + getTopicCN(module1.getTopic(), locale));
             } else {
               row.createCell(cellInt++).setCellValue("");
             }
@@ -738,15 +759,17 @@ public class ExcelService {
                       + carer.getPhone()
                       + "/"
                       + carer.getFamilyTies().toString()
-                      + "/主看护人/"
+                      + "/"
+                      + localSource.getMessage("report.primaryCaregiver", null, locale)
+                      + "/"
                       + carer.getWechat());
           carerList.remove(carer);
         } else {
-          setNotStartCarers(carerList, row, cellInt, 4);
+          setNotStartCarers(carerList, row, cellInt, 4, locale);
           isNextToCell = true;
         }
         if (!isNextToCell) {
-          setNotStartCarers(carerList, row, cellInt, 3);
+          setNotStartCarers(carerList, row, cellInt, 3, locale);
         }
       } else {
         for (int i = 0; i < 4; i++) row.createCell(cellInt++).setCellValue("");
@@ -755,7 +778,8 @@ public class ExcelService {
     }
   }
 
-  private void setNotStartCarers(List<Carer> carerList, Row row, int cellInt, int num) {
+  private void setNotStartCarers(
+      List<Carer> carerList, Row row, int cellInt, int num, Locale locale) {
     for (int i = 0; i < num; i++) {
       try {
         Carer carer = carerList.get(i);
@@ -767,7 +791,9 @@ public class ExcelService {
                       + carer.getPhone()
                       + "/"
                       + carer.getFamilyTies().toString()
-                      + "/非主看护人/"
+                      + "/"
+                      + localSource.getMessage("report.nonPrimaryCaregiver", null, locale)
+                      + "/"
                       + carer.getWechat());
         } else {
           row.createCell(cellInt++).setCellValue("");
@@ -778,24 +804,24 @@ public class ExcelService {
     }
   }
 
-  public String getTopicCN(ModuleTopic topic) {
+  public String getTopicCN(ModuleTopic topic, Locale locale) {
     switch (topic) {
       case MOTHER_NUTRITION:
-        return "母亲营养";
+        return localSource.getMessage("report.module.motherNutrition", null, locale);
       case BREASTFEEDING:
-        return "母乳喂养";
+        return localSource.getMessage("report.module.breastfeeding", null, locale);
       case BABY_FOOD:
-        return "婴儿辅食";
+        return localSource.getMessage("report.module.babyFood", null, locale);
       case INFANT_INJURY_AND_PREVENTION:
-        return "婴儿伤病和预防";
+        return localSource.getMessage("report.module.infantInjuryAndPrevention", null, locale);
       case CAREGIVER_MENTAL_HEALTH:
-        return "照料人心理健康";
+        return localSource.getMessage("report.module.caregiverMentalHealth", null, locale);
       case GOVERNMENT_SERVICES:
-        return "政府服务";
+        return localSource.getMessage("report.module.governmentServices", null, locale);
       case KNOWLEDGE_ATTITUDE_TEST:
-        return "知识态度检测";
+        return localSource.getMessage("report.module.knowledgeAttitudeTest", null, locale);
       default:
-        return "其他";
+        return localSource.getMessage("report.module.other", null, locale);
     }
   }
 

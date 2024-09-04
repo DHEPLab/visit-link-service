@@ -2,7 +2,6 @@ package edu.stanford.fsi.reap.service;
 
 import edu.stanford.fsi.reap.entity.UnfilteredUser;
 import edu.stanford.fsi.reap.repository.UnfilteredUserRepository;
-import edu.stanford.fsi.reap.repository.UserRepository;
 import edu.stanford.fsi.reap.security.AuthoritiesConstants;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import java.util.List;
@@ -16,8 +15,7 @@ public class CommunityHouseWorkerService {
   private final ExcelService excelService;
 
   public CommunityHouseWorkerService(
-      UnfilteredUserRepository unfilteredUserRepository,
-      ExcelService excelService) {
+      UnfilteredUserRepository unfilteredUserRepository, ExcelService excelService) {
     this.unfilteredUserRepository = unfilteredUserRepository;
     this.excelService = excelService;
   }

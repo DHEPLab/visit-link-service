@@ -251,8 +251,9 @@ public class VisitResource {
   }
 
   @GetMapping("/notStartVisit")
-  public ResponseEntity<byte[]> reportExcel() {
-    byte[] ret = service.reportNotStartVisit();
+  public ResponseEntity<byte[]> reportExcel(
+      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
+    byte[] ret = service.reportNotStartVisit(lang);
     return ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_OCTET_STREAM)
         .header(

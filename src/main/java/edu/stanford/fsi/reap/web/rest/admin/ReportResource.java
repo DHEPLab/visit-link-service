@@ -32,8 +32,10 @@ public class ReportResource {
   }
 
   @GetMapping
-  public ResponseEntity<byte[]> visitReportExcel(@Valid ReportDTO reportDTO) {
-    byte[] ret = visitReportService.report(reportDTO);
+  public ResponseEntity<byte[]> visitReportExcel(
+      @Valid ReportDTO reportDTO,
+      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
+    byte[] ret = visitReportService.report(reportDTO, lang);
     return ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_OCTET_STREAM)
         .header(

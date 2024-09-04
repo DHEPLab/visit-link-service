@@ -28,7 +28,7 @@ public class HealthyFutureApplicationTest {
 
   @Test
   public void test1() throws Exception {
-    visitReportService.report(new ReportDTO(LocalDate.of(2018, 1, 1), LocalDate.now()));
+    visitReportService.report(new ReportDTO(LocalDate.of(2018, 1, 1), LocalDate.now()), "en");
   }
 
   @Test
