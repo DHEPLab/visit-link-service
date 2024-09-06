@@ -984,6 +984,10 @@ public class ExcelService {
           errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.name", locale));
           continue;
         }
+        if (!realName.matches(RegexConstant.NAME_REGEX)) {
+          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.usernameInvalid", locale));
+          continue;
+        }
         if (StringUtils.isEmpty(identity)) {
           errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.chwId", locale));
           continue;
@@ -1011,10 +1015,6 @@ public class ExcelService {
         }
         if (StringUtils.isEmpty(username)) {
           errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.username", locale));
-          continue;
-        }
-        if (!username.matches(RegexConstant.NAME_REGEX)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.usernameInvalid", locale));
           continue;
         }
         if (userRepository.findOneByUsername(username).isPresent()) {
