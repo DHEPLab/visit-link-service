@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 public class ProfileWrapper {
-  @NotNull @Size(min = 2, max = 10)
+  @NotNull @Size(min = 1, max = 50)
   private String realName;
 
   @NotNull private String phone;

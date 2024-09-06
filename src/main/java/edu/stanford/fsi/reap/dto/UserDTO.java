@@ -15,7 +15,7 @@ public class UserDTO {
 
   private Long id;
 
-  @Size(min = 2, max = 20)
+  @Size(min = 1, max = 50)
   @NotNull private String username;
 
   @Size(min = 6, max = 32)
