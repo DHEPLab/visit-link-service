@@ -23,7 +23,7 @@ public class CarerHistory extends AbstractHistoryEntity {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull @Size(min = 2, max = 10)
+  @NotNull @Size(min = 1, max = 50)
   private String name;
 
   @NotNull @Size(max = 20)
