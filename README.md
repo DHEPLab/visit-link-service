@@ -38,6 +38,9 @@ Default user credentials:
 * Username: admin
 * Password: admin123
 
+* Username: super_admin
+* Password: 123456
+
 ## External Dependencies
 
 * AWS S3, used for storing course images and videos.

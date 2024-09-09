@@ -35,7 +35,7 @@ public interface ModuleRepository extends JpaRepository<Module, Long> {
 
   Optional<Module> findByNumberAndBranch(String number, CurriculumBranch master);
 
-  @Query("select name " + "from Module where id in ?1")
+  @Query("select name from Module where id in ?1 ORDER BY FIELD(id, ?1)")
   List<String> findNamesInIdList(List<Long> moduleIds);
 
   List<Module> findByBranchAndPublishedTrue(CurriculumBranch master);
