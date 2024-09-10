@@ -909,6 +909,7 @@ public class ExcelService {
       List<String> tags = Arrays.asList(split);
 
       if (!StringUtils.isEmpty(realName)
+          && realName.matches(RegexConstant.NAME_REGEX)
           && !StringUtils.isEmpty(identity)
           && !communityHouseWorkerRepository.findFirstByIdentity(identity).isPresent()
           && !StringUtils.isEmpty(tag)
@@ -916,7 +917,6 @@ public class ExcelService {
           && phone.matches(RegexConstant.PHONE_REGEX)
           && !StringUtils.isEmpty(username)
           && !userRepository.findOneByUsername(username).isPresent()
-          && username.matches(RegexConstant.NAME_REGEX)
           && !StringUtils.isEmpty(password)) {
         CommunityHouseWorker communityHouseWorker =
             new CommunityHouseWorker(null, identity, tags, null);
