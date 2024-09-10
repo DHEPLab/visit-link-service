@@ -985,7 +985,7 @@ public class ExcelService {
           continue;
         }
         if (!realName.matches(RegexConstant.NAME_REGEX)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.usernameInvalid", locale));
+          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.name", locale));
           continue;
         }
         if (StringUtils.isEmpty(identity)) {
