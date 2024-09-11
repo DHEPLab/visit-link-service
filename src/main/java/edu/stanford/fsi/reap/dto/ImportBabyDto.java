@@ -20,7 +20,7 @@ public class ImportBabyDto {
 
   private Integer number;
 
-  @NotNull @Size(min = 2, max = 10)
+  @NotNull @Size(min = 1, max = 50)
   private String name;
 
   @Size(max = 50)
