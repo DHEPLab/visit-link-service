@@ -99,11 +99,6 @@ class LessonResourcesResourceTest {
         .thenReturn(Optional.of(lesson));
 
     ZonedDateTime lastUpdateAt = ZonedDateTime.parse("2024-09-11T07:21:58Z");
-
-    System.out.println("Module last modified: " + module.getLastModifiedAt());
-    System.out.println("Lesson last modified: " + lesson.getLastModifiedAt());
-    System.out.println("Last update at: " + lastUpdateAt);
-
     Updates updates = lessonResourcesResource.checkForUpdates(lastUpdateAt);
     System.out.println("Is updated: " + updates.isUpdated());
 

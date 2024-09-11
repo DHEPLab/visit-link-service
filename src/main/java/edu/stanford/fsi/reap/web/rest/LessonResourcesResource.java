@@ -50,7 +50,6 @@ public class LessonResourcesResource {
     if (lastUpdateAt == null) return Updates.isTheLatest();
 
     // [Temporary fix] Converts UTC time to the system's default time zone
-
     LocalDateTime localLastUpdateAt =
         lastUpdateAt.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
 
