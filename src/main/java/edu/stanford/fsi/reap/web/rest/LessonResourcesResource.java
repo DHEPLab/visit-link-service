@@ -12,9 +12,8 @@ import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.LessonService;
 import edu.stanford.fsi.reap.service.ModuleService;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -44,34 +43,35 @@ public class LessonResourcesResource {
     this.lessonService = lessonService;
   }
 
-@GetMapping("/check-for-updates")
-public Updates checkForUpdates(
-    @RequestParam("lastUpdateAt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    LocalDateTime lastUpdateAt) {
-  if (lastUpdateAt == null) return Updates.isTheLatest();
+  @GetMapping("/check-for-updates")
+  public Updates checkForUpdates(
+      @RequestParam("lastUpdateAt") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+          ZonedDateTime lastUpdateAt) {
+    if (lastUpdateAt == null) return Updates.isTheLatest();
 
-  //[Temporary fix] Converts UTC time to the system's default time zone
-  ZonedDateTime zonedLastUpdateAt = lastUpdateAt.atZone(ZoneOffset.UTC).withZoneSameInstant(ZoneId.systemDefault());
-  LocalDateTime adjustedLastUpdateAt = zonedLastUpdateAt.toLocalDateTime();
+    // [Temporary fix] Converts UTC time to the system's default time zone
 
-  Optional<Lesson> lastLesson =
-      lessonRepository
-          .findFirstByCurriculumBranchAndCurriculumPublishedTrueOrderByLastModifiedAtDesc(
-              CurriculumBranch.MASTER);
-  Optional<Module> lastModule =
-      moduleRepository.findFirstByBranchAndPublishedTrueOrderByLastModifiedAtDesc(
-          CurriculumBranch.MASTER);
+    LocalDateTime localLastUpdateAt =
+        lastUpdateAt.withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime();
 
-  if (lastLesson.isPresent() && lastLesson.get().getLastModifiedAt().isAfter(adjustedLastUpdateAt)) {
-    return Updates.haveUpdate(lastLesson.get().getLastModifiedAt());
+    Optional<Lesson> lastLesson =
+        lessonRepository
+            .findFirstByCurriculumBranchAndCurriculumPublishedTrueOrderByLastModifiedAtDesc(
+                CurriculumBranch.MASTER);
+    Optional<Module> lastModule =
+        moduleRepository.findFirstByBranchAndPublishedTrueOrderByLastModifiedAtDesc(
+            CurriculumBranch.MASTER);
+
+    if (lastLesson.isPresent() && lastLesson.get().getLastModifiedAt().isAfter(localLastUpdateAt)) {
+      return Updates.haveUpdate(lastLesson.get().getLastModifiedAt());
+    }
+
+    if (lastModule.isPresent() && lastModule.get().getLastModifiedAt().isAfter(localLastUpdateAt)) {
+      return Updates.haveUpdate(lastModule.get().getLastModifiedAt());
+    }
+
+    return Updates.isTheLatest();
   }
-
-  if (lastModule.isPresent() && lastModule.get().getLastModifiedAt().isAfter(adjustedLastUpdateAt)) {
-    return Updates.haveUpdate(lastModule.get().getLastModifiedAt());
-  }
-
-  return Updates.isTheLatest();
-}
 
   @GetMapping("/modules")
   public ModulePackage downloadModules() {

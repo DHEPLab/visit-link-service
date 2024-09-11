@@ -19,8 +19,12 @@ import edu.stanford.fsi.reap.repository.ModuleRepository;
 import edu.stanford.fsi.reap.service.LessonService;
 import edu.stanford.fsi.reap.service.ModuleService;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.TimeZone;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -42,6 +46,9 @@ class LessonResourcesResourceTest {
 
   @BeforeAll
   public static void beforeAll() {
+
+    TimeZone.setDefault(TimeZone.getTimeZone(ZoneId.of("UTC")));
+
     lessonResourcesResource =
         new LessonResourcesResource(
             mock(ModuleService.class), moduleRepository, lessonRepository, lessonService);
@@ -50,10 +57,13 @@ class LessonResourcesResourceTest {
 
   @Test
   public void should_is_the_latest() {
+    LocalDateTime moduleLastModified = LocalDateTime.of(2020, 1, 2, 10, 0, 0, 0);
+    LocalDateTime lessonLastModified = LocalDateTime.of(2020, 1, 2, 10, 1, 0, 0);
+
     Module module = new Module();
-    module.setLastModifiedAt(LocalDateTime.of(2020, 1, 2, 10, 0));
+    module.setLastModifiedAt(moduleLastModified);
     Lesson lesson = new Lesson();
-    lesson.setLastModifiedAt(LocalDateTime.of(2020, 1, 2, 10, 1));
+    lesson.setLastModifiedAt(lessonLastModified);
 
     when(moduleRepository.findFirstByBranchAndPublishedTrueOrderByLastModifiedAtDesc(any()))
         .thenReturn(Optional.of(module));
@@ -63,17 +73,23 @@ class LessonResourcesResourceTest {
         .thenReturn(Optional.of(lesson));
 
     Updates updates = lessonResourcesResource.checkForUpdates(null);
-    assertFalse(updates.isUpdated());
-    updates = lessonResourcesResource.checkForUpdates(LocalDateTime.of(2020, 1, 2, 10, 2));
-    assertFalse(updates.isUpdated());
+    assertFalse(updates.isUpdated(), "Should be updated when lastUpdateAt is null");
+
+    String lastUpdateAtString = "2020-01-02T07:21:58Z";
+    ZonedDateTime lastUpdateAt = ZonedDateTime.parse(lastUpdateAtString);
+
+    updates = lessonResourcesResource.checkForUpdates(lastUpdateAt);
+    assertTrue(
+        updates.isUpdated(),
+        "Should not be updated when lastUpdateAt is after the latest modifications");
   }
 
   @Test
   public void should_have_update() {
     Module module = new Module();
-    module.setLastModifiedAt(LocalDateTime.of(2020, 1, 2, 10, 0));
+    module.setLastModifiedAt(LocalDateTime.of(2024, 9, 11, 8, 0));
     Lesson lesson = new Lesson();
-    lesson.setLastModifiedAt(LocalDateTime.of(2020, 1, 2, 10, 0));
+    lesson.setLastModifiedAt(LocalDateTime.of(2024, 9, 11, 8, 0));
 
     when(moduleRepository.findFirstByBranchAndPublishedTrueOrderByLastModifiedAtDesc(any()))
         .thenReturn(Optional.of(module));
@@ -81,17 +97,27 @@ class LessonResourcesResourceTest {
     when(lessonRepository
             .findFirstByCurriculumBranchAndCurriculumPublishedTrueOrderByLastModifiedAtDesc(any()))
         .thenReturn(Optional.of(lesson));
-    Updates updates = lessonResourcesResource.checkForUpdates(LocalDateTime.of(2020, 1, 2, 9, 0));
+
+    ZonedDateTime lastUpdateAt = ZonedDateTime.parse("2024-09-11T07:21:58Z");
+
+    System.out.println("Module last modified: " + module.getLastModifiedAt());
+    System.out.println("Lesson last modified: " + lesson.getLastModifiedAt());
+    System.out.println("Last update at: " + lastUpdateAt);
+
+    Updates updates = lessonResourcesResource.checkForUpdates(lastUpdateAt);
+    System.out.println("Is updated: " + updates.isUpdated());
+
     assertTrue(updates.isUpdated());
   }
 
   @Test
   @WithMockUser
   public void should_check_forUpdates_isTheLatest() throws Exception {
+    String lastUpdateAtString = "2020-10-10T12:12:12Z";
     mockMvc
         .perform(
             MockMvcRequestBuilders.get("/api/resources/check-for-updates")
-                .param("lastUpdateAt", "2020-10-10T12:12:12"))
+                .param("lastUpdateAt", lastUpdateAtString))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.updated").value(false));
@@ -106,10 +132,14 @@ class LessonResourcesResourceTest {
             .findFirstByCurriculumBranchAndCurriculumPublishedTrueOrderByLastModifiedAtDesc(
                 CurriculumBranch.MASTER))
         .thenReturn(Optional.of(lesson));
+
+    String lastUpdateAtString =
+        ZonedDateTime.now().minusDays(1).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
     mockMvc
         .perform(
             MockMvcRequestBuilders.get("/api/resources/check-for-updates")
-                .param("lastUpdateAt", "2020-10-10T12:12:12"))
+                .param("lastUpdateAt", lastUpdateAtString))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.updated").value(true));
@@ -133,10 +163,13 @@ class LessonResourcesResourceTest {
             CurriculumBranch.MASTER))
         .thenReturn(Optional.of(module));
 
+    String lastUpdateAtString =
+        ZonedDateTime.now().minusDays(1).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
     mockMvc
         .perform(
             MockMvcRequestBuilders.get("/api/resources/check-for-updates")
-                .param("lastUpdateAt", "2020-10-10T12:12:12"))
+                .param("lastUpdateAt", lastUpdateAtString))
         .andDo(print())
         .andExpect(status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("$.updated").value(true));
