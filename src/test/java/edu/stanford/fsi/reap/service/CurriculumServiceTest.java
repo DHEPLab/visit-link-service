@@ -150,7 +150,7 @@ class CurriculumServiceTest {
         CurriculumDTO.builder()
             .name(NAME)
             .description(DESCRIPTION)
-            .lessons(Collections.singletonList(lesson))
+            .sessions(Collections.singletonList(lesson))
             .schedules(Collections.singletonList(schedule))
             .build();
     Optional<CurriculumResultDTO> optional = service.draft(curriculumDTO);
@@ -168,7 +168,7 @@ class CurriculumServiceTest {
         CurriculumDTO.builder()
             .name(NAME)
             .description(DESCRIPTION)
-            .lessons(Collections.singletonList(lesson))
+            .sessions(Collections.singletonList(lesson))
             .schedules(Collections.singletonList(schedule))
             .build();
     Optional<CurriculumResultDTO> optional = service.draft(curriculumDTO);
@@ -198,7 +198,7 @@ class CurriculumServiceTest {
             .id(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID)
             .name(NAME)
             .description(DESCRIPTION)
-            .lessons(Collections.singletonList(Lesson.builder().number("L1").build()))
+            .sessions(Collections.singletonList(Lesson.builder().number("L1").build()))
             .schedules(
                 Collections.singletonList(
                     LessonSchedule.builder()
@@ -224,7 +224,7 @@ class CurriculumServiceTest {
         CurriculumDTO.builder()
             .name(NAME)
             .description(DESCRIPTION)
-            .lessons(
+            .sessions(
                 Arrays.asList(
                     Lesson.builder().number("L1").startOfApplicableDays(10).build(),
                     Lesson.builder().number("L2").startOfApplicableDays(20).build()))
@@ -260,7 +260,7 @@ class CurriculumServiceTest {
             .id(MASTER_BRANCH_UNPUBLISHED_CURRICULUM_ID_2)
             .name(NAME)
             .description(DESCRIPTION)
-            .lessons(Collections.singletonList(Lesson.builder().number("L1").build()))
+            .sessions(Collections.singletonList(Lesson.builder().number("L1").build()))
             .schedules(
                 Collections.singletonList(
                     LessonSchedule.builder()
@@ -283,7 +283,7 @@ class CurriculumServiceTest {
             .id(MASTER_BRANCH_PUBLISHED_CURRICULUM_ID)
             .name(NAME)
             .description(DESCRIPTION)
-            .lessons(Collections.singletonList(Lesson.builder().id(2L).number("L1").build()))
+            .sessions(Collections.singletonList(Lesson.builder().id(2L).number("L1").build()))
             .schedules(
                 Collections.singletonList(
                     LessonSchedule.builder()
@@ -311,7 +311,7 @@ class CurriculumServiceTest {
             .id(DRAFT_BRANCH_CURRICULUM_ID)
             .name(NAME)
             .description(DESCRIPTION)
-            .lessons(Collections.singletonList(Lesson.builder().id(2L).number("L1").build()))
+            .sessions(Collections.singletonList(Lesson.builder().id(2L).number("L1").build()))
             .schedules(
                 Collections.singletonList(
                     LessonSchedule.builder()

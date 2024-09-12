@@ -29,7 +29,8 @@ public class CurriculumDTO {
   @NotNull @Size(max = 1000)
   private String description;
 
-  @NotEmpty @Valid private List<Lesson> lessons;
+  // TODO Rename all the lesson to session
+  @NotEmpty @Valid private List<Lesson> sessions;
 
   @NotEmpty @Valid private List<LessonSchedule> schedules;
 }

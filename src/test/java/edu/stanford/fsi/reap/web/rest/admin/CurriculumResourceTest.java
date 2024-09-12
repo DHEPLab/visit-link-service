@@ -95,7 +95,7 @@ class CurriculumResourceTest {
         CurriculumDTO.builder()
             .name("test")
             .description("test")
-            .lessons(Collections.singletonList(lesson))
+            .sessions(Collections.singletonList(lesson))
             .schedules(Collections.singletonList(lessonSchedule))
             .build();
 
@@ -138,7 +138,7 @@ class CurriculumResourceTest {
         CurriculumDTO.builder()
             .name("test")
             .description("test")
-            .lessons(Collections.singletonList(lesson))
+            .sessions(Collections.singletonList(lesson))
             .schedules(Collections.singletonList(lessonSchedule))
             .build();
 

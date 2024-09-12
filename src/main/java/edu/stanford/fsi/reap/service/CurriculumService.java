@@ -108,7 +108,7 @@ public class CurriculumService {
     repository.save(curriculum);
 
     // create draft branch, clone lessons, schedules, bind source
-    dto.getLessons()
+    dto.getSessions()
         .forEach(
             lesson -> {
               if (lesson.getId() != null) {
@@ -125,7 +125,7 @@ public class CurriculumService {
               schedule.setId(null);
             });
 
-    return save(curriculum, dto.getLessons(), dto.getSchedules());
+    return save(curriculum, dto.getSessions(), dto.getSchedules());
   }
 
   private CurriculumResultDTO publishDraftBranch(CurriculumDTO draft, Curriculum source) {
@@ -137,8 +137,8 @@ public class CurriculumService {
     repository.save(source);
 
     // publish source lesson if exist
-    draft.setLessons(
-        draft.getLessons().stream()
+    draft.setSessions(
+        draft.getSessions().stream()
             .map(
                 lesson -> {
                   if (lesson.getId() == null) return lesson;
@@ -174,7 +174,7 @@ public class CurriculumService {
                 })
             .collect(Collectors.toList()));
 
-    CurriculumResultDTO resultDTO = save(source, draft.getLessons(), draft.getSchedules());
+    CurriculumResultDTO resultDTO = save(source, draft.getSessions(), draft.getSchedules());
     // delete draft curriculum
     repository.deleteById(draft.getId());
     return resultDTO;
@@ -198,7 +198,7 @@ public class CurriculumService {
     curriculum.setPublished(published);
     onUpdate(curriculum);
     repository.save(curriculum);
-    return save(curriculum, dto.getLessons(), dto.getSchedules());
+    return save(curriculum, dto.getSessions(), dto.getSchedules());
   }
 
   private CurriculumResultDTO save(
@@ -222,7 +222,7 @@ public class CurriculumService {
       curriculum.setProjectId(SecurityUtils.getProjectId());
     }
     repository.save(curriculum);
-    return save(curriculum, dto.getLessons(), dto.getSchedules());
+    return save(curriculum, dto.getSessions(), dto.getSchedules());
   }
 
   private int saveLessons(Curriculum curriculum, List<Lesson> lessons) {
