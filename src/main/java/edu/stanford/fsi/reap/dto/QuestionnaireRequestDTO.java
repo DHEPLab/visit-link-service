@@ -13,7 +13,7 @@ public class QuestionnaireRequestDTO {
 
   private Long id;
 
-  @NotNull @Size(max = 20)
+  @NotNull @Size(max = 40)
   private String name;
 
   @Valid

@@ -23,10 +23,10 @@ public class CurriculumDTO {
 
   private Long id;
 
-  @NotNull @Size(max = 20)
+  @NotNull @Size(max = 100)
   private String name;
 
-  @NotNull @Size(max = 200)
+  @NotNull @Size(max = 1000)
   private String description;
 
   @NotEmpty @Valid private List<Lesson> lessons;
