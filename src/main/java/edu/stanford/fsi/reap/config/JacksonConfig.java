@@ -2,7 +2,6 @@ package edu.stanford.fsi.reap.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import edu.stanford.fsi.reap.converter.LocalDateTimeDeserializer;
 import edu.stanford.fsi.reap.converter.LocalDateTimeSerializer;
 import java.time.LocalDateTime;
 import org.springframework.context.annotation.Bean;
@@ -17,7 +16,6 @@ public class JacksonConfig {
     SimpleModule module = new SimpleModule();
 
     module.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer());
-    module.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer());
 
     mapper.registerModule(module);
     return mapper;
