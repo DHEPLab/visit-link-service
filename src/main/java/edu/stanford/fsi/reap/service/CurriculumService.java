@@ -303,7 +303,7 @@ public class CurriculumService {
         .name(curriculum.getName())
         .description(curriculum.getDescription())
         .lastPublishedAt(curriculum.getLastModifiedAt())
-        .lessons(lessons)
+        .sessions(lessons)
         .schedules(schedules)
         .branch(curriculum.getBranch())
         .published(curriculum.isPublished())

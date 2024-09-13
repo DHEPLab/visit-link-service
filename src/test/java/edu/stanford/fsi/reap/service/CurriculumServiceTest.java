@@ -182,9 +182,9 @@ class CurriculumServiceTest {
     assertEquals(DESCRIPTION, result.getDescription());
     assertNull(result.getSourceId());
 
-    assertEquals(1, result.getLessons().size());
-    assertEquals(NEW_LESSON_ID, result.getLessons().get(0).getId());
-    assertEquals(NEW_CURRICULUM_ID, result.getLessons().get(0).getCurriculum().getId());
+    assertEquals(1, result.getSessions().size());
+    assertEquals(NEW_LESSON_ID, result.getSessions().get(0).getId());
+    assertEquals(NEW_CURRICULUM_ID, result.getSessions().get(0).getCurriculum().getId());
 
     assertEquals(1, result.getSchedules().size());
     assertEquals(NEW_SCHEDULE_ID, result.getSchedules().get(0).getId());
@@ -241,9 +241,9 @@ class CurriculumServiceTest {
     assertEquals(DESCRIPTION, result.getDescription());
     assertNull(result.getSourceId());
 
-    assertEquals(2, result.getLessons().size());
-    assertEquals(NEW_LESSON_ID, result.getLessons().get(0).getId());
-    assertEquals(NEW_CURRICULUM_ID, result.getLessons().get(0).getCurriculum().getId());
+    assertEquals(2, result.getSessions().size());
+    assertEquals(NEW_LESSON_ID, result.getSessions().get(0).getId());
+    assertEquals(NEW_CURRICULUM_ID, result.getSessions().get(0).getCurriculum().getId());
 
     assertEquals(1, result.getSchedules().size());
     assertEquals(NEW_SCHEDULE_ID, result.getSchedules().get(0).getId());
@@ -298,8 +298,8 @@ class CurriculumServiceTest {
     assertEquals(NEW_CURRICULUM_ID, result.getId());
     assertEquals(CurriculumBranch.DRAFT, result.getBranch());
     assertEquals(MASTER_BRANCH_PUBLISHED_CURRICULUM_ID, result.getSourceId());
-    assertEquals(NEW_LESSON_ID, result.getLessons().get(0).getId());
-    assertEquals(2L, result.getLessons().get(0).getSource().getId());
+    assertEquals(NEW_LESSON_ID, result.getSessions().get(0).getId());
+    assertEquals(2L, result.getSessions().get(0).getSource().getId());
     assertEquals(NEW_SCHEDULE_ID, result.getSchedules().get(0).getId());
     assertFalse(result.isPublished());
   }
@@ -327,8 +327,8 @@ class CurriculumServiceTest {
     assertEquals(CurriculumBranch.MASTER, result.getBranch());
     assertTrue(result.isPublished());
 
-    assertEquals(22L, result.getLessons().get(0).getId());
-    assertNull(result.getLessons().get(0).getSource());
+    assertEquals(22L, result.getSessions().get(0).getId());
+    assertNull(result.getSessions().get(0).getSource());
 
     assertEquals(33L, result.getSchedules().get(0).getId());
     assertNull(result.getSchedules().get(0).getSource());

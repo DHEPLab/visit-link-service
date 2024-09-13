@@ -30,7 +30,8 @@ public class CurriculumResultDTO {
 
   private CurriculumStatus status;
 
-  private List<Lesson> lessons;
+  // TODO rename all lessons to sessions
+  private List<Lesson> sessions;
 
   private List<LessonSchedule> schedules;
 
