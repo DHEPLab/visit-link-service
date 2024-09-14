@@ -17,7 +17,6 @@ spring:
     multipart:
       max-file-size: -1
       max-request-size: -1
-  jackson.time-zone: GMT+08:00
   flyway:
     clean-disabled: true
 
