@@ -10,6 +10,7 @@ import edu.stanford.fsi.reap.repository.LessonRepository;
 import edu.stanford.fsi.reap.repository.ModuleRepository;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.ModuleService;
+import edu.stanford.fsi.reap.utils.ZonedDateTimeUtil;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
 import java.time.ZoneId;
 import java.util.Optional;
@@ -134,7 +135,8 @@ public class ModuleResource {
                           builder.header("x-draft-id", String.valueOf(draft.getId()));
                           builder.header(
                               "x-draft-date",
-                              draft.getLastModifiedAt().atZone(ZoneId.systemDefault()).toString());
+                              ZonedDateTimeUtil.toResponseString(
+                                  draft.getLastModifiedAt().atZone(ZoneId.systemDefault())));
                         });
               }
               return builder.body(module);

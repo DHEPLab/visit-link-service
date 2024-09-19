@@ -10,6 +10,7 @@ import edu.stanford.fsi.reap.repository.CurriculumRepository;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.BabyService;
 import edu.stanford.fsi.reap.service.CurriculumService;
+import edu.stanford.fsi.reap.utils.ZonedDateTimeUtil;
 import java.time.ZoneId;
 import javax.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -75,7 +76,8 @@ public class CurriculumResource {
                           builder.header("x-draft-id", String.valueOf(draft.getId()));
                           builder.header(
                               "x-draft-date",
-                              draft.getLastModifiedAt().atZone(ZoneId.systemDefault()).toString());
+                              ZonedDateTimeUtil.toResponseString(
+                                  draft.getLastModifiedAt().atZone(ZoneId.systemDefault())));
                         });
               }
               return builder.body(curriculum);
