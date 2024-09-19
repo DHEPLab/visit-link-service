@@ -58,8 +58,9 @@ public class ReportResource {
 
   @GetMapping("/chwReport")
   public ResponseEntity<byte[]> chwReport(
-      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
-    byte[] ret = communityHouseWorkerService.chwReport(lang);
+      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang,
+      @RequestHeader(value = "X-Timezone", defaultValue = "Etc/UTC") String timezone) {
+    byte[] ret = communityHouseWorkerService.chwReport(lang, timezone);
     return ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_OCTET_STREAM)
         .header(

@@ -21,12 +21,12 @@ public class CommunityHouseWorkerService {
   }
 
   /** 导出报表 CHW */
-  public byte[] chwReport(String lang) {
+  public byte[] chwReport(String lang, String timezone) {
     Long projectId = SecurityUtils.getProjectId();
     List<UnfilteredUser> chwList =
         unfilteredUserRepository.findByRoleOrderByCreatedAtDesc(AuthoritiesConstants.CHW).stream()
             .filter(target -> target.getProjectId().equals(projectId))
             .collect(Collectors.toList());
-    return excelService.generateChwExcel(chwList, lang);
+    return excelService.generateChwExcel(chwList, lang, timezone);
   }
 }

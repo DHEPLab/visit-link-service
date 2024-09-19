@@ -468,18 +468,22 @@ public class ExcelService {
    * CHW
    *
    * @param chwList
+   * @param timezone
    */
-  public byte[] generateChwExcel(List<UnfilteredUser> chwList, String lang) {
-    return getChwReport(chwList, this::mapByteArray, lang);
+  public byte[] generateChwExcel(List<UnfilteredUser> chwList, String lang, String timezone) {
+    return getChwReport(chwList, this::mapByteArray, lang, timezone);
   }
 
   private byte[] getChwReport(
-      List<UnfilteredUser> chwList, Function<Workbook, byte[]> saveFileOrOther, String lang) {
+      List<UnfilteredUser> chwList,
+      Function<Workbook, byte[]> saveFileOrOther,
+      String lang,
+      String timezone) {
     try (InputStream inputStream =
             getTemplateResourceIO("static/excel/Healthy-Future-Report-CHW.xlsx");
         Workbook workBook = new XSSFWorkbook(inputStream)) {
 
-      addContentRowByCommunityHouseWorkers(workBook, chwList, lang);
+      addContentRowByCommunityHouseWorkers(workBook, chwList, lang, timezone);
 
       return saveFileOrOther.apply(workBook);
     } catch (Exception e) {
@@ -494,7 +498,7 @@ public class ExcelService {
   }
 
   private void addContentRowByCommunityHouseWorkers(
-      Workbook workbook, List<UnfilteredUser> chwList, String lang) {
+      Workbook workbook, List<UnfilteredUser> chwList, String lang, String timezone) {
     Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
 
     Function<UnfilteredUser, String> getStatusString =
@@ -533,7 +537,9 @@ public class ExcelService {
       }
 
       // CHW created date
-      row.createCell(column++).setCellValue(user.getCreatedAt().toString());
+      row.createCell(column++)
+          .setCellValue(
+              ZonedDateTimeUtil.toResponseString(user.getCreatedAt().atZone(ZoneId.of(timezone))));
       // CHW created by who
       row.createCell(column).setCellValue(user.getCreatedBy());
     }
