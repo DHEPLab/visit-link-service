@@ -11,12 +11,14 @@ import edu.stanford.fsi.reap.pojo.VisitReportObjData;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.utils.RegexConstant;
+import edu.stanford.fsi.reap.utils.ZonedDateTimeUtil;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -70,19 +72,21 @@ public class ExcelService {
   }
 
   /** Generate Visit Report */
-  public byte[] generateVisitReportExcel(List<VisitReportObjData> visitReportObjData, String lang) {
-    return getVisitReport(visitReportObjData, this::mapByteArray, lang);
+  public byte[] generateVisitReportExcel(
+      List<VisitReportObjData> visitReportObjData, String lang, String timezone) {
+    return getVisitReport(visitReportObjData, this::mapByteArray, lang, timezone);
   }
 
   private byte[] getVisitReport(
       List<VisitReportObjData> visitReportObjData,
       Function<Workbook, byte[]> saveFileOrOther,
-      String lang) {
+      String lang,
+      String timezone) {
     try (InputStream inputStream =
             getTemplateResourceIO("static/excel/Healthy-Future-Report.xlsx");
         Workbook workBook = new XSSFWorkbook(inputStream)) {
 
-      addContentRow(workBook, visitReportObjData, lang);
+      addContentRow(workBook, visitReportObjData, lang, timezone);
 
       return saveFileOrOther.apply(workBook);
     } catch (Exception e) {
@@ -91,7 +95,8 @@ public class ExcelService {
     }
   }
 
-  private void addContentRow(Workbook workbook, List<VisitReportObjData> allData, String lang) {
+  private void addContentRow(
+      Workbook workbook, List<VisitReportObjData> allData, String lang, String timezone) {
     Sheet sheet = workbook.getSheetAt(0);
     Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
 
@@ -101,10 +106,16 @@ public class ExcelService {
       int cellInt = 0;
 
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getId());
-      row.createCell(cellInt++).setCellValue(itemRow.getVisit().getVisitTime().toString());
+      row.createCell(cellInt++)
+          .setCellValue(
+              ZonedDateTimeUtil.toResponseString(
+                  itemRow.getVisit().getVisitTime().atZone(ZoneId.of(timezone))));
 
       if (itemRow.getVisit().getStartTime() != null) {
-        row.createCell(cellInt++).setCellValue(itemRow.getVisit().getStartTime().toString());
+        row.createCell(cellInt++)
+            .setCellValue(
+                ZonedDateTimeUtil.toResponseString(
+                    itemRow.getVisit().getStartTime().atZone(ZoneId.of(timezone))));
       } else {
         row.createCell(cellInt++).setCellValue("");
       }
@@ -113,7 +124,8 @@ public class ExcelService {
           .setCellValue(
               itemRow.getVisit().getCompleteTime() == null
                   ? ""
-                  : itemRow.getVisit().getCompleteTime().toString());
+                  : ZonedDateTimeUtil.toResponseString(
+                      itemRow.getVisit().getCompleteTime().atZone(ZoneId.of(timezone))));
       row.createCell(cellInt++)
           .setCellValue(
               itemRow.getVisit().getStatus() == VisitStatus.UNDONE
@@ -192,14 +204,20 @@ public class ExcelService {
 
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getChw().getId());
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getChw().getChw().getIdentity());
-      row.createCell(cellInt++).setCellValue(itemRow.getVisit().getCreatedAt().toString());
+      row.createCell(cellInt++)
+          .setCellValue(
+              ZonedDateTimeUtil.toResponseString(
+                  itemRow.getVisit().getCreatedAt().atZone(ZoneId.of(timezone))));
       row.createCell(cellInt++)
           .setCellValue(
               userRepository
                   .findOneByUsername(itemRow.getVisit().getCreatedBy())
                   .orElse(User.builder().build())
                   .getRealName());
-      row.createCell(cellInt++).setCellValue(itemRow.getVisit().getLastModifiedAt().toString());
+      row.createCell(cellInt++)
+          .setCellValue(
+              ZonedDateTimeUtil.toResponseString(
+                  itemRow.getVisit().getLastModifiedAt().atZone(ZoneId.of(timezone))));
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getLastModifiedBy());
 
       CommunityHouseWorker chw = itemRow.getVisit().getChw().getChw();
@@ -224,7 +242,14 @@ public class ExcelService {
         }
 
         row.createCell(cellInt++)
-            .setCellValue(itemRow.getVisit().getChw().getChw().getCreatedAt().toString());
+            .setCellValue(
+                ZonedDateTimeUtil.toResponseString(
+                    itemRow
+                        .getVisit()
+                        .getChw()
+                        .getChw()
+                        .getCreatedAt()
+                        .atZone(ZoneId.of(timezone))));
         row.createCell(cellInt++).setCellValue(itemRow.getVisit().getChw().getChw().getCreatedBy());
       } else {
         row.createCell(cellInt++).setCellValue("");
@@ -277,7 +302,10 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getBaby().getApproved());
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getBaby().getCloseAccountReason());
       row.createCell(cellInt++)
-          .setCellValue(itemRow.getVisit().getBaby().getCreatedAt().toString());
+          .setCellValue(
+              ZonedDateTimeUtil.toResponseString(
+                  itemRow.getVisit().getBaby().getCreatedAt().atZone(ZoneId.of(timezone))));
+      ;
       row.createCell(cellInt++)
           .setCellValue(
               userRepository

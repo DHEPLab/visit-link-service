@@ -44,7 +44,7 @@ public class VisitReportService {
   }
 
   /** 导出报表 Visit history */
-  public byte[] report(ReportDTO reportDTO, String lang) {
+  public byte[] report(ReportDTO reportDTO, String lang, String timezone) {
     if (!reportDTO.validDay()) throw new BadRequestAlertException("error.excel.report.invalidDate");
     Long projectId = SecurityUtils.getProjectId();
     List<VisitReportObjData> list =
@@ -65,7 +65,7 @@ public class VisitReportService {
             .collect(Collectors.toList());
     // 遍历取出问卷内容记录，并根据titleNo进行排序
     sort(list);
-    return excelService.generateVisitReportExcel(list, lang);
+    return excelService.generateVisitReportExcel(list, lang, timezone);
   }
 
   private void sort(List<VisitReportObjData> list) {

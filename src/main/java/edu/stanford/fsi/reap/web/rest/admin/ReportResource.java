@@ -34,8 +34,9 @@ public class ReportResource {
   @GetMapping
   public ResponseEntity<byte[]> visitReportExcel(
       @Valid ReportDTO reportDTO,
-      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang) {
-    byte[] ret = visitReportService.report(reportDTO, lang);
+      @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, defaultValue = "en") String lang,
+      @RequestHeader(value = "X-Timezone", defaultValue = "Etc/UTC") String timezone) {
+    byte[] ret = visitReportService.report(reportDTO, lang, timezone);
     return ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_OCTET_STREAM)
         .header(
