@@ -82,7 +82,7 @@ public class BabyService {
   }
 
   /** 导出宝宝列表 */
-  public byte[] babyRosterReport() {
+  public byte[] babyRosterReport(String timezone) {
     Long projectId = SecurityUtils.getProjectId();
     List<Baby> list =
         repository.findByOrderByCreatedAtDesc().stream()
@@ -91,7 +91,7 @@ public class BabyService {
                   return target.getProjectId().equals(projectId);
                 })
             .collect(Collectors.toList());
-    return excelService.generateBabyRoster(list);
+    return excelService.generateBabyRoster(list, timezone);
   }
 
   public void assignChw(Chw chw, Long[] babyIds) {

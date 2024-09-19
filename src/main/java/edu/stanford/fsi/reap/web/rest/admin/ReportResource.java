@@ -46,8 +46,9 @@ public class ReportResource {
   }
 
   @GetMapping("/babyRosterReport")
-  public ResponseEntity<byte[]> babyRosterReport() {
-    byte[] ret = babyService.babyRosterReport();
+  public ResponseEntity<byte[]> babyRosterReport(
+      @RequestHeader(value = "X-Timezone", defaultValue = "Etc/UTC") String timezone) {
+    byte[] ret = babyService.babyRosterReport(timezone);
     return ResponseEntity.ok()
         .contentType(MediaType.APPLICATION_OCTET_STREAM)
         .header(

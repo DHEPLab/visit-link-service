@@ -346,16 +346,17 @@ public class ExcelService {
   }
 
   /** Baby Roster */
-  public byte[] generateBabyRoster(List<Baby> babies) {
-    return getBabyReport(babies, this::mapByteArray);
+  public byte[] generateBabyRoster(List<Baby> babies, String timezone) {
+    return getBabyReport(babies, this::mapByteArray, timezone);
   }
 
-  private byte[] getBabyReport(List<Baby> babies, Function<Workbook, byte[]> saveFileOrOther) {
+  private byte[] getBabyReport(
+      List<Baby> babies, Function<Workbook, byte[]> saveFileOrOther, String timezone) {
     try (InputStream inputStream =
             getTemplateResourceIO("static/excel/Healthy-Future-Report-Baby.xlsx");
         Workbook workBook = new XSSFWorkbook(inputStream)) {
 
-      addContentRowByBaby(workBook, babies);
+      addContentRowByBaby(workBook, babies, timezone);
 
       return saveFileOrOther.apply(workBook);
     } catch (Exception e) {
@@ -364,7 +365,7 @@ public class ExcelService {
     }
   }
 
-  private void addContentRowByBaby(Workbook workbook, List<Baby> allData) {
+  private void addContentRowByBaby(Workbook workbook, List<Baby> allData, String timezone) {
     Sheet sheet = workbook.getSheetAt(0);
     int index = 1;
     for (Baby itemRow : allData) {
@@ -442,7 +443,10 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getRemark());
       row.createCell(cellInt++)
           .setCellValue(itemRow.getEdc() == null ? "" : itemRow.getEdc().toString());
-      row.createCell(cellInt++).setCellValue(itemRow.getCreatedAt().toString());
+      row.createCell(cellInt++)
+          .setCellValue(
+              ZonedDateTimeUtil.toResponseString(
+                  itemRow.getCreatedAt().atZone(ZoneId.of(timezone))));
       row.createCell(cellInt++).setCellValue(itemRow.getCreatedBy());
       row.createCell(cellInt++).setCellValue(itemRow.getStage().toString());
       row.createCell(cellInt++).setCellValue(itemRow.getAssistedFood());
