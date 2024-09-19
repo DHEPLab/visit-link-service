@@ -11,6 +11,7 @@ import edu.stanford.fsi.reap.repository.ModuleRepository;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.ModuleService;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
+import java.time.ZoneId;
 import java.util.Optional;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -131,7 +132,9 @@ public class ModuleResource {
                     .ifPresent(
                         draft -> {
                           builder.header("x-draft-id", String.valueOf(draft.getId()));
-                          builder.header("x-draft-date", draft.getLastModifiedAt().toString());
+                          builder.header(
+                              "x-draft-date",
+                              draft.getLastModifiedAt().atZone(ZoneId.systemDefault()).toString());
                         });
               }
               return builder.body(module);

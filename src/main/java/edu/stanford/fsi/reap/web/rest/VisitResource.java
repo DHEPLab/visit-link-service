@@ -14,6 +14,7 @@ import edu.stanford.fsi.reap.utils.DateRange;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -224,7 +225,9 @@ public class VisitResource {
                     .ifPresent(
                         draft -> {
                           builder.header("x-draft-id", String.valueOf(draft.getId()));
-                          builder.header("x-draft-date", draft.getLastModifiedAt().toString());
+                          builder.header(
+                              "x-draft-date",
+                              draft.getLastModifiedAt().atZone(ZoneId.systemDefault()).toString());
                         });
               }
               return builder.body(qt);

@@ -11,6 +11,7 @@ import edu.stanford.fsi.reap.repository.QuestionnaireRepository;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.QuestionnaireService;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
+import java.time.ZoneId;
 import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -82,7 +83,9 @@ public class QuestionnaireResource {
                     .ifPresent(
                         draft -> {
                           builder.header("x-draft-id", String.valueOf(draft.getId()));
-                          builder.header("x-draft-date", draft.getLastModifiedAt().toString());
+                          builder.header(
+                              "x-draft-date",
+                              draft.getLastModifiedAt().atZone(ZoneId.systemDefault()).toString());
                         });
               }
               return builder.body(qt);
