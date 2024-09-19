@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Stream;
@@ -108,14 +107,14 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getId());
       row.createCell(cellInt++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(
-                  itemRow.getVisit().getVisitTime().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                  itemRow.getVisit().getVisitTime(), timezone));
 
       if (itemRow.getVisit().getStartTime() != null) {
         row.createCell(cellInt++)
             .setCellValue(
-                ZonedDateTimeUtil.toResponseString(
-                    itemRow.getVisit().getStartTime().atZone(ZoneId.of(timezone))));
+                ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                    itemRow.getVisit().getStartTime(), timezone));
       } else {
         row.createCell(cellInt++).setCellValue("");
       }
@@ -124,8 +123,8 @@ public class ExcelService {
           .setCellValue(
               itemRow.getVisit().getCompleteTime() == null
                   ? ""
-                  : ZonedDateTimeUtil.toResponseString(
-                      itemRow.getVisit().getCompleteTime().atZone(ZoneId.of(timezone))));
+                  : ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                      itemRow.getVisit().getCompleteTime(), timezone));
       row.createCell(cellInt++)
           .setCellValue(
               itemRow.getVisit().getStatus() == VisitStatus.UNDONE
@@ -206,8 +205,8 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getChw().getChw().getIdentity());
       row.createCell(cellInt++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(
-                  itemRow.getVisit().getCreatedAt().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                  itemRow.getVisit().getCreatedAt(), timezone));
       row.createCell(cellInt++)
           .setCellValue(
               userRepository
@@ -216,8 +215,8 @@ public class ExcelService {
                   .getRealName());
       row.createCell(cellInt++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(
-                  itemRow.getVisit().getLastModifiedAt().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                  itemRow.getVisit().getLastModifiedAt(), timezone));
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getLastModifiedBy());
 
       CommunityHouseWorker chw = itemRow.getVisit().getChw().getChw();
@@ -243,13 +242,8 @@ public class ExcelService {
 
         row.createCell(cellInt++)
             .setCellValue(
-                ZonedDateTimeUtil.toResponseString(
-                    itemRow
-                        .getVisit()
-                        .getChw()
-                        .getChw()
-                        .getCreatedAt()
-                        .atZone(ZoneId.of(timezone))));
+                ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                    itemRow.getVisit().getChw().getChw().getCreatedAt(), timezone));
         row.createCell(cellInt++).setCellValue(itemRow.getVisit().getChw().getChw().getCreatedBy());
       } else {
         row.createCell(cellInt++).setCellValue("");
@@ -303,8 +297,8 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getBaby().getCloseAccountReason());
       row.createCell(cellInt++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(
-                  itemRow.getVisit().getBaby().getCreatedAt().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                  itemRow.getVisit().getBaby().getCreatedAt(), timezone));
       ;
       row.createCell(cellInt++)
           .setCellValue(
@@ -445,8 +439,7 @@ public class ExcelService {
           .setCellValue(itemRow.getEdc() == null ? "" : itemRow.getEdc().toString());
       row.createCell(cellInt++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(
-                  itemRow.getCreatedAt().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(itemRow.getCreatedAt(), timezone));
       row.createCell(cellInt++).setCellValue(itemRow.getCreatedBy());
       row.createCell(cellInt++).setCellValue(itemRow.getStage().toString());
       row.createCell(cellInt++).setCellValue(itemRow.getAssistedFood());
@@ -543,7 +536,7 @@ public class ExcelService {
       // CHW created date
       row.createCell(column++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(user.getCreatedAt().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(user.getCreatedAt(), timezone));
       // CHW created by who
       row.createCell(column).setCellValue(user.getCreatedBy());
     }
@@ -629,14 +622,12 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getId());
       row.createCell(cellInt++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(
-                  itemRow.getVisitTime().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(itemRow.getVisitTime(), timezone));
 
       if (itemRow.getStartTime() != null) {
         row.createCell(cellInt++)
             .setCellValue(
-                ZonedDateTimeUtil.toResponseString(
-                    itemRow.getStartTime().atZone(ZoneId.of(timezone))));
+                ZonedDateTimeUtil.getLocalDatetimeWithTimezone(itemRow.getStartTime(), timezone));
       } else {
         row.createCell(cellInt++).setCellValue("");
       }
@@ -645,8 +636,8 @@ public class ExcelService {
           .setCellValue(
               itemRow.getCompleteTime() == null
                   ? ""
-                  : ZonedDateTimeUtil.toResponseString(
-                      itemRow.getCompleteTime().atZone(ZoneId.of(timezone))));
+                  : ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                      itemRow.getCompleteTime(), timezone));
       row.createCell(cellInt++)
           .setCellValue(
               itemRow.getStatus() == VisitStatus.UNDONE
@@ -711,8 +702,7 @@ public class ExcelService {
       }
       row.createCell(cellInt++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(
-                  itemRow.getCreatedAt().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(itemRow.getCreatedAt(), timezone));
       row.createCell(cellInt++)
           .setCellValue(
               userRepository
@@ -721,8 +711,8 @@ public class ExcelService {
                   .getRealName());
       row.createCell(cellInt++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(
-                  itemRow.getLastModifiedAt().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                  itemRow.getLastModifiedAt(), timezone));
       row.createCell(cellInt++).setCellValue(itemRow.getLastModifiedBy());
 
       if (itemRow.getChw() != null) {
@@ -748,8 +738,8 @@ public class ExcelService {
 
         row.createCell(cellInt++)
             .setCellValue(
-                ZonedDateTimeUtil.toResponseString(
-                    itemRow.getChw().getChw().getCreatedAt().atZone(ZoneId.of(timezone))));
+                ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                    itemRow.getChw().getChw().getCreatedAt(), timezone));
         row.createCell(cellInt++).setCellValue(itemRow.getChw().getChw().getCreatedBy());
       } else {
         row.createCell(cellInt++).setCellValue("");
@@ -798,8 +788,8 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getBaby().getCloseAccountReason());
       row.createCell(cellInt++)
           .setCellValue(
-              ZonedDateTimeUtil.toResponseString(
-                  itemRow.getBaby().getCreatedAt().atZone(ZoneId.of(timezone))));
+              ZonedDateTimeUtil.getLocalDatetimeWithTimezone(
+                  itemRow.getBaby().getCreatedAt(), timezone));
       row.createCell(cellInt++)
           .setCellValue(
               userRepository
