@@ -148,10 +148,10 @@ public class VisitService {
         });
   }
 
-  public byte[] reportNotStartVisit(String lang) {
+  public byte[] reportNotStartVisit(String lang, String timezone) {
     List<VisitStatus> status = Arrays.asList(VisitStatus.NOT_STARTED, VisitStatus.UNDONE);
     List<ExportVisit> visits = exportVisitRepository.findByStatusInOrderByCreatedAtDesc(status);
-    return excelService.writeNotStartExcel(visits, lang);
+    return excelService.writeNotStartExcel(visits, lang, timezone);
   }
 
   public void updateVisitStatus(Visit visit, UpdateVisitStatusWrapper wrapper) {
