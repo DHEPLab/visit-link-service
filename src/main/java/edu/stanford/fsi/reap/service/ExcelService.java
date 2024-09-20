@@ -144,7 +144,7 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getLesson().getDescription());
       row.createCell(cellInt++)
           .setCellValue(
-              itemRow.getVisit().getLesson().getStage() == BabyStage.BIRTH ? "Born" : "Pregnant");
+              itemRow.getVisit().getLesson().getStage() == BabyStage.BORN ? "Born" : "Pregnant");
       row.createCell(cellInt++)
           .setCellValue(itemRow.getVisit().getLesson().getEndOfApplicableDays());
       row.createCell(cellInt++)
@@ -261,7 +261,7 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getVisit().getBaby().getArea());
       row.createCell(cellInt++)
           .setCellValue(
-              itemRow.getVisit().getBaby().getStage() == BabyStage.BIRTH ? "Born" : "Pregnant");
+              itemRow.getVisit().getBaby().getStage() == BabyStage.BORN ? "Born" : "Pregnant");
 
       if (itemRow.getVisit().getBaby().getEdc() != null) {
         row.createCell(cellInt++).setCellValue(itemRow.getVisit().getBaby().getEdc().toString());
@@ -378,7 +378,7 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getCloseAccountReason());
 
       BabyStage babyStage = itemRow.getStage();
-      if (babyStage.equals(BabyStage.EDC)) row.createCell(cellInt++).setCellValue("Unborn");
+      if (babyStage.equals(BabyStage.UNBORN)) row.createCell(cellInt++).setCellValue("Unborn");
       else row.createCell(cellInt++).setCellValue("Born");
 
       row.createCell(cellInt++).setCellValue(itemRow.getName());
@@ -653,7 +653,7 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getLesson().getNumber());
       row.createCell(cellInt++).setCellValue(itemRow.getLesson().getDescription());
       row.createCell(cellInt++)
-          .setCellValue(itemRow.getLesson().getStage() == BabyStage.BIRTH ? "Born" : "Pregnant");
+          .setCellValue(itemRow.getLesson().getStage() == BabyStage.BORN ? "Born" : "Pregnant");
       row.createCell(cellInt++).setCellValue(itemRow.getLesson().getEndOfApplicableDays());
       row.createCell(cellInt++).setCellValue(itemRow.getLesson().getStartOfApplicableDays());
 
@@ -756,7 +756,7 @@ public class ExcelService {
       row.createCell(cellInt++).setCellValue(itemRow.getBaby().getRemark());
       row.createCell(cellInt++).setCellValue(itemRow.getBaby().getArea());
       row.createCell(cellInt++)
-          .setCellValue(itemRow.getBaby().getStage() == BabyStage.BIRTH ? "Born" : "Pregnant");
+          .setCellValue(itemRow.getBaby().getStage() == BabyStage.BORN ? "Born" : "Pregnant");
 
       if (itemRow.getBaby().getEdc() != null) {
         row.createCell(cellInt++).setCellValue(itemRow.getBaby().getEdc().toString());

@@ -21,7 +21,7 @@ public class BabyAge {
   public static final int DAY_OF_FIRST_MONTH_FOR_STAGE_EDC = 10;
 
   public static int dayOfOffset(BabyStage stage) {
-    if (!BabyStage.EDC.equals(stage)) {
+    if (!BabyStage.UNBORN.equals(stage)) {
       return 0;
     }
     return DAY_OF_MONTH - DAY_OF_FIRST_MONTH_FOR_STAGE_EDC;
@@ -89,21 +89,21 @@ public class BabyAge {
   }
 
   public static int months(Baby baby, LocalDate baseline) {
-    if (BabyStage.EDC.equals(baby.getStage())) {
+    if (BabyStage.UNBORN.equals(baby.getStage())) {
       return monthsOfPregnancy(baseline, baby.getEdc());
     }
     return monthsOfBirth(baseline, baby.getBirthday());
   }
 
   public static int days(Baby baby, LocalDate baseline) {
-    if (BabyStage.EDC.equals(baby.getStage())) {
+    if (BabyStage.UNBORN.equals(baby.getStage())) {
       return daysOfPregnancy(baseline, baby.getEdc());
     }
     return daysOfBirth(baseline, baby.getBirthday());
   }
 
   public static boolean pastEdc(BabyStage stage, LocalDate edc, LocalDate now) {
-    if (BabyStage.BIRTH.equals(stage)) return false;
+    if (BabyStage.BORN.equals(stage)) return false;
     return edc.isBefore(now);
   }
 }

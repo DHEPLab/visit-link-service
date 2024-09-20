@@ -99,7 +99,7 @@ class BabyResourceTest {
         Baby.builder()
             .name("test")
             .gender(Gender.MALE)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .area("test")
             .location("test")
             .build();
@@ -131,7 +131,7 @@ class BabyResourceTest {
             .id(1L)
             .name("test1")
             .gender(Gender.MALE)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .area("上海")
             .location("静安")
             .build();
@@ -161,7 +161,7 @@ class BabyResourceTest {
             .id(1L)
             .name("test1")
             .gender(Gender.MALE)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .area("上海")
             .location("静安")
             .build();
@@ -184,7 +184,7 @@ class BabyResourceTest {
     baby.setId(1L);
     baby.setName("test1");
     baby.setGender(Gender.MALE);
-    baby.setStage(BabyStage.BIRTH);
+    baby.setStage(BabyStage.BORN);
     baby.setArea("上海");
     baby.setLocation("静安");
     baby.setEdc(LocalDate.MAX);
@@ -252,7 +252,7 @@ class BabyResourceTest {
             .id(1L)
             .name("test1")
             .gender(Gender.MALE)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .area("上海")
             .location("静安")
             .edc(LocalDate.MAX)
@@ -297,7 +297,7 @@ class BabyResourceTest {
             .id(1L)
             .name("test1")
             .gender(Gender.MALE)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .area("上海")
             .location("静安")
             .edc(LocalDate.MAX)
@@ -325,7 +325,7 @@ class BabyResourceTest {
             .id(1L)
             .name("test1")
             .gender(Gender.MALE)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .area("上海")
             .location("静安")
             .edc(LocalDate.MAX)
@@ -353,7 +353,7 @@ class BabyResourceTest {
             .id(1L)
             .name("test1")
             .gender(Gender.MALE)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .area("上海")
             .location("静安")
             .edc(LocalDate.MAX)

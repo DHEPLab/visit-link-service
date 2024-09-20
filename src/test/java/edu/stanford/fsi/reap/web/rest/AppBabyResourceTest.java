@@ -250,7 +250,7 @@ class AppBabyResourceTest {
     appCreateBaby.setCarers(new ArrayList<>());
     Baby returnBaby = new Baby();
     returnBaby.setName("returnBaby");
-    returnBaby.setStage(BabyStage.BIRTH);
+    returnBaby.setStage(BabyStage.BORN);
     returnBaby.setBirthday(
         LocalDate.parse("2020-02-02", DateTimeFormatter.ofPattern("yyyy-MM-dd")));
 
@@ -363,7 +363,7 @@ class AppBabyResourceTest {
     BabyWrapper wrapper = new BabyWrapper();
     wrapper.setName("wrapper");
     wrapper.setGender(Gender.MALE);
-    wrapper.setStage(BabyStage.BIRTH);
+    wrapper.setStage(BabyStage.BORN);
 
     mockMvc
         .perform(

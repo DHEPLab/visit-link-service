@@ -18,7 +18,7 @@ class DateRangeTest {
   public void should_return_edc_stage_visit_date_range() {
     LessonSchedule schedule =
         LessonSchedule.builder()
-            .stage(BabyStage.EDC)
+            .stage(BabyStage.UNBORN)
             .startOfApplicableDays(270)
             .endOfApplicableDays(280)
             .build();
@@ -39,7 +39,7 @@ class DateRangeTest {
   public void should_return_visit_date_range() {
     LessonSchedule schedule =
         LessonSchedule.builder()
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .startOfApplicableDays(90)
             .endOfApplicableDays(150)
             .build();

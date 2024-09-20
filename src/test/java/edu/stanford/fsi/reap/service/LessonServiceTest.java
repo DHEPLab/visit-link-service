@@ -33,13 +33,13 @@ class LessonServiceTest {
     VisitRepository visitRepository = mock(VisitRepository.class);
     QuestionnaireRepository questionnaireRepository = mock(QuestionnaireRepository.class);
 
-    when(lessonScheduleRepository.findByCurriculumIdAndStage(1L, BabyStage.EDC))
+    when(lessonScheduleRepository.findByCurriculumIdAndStage(1L, BabyStage.UNBORN))
         .thenReturn(mockEDCStageSchedules());
-    when(lessonRepository.findByCurriculumIdAndStage(1L, BabyStage.EDC))
+    when(lessonRepository.findByCurriculumIdAndStage(1L, BabyStage.UNBORN))
         .thenReturn(mockEDCStageLessons());
-    when(lessonScheduleRepository.findByCurriculumIdAndStage(1L, BabyStage.BIRTH))
+    when(lessonScheduleRepository.findByCurriculumIdAndStage(1L, BabyStage.BORN))
         .thenReturn(mockBirthStageSchedules());
-    when(lessonRepository.findByCurriculumIdAndStage(1L, BabyStage.BIRTH))
+    when(lessonRepository.findByCurriculumIdAndStage(1L, BabyStage.BORN))
         .thenReturn(mockBirthStageLessons());
     when(visitRepository.findByLessonIdAndBabyId(11L, 1L))
         .thenReturn(Collections.singletonList(Visit.builder().status(VisitStatus.DONE).build()));
@@ -113,7 +113,7 @@ class LessonServiceTest {
   private static List<LessonSchedule> mockEDCStageSchedules() {
     return Collections.singletonList(
         LessonSchedule.builder()
-            .stage(BabyStage.EDC)
+            .stage(BabyStage.UNBORN)
             .startOfApplicableDays(61)
             .endOfApplicableDays(150)
             .lessons(Arrays.asList(new Domain("1", "E1"), new Domain("2", "E2")))
@@ -123,7 +123,7 @@ class LessonServiceTest {
   private static List<LessonSchedule> mockBirthStageSchedules() {
     return Collections.singletonList(
         LessonSchedule.builder()
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .startOfApplicableDays(60)
             .endOfApplicableDays(90)
             .lessons(Arrays.asList(new Domain("11", "B1"), new Domain("22", "B2")))
@@ -140,7 +140,7 @@ class LessonServiceTest {
   public void should_match_lesson_for_edc_stage_baby() {
     Baby baby =
         Baby.builder()
-            .stage(BabyStage.EDC)
+            .stage(BabyStage.UNBORN)
             .edc(LocalDate.of(2020, 10, 1))
             .curriculum(Curriculum.builder().id(1L).build())
             .build();
@@ -167,7 +167,7 @@ class LessonServiceTest {
   public void should_match_lesson_for_birth_stage_baby() {
     Baby baby =
         Baby.builder()
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .birthday(LocalDate.of(2020, 3, 1))
             .curriculum(Curriculum.builder().id(1L).build())
             .build();
@@ -186,7 +186,7 @@ class LessonServiceTest {
     Baby baby =
         Baby.builder()
             .id(1L)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .birthday(LocalDate.of(2020, 3, 1))
             .curriculum(Curriculum.builder().id(1L).build())
             .build();
@@ -201,7 +201,7 @@ class LessonServiceTest {
     Baby baby =
         Baby.builder()
             .id(2L)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .birthday(LocalDate.of(2020, 3, 1))
             .curriculum(Curriculum.builder().id(1L).build())
             .build();
@@ -215,7 +215,7 @@ class LessonServiceTest {
   public void should_return_visit_date_range() {
     Baby baby =
         Baby.builder()
-            .stage(BabyStage.EDC)
+            .stage(BabyStage.UNBORN)
             .edc(LocalDate.of(2020, 11, 1))
             .curriculum(Curriculum.builder().id(1L).build())
             .build();

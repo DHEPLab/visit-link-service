@@ -74,7 +74,7 @@ class CarerResourceTest {
             .id(1L)
             .name("test1")
             .gender(Gender.MALE)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .area("上海")
             .location("静安")
             .build();
@@ -118,7 +118,7 @@ class CarerResourceTest {
             .id(1L)
             .name("test1")
             .gender(Gender.MALE)
-            .stage(BabyStage.BIRTH)
+            .stage(BabyStage.BORN)
             .area("上海")
             .location("静安")
             .build();
