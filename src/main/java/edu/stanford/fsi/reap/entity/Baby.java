@@ -51,7 +51,7 @@ public class Baby extends AbstractAuditingEntity {
 
   /** required on baby stage is birth */
   @Enumerated(EnumType.STRING)
-  @Column(length = 20)
+  @Column(length = 50)
   private FeedingPattern feedingPattern;
 
   @Builder.Default
