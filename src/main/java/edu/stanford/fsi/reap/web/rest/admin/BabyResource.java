@@ -70,7 +70,8 @@ public class BabyResource {
   public ResponseEntity<Baby> createBaby(@Valid @RequestBody BabyDTO dto) {
     Baby baby = modelMapper.map(dto, Baby.class);
     keepIdentityUnique(baby);
-    handleBabyLocation(baby);
+    // TODO: temporary disable the location check
+    //    handleBabyLocation(baby);
     baby.setProjectId(SecurityUtils.getProjectId());
     return ResponseEntity.ok(repository.save(baby));
   }
@@ -132,7 +133,8 @@ public class BabyResource {
   public ResponseEntity<Baby> updateBaby(@PathVariable Long id, @Valid @RequestBody BabyDTO dto) {
     Baby baby = modelMapper.map(dto, Baby.class);
     keepIdentityUnique(baby);
-    handleBabyLocation(baby);
+    // TODO: temporary disable the location check
+    // handleBabyLocation(baby);
 
     Optional<Baby> oldBaby = repository.findById(dto.getId());
     baby.setCreatedAt(oldBaby.get().getCreatedAt());
