@@ -24,7 +24,7 @@ public class Tag implements Serializable {
   private Long id;
 
   @NotBlank
-  @Size(max = 50)
+  @Size(max = 100)
   private String name;
 
   public Tag(String tagName) {

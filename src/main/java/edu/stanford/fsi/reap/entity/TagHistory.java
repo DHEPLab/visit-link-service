@@ -27,7 +27,7 @@ public class TagHistory implements Serializable {
   private Long id;
 
   @NotBlank
-  @Size(max = 50)
+  @Size(max = 100)
   private String name;
 
   private Long historyId;
