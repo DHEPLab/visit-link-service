@@ -105,13 +105,15 @@ class BabyAgeTest {
 
   @Test
   public void should_past_edc() {
-    assertTrue(BabyAge.pastEdc(BabyStage.UNBORN, LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 2)));
+    assertTrue(
+        BabyAge.pastEdc(BabyStage.UNBORN, LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 2)));
   }
 
   @Test
   public void should_not_past_edc() {
     assertFalse(
         BabyAge.pastEdc(BabyStage.BORN, LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 2)));
-    assertFalse(BabyAge.pastEdc(BabyStage.UNBORN, LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1)));
+    assertFalse(
+        BabyAge.pastEdc(BabyStage.UNBORN, LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1)));
   }
 }

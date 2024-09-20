@@ -6,5 +6,5 @@ package edu.stanford.fsi.reap.entity.enumerations;
 public enum BabyStage {
   // 预产期， 已出生
   UNBORN,
-    BORN
+  BORN
 }
