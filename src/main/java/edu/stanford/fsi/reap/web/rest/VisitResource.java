@@ -83,11 +83,6 @@ public class VisitResource {
       throw new BadRequestAlertException("error.visit.pastDate", mapMsg(dto.getVisitTime()));
     }
 
-    // 创建当天的家访，提交时间不能晚于 21:00
-    if (DateRange.pastTodayDeadline(dto.getVisitTime(), LocalDateTime.now())) {
-      throw new BadRequestAlertException("error.visit.pastDeadline");
-    }
-
     // 宝宝有未完成的家访不能再次创建新家访
     if (repository.findByBabyIdAndStatus(dto.getBabyId(), VisitStatus.NOT_STARTED).isPresent()) {
       throw new BadRequestAlertException("error.visit.alreadyExists");
