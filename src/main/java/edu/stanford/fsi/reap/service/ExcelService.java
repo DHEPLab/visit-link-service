@@ -855,7 +855,7 @@ public class ExcelService {
     }
   }
 
-  public String getTopicCN(ModuleTopic topic, Locale locale) {
+  private String getTopicCN(ModuleTopic topic, Locale locale) {
     switch (topic) {
       case MOTHER_NUTRITION:
         return localSource.getMessage("report.module.motherNutrition", null, locale);
@@ -1052,8 +1052,13 @@ public class ExcelService {
           errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.area", locale));
           continue;
         }
-        if ("zh".equals(lang) && tag.split(",").length > 3) {
+        String[] tags = tag.split(";");
+        if (tags.length > 3) {
           errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.areaInvalid", locale));
+          continue;
+        }
+        if (!Arrays.stream(tags).allMatch(part -> part.length() <= 100)) {
+          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.areaLengthInvalid", locale));
           continue;
         }
         if (StringUtils.isEmpty(phone)) {
