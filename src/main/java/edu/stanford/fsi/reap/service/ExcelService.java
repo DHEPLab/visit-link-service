@@ -955,7 +955,7 @@ public class ExcelService {
       String username = safeGetStringCellValue(row.getCell(4), evaluator);
       String password = safeGetStringCellValue(row.getCell(5), evaluator);
 
-      String[] split = tag.split(",");
+      String[] split = tag.split(";");
       String encryptedPassword = passwordEncoder.encode(password);
       List<String> tags = Arrays.asList(split);
 
