@@ -1,13 +1,16 @@
 package edu.stanford.fsi.reap.web.rest.admin;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import edu.stanford.fsi.reap.dto.*;
 import edu.stanford.fsi.reap.entity.*;
 import edu.stanford.fsi.reap.handler.BabyLocationHandler;
+import edu.stanford.fsi.reap.dto.GeoLocation;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.BabyModifyRecordService;
 import edu.stanford.fsi.reap.service.BabyService;
 import edu.stanford.fsi.reap.service.ExcelService;
+import edu.stanford.fsi.reap.service.GoogleMapService;
 import edu.stanford.fsi.reap.utils.BabyAge;
 import edu.stanford.fsi.reap.utils.FieldValueUtil;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
@@ -44,6 +47,8 @@ public class BabyResource {
   private final BabyLocationHandler babyLocationHandler;
   private final BabyModifyRecordRepository babyModifyRecordRepository;
   private final BabyModifyRecordService babyModifyRecordService;
+  private final GoogleMapService googleMapService;
+
 
   public BabyResource(
       CarerRepository carerRepository,
@@ -54,7 +59,8 @@ public class BabyResource {
       ExcelService excelService,
       BabyLocationHandler babyLocationHandler,
       BabyModifyRecordRepository babyModifyRecordRepository,
-      BabyModifyRecordService babyModifyRecordService) {
+      BabyModifyRecordService babyModifyRecordService,
+      GoogleMapService googleMapService) {
     this.carerRepository = carerRepository;
     this.repository = repository;
     this.service = service;
@@ -64,6 +70,7 @@ public class BabyResource {
     this.babyLocationHandler = babyLocationHandler;
     this.babyModifyRecordRepository = babyModifyRecordRepository;
     this.babyModifyRecordService = babyModifyRecordService;
+    this.googleMapService = googleMapService;
   }
 
   @PostMapping
@@ -247,6 +254,27 @@ public class BabyResource {
         .findBySearchAndApprovedTrueOrderBy(search, projectId, pageable)
         .map(this::mapDtoByBaby);
   }
+
+    @GetMapping("/place/autocomplete")
+    public ResponseEntity<JsonNode> getPlaceAutocomplete(@RequestParam String area) {
+        JsonNode result = googleMapService.getGlaceAutocomplete(area);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/place")
+    public ResponseEntity<JsonNode> findPlace(@RequestParam String area) {
+        JsonNode result = googleMapService.findPlace(area);
+
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/place/location")
+    public ResponseEntity<GeoLocation> findPlaceLocation(@RequestParam String area) {
+        GeoLocation result = googleMapService.getPlaceGeoLocation(area);
+
+        return ResponseEntity.ok(result);
+    }
 
   @GetMapping("/unreviewed")
   public Page<AdminBabyDTO> getUnreviewedBabies(String search, Pageable pageable) {
