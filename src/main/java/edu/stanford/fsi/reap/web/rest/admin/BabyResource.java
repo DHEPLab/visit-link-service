@@ -2,9 +2,9 @@ package edu.stanford.fsi.reap.web.rest.admin;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import edu.stanford.fsi.reap.dto.*;
+import edu.stanford.fsi.reap.dto.GeoLocation;
 import edu.stanford.fsi.reap.entity.*;
 import edu.stanford.fsi.reap.handler.BabyLocationHandler;
-import edu.stanford.fsi.reap.dto.GeoLocation;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.BabyModifyRecordService;
@@ -48,7 +48,6 @@ public class BabyResource {
   private final BabyModifyRecordRepository babyModifyRecordRepository;
   private final BabyModifyRecordService babyModifyRecordService;
   private final GoogleMapService googleMapService;
-
 
   public BabyResource(
       CarerRepository carerRepository,
@@ -255,26 +254,26 @@ public class BabyResource {
         .map(this::mapDtoByBaby);
   }
 
-    @GetMapping("/place/autocomplete")
-    public ResponseEntity<JsonNode> getPlaceAutocomplete(@RequestParam String area) {
-        JsonNode result = googleMapService.getGlaceAutocomplete(area);
+  @GetMapping("/place/autocomplete")
+  public ResponseEntity<JsonNode> getPlaceAutocomplete(@RequestParam String area) {
+    JsonNode result = googleMapService.getGlaceAutocomplete(area);
 
-        return ResponseEntity.ok(result);
-    }
+    return ResponseEntity.ok(result);
+  }
 
-    @GetMapping("/place")
-    public ResponseEntity<JsonNode> findPlace(@RequestParam String area) {
-        JsonNode result = googleMapService.findPlace(area);
+  @GetMapping("/place")
+  public ResponseEntity<JsonNode> findPlace(@RequestParam String area) {
+    JsonNode result = googleMapService.findPlace(area);
 
-        return ResponseEntity.ok(result);
-    }
+    return ResponseEntity.ok(result);
+  }
 
-    @GetMapping("/place/location")
-    public ResponseEntity<GeoLocation> findPlaceLocation(@RequestParam String area) {
-        GeoLocation result = googleMapService.getPlaceGeoLocation(area);
+  @GetMapping("/place/location")
+  public ResponseEntity<GeoLocation> findPlaceLocation(@RequestParam String area) {
+    GeoLocation result = googleMapService.getPlaceGeoLocation(area);
 
-        return ResponseEntity.ok(result);
-    }
+    return ResponseEntity.ok(result);
+  }
 
   @GetMapping("/unreviewed")
   public Page<AdminBabyDTO> getUnreviewedBabies(String search, Pageable pageable) {

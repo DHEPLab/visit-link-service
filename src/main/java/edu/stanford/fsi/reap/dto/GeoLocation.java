@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class GeoLocation {
-    private String name;
-    private double lat;
-    private double lng;
+  private String name;
+  private double lat;
+  private double lng;
 }

@@ -18,9 +18,9 @@ import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.BabyModifyRecordService;
 import edu.stanford.fsi.reap.service.BabyService;
 import edu.stanford.fsi.reap.service.ExcelService;
+import edu.stanford.fsi.reap.service.GoogleMapService;
 import java.time.LocalDate;
 import java.util.*;
-import edu.stanford.fsi.reap.service.GoogleMapService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -78,7 +78,8 @@ class BabyResourceTest {
             excelService,
             babyLocationHandler,
             babyModifyRecordRepository,
-            babyModifyRecordService, googleMapService);
+            babyModifyRecordService,
+            googleMapService);
     mockMvc =
         MockMvcBuilders.standaloneSetup(babyResource)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
