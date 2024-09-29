@@ -45,14 +45,6 @@ Default user credentials:
 
 * AWS S3, used for storing course images and videos.
 
-## Deployment Scripts
-
-```
-$ ansible/build.sh
-$ ansible/package.sh
-$ DEPLOY_GROUP=prod ansible/deploy.sh
-```
-
 ### Reference Documentation
 For further reference, please consider the following sections:
 

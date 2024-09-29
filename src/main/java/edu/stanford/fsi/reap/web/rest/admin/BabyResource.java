@@ -203,7 +203,7 @@ public class BabyResource {
                 baby.setIdentity(wrapper.getIdentity());
                 keepIdentityUnique(baby);
               }
-              resetBabyLocation(baby);
+              //              resetBabyLocation(baby);
               service.approve(baby);
             });
   }

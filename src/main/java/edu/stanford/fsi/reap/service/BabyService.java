@@ -162,9 +162,10 @@ public class BabyService {
               if (baby.getAssistedFood() == null) {
                 baby.setAssistedFood(false);
               }
-              if (baby.getLatitude() == null || baby.getLongitude() == null) {
-                babyLocationHandler.confirmBabyLocation(baby.getArea(), baby.getLocation());
-              }
+              //              if (baby.getLatitude() == null || baby.getLongitude() == null) {
+              //                babyLocationHandler.confirmBabyLocation(baby.getArea(),
+              // baby.getLocation());
+              //              }
               if (baby.getProjectId() == null) {
                 baby.setProjectId(SecurityUtils.getProjectId());
               }
