@@ -17,8 +17,10 @@ public class GoogleMapService {
 
   private static final String FIND_PLACE_URL =
       "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?";
+  private static final String GEOCODING_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 
-  // TODO:
+
+    // TODO:
   private static final String API_KEY = "";
 
   private final RestTemplate restTemplate;
@@ -74,4 +76,26 @@ public class GoogleMapService {
       return null;
     }
   }
+    public GeoLocation geocode(String address) {
+        String url = UriComponentsBuilder.fromHttpUrl(GEOCODING_URL)
+                .queryParam("address", address)
+                .queryParam("key", API_KEY)
+                .toUriString();
+
+        try {
+            JsonNode json = restTemplate.getForObject(url, JsonNode.class);
+            if (json != null && "OK".equals(json.path("status").asText())) {
+                JsonNode location = json.path("results").get(0).path("geometry").path("location");
+                double lat = location.path("lat").asDouble();
+                double lng = location.path("lng").asDouble();
+                return new GeoLocation(address, lat, lng);
+            } else {
+                log.error("Error in geocoding API response: {}", json != null ? json.path("status").asText() : "null response");
+                throw new BadRequestAlertException("Geocoding API error for address: " + address);
+            }
+        } catch (Exception e) {
+            log.error("Error fetching geocoding results from Google Maps API: {}", e.getMessage());
+            throw new BadRequestAlertException("Error geocoding address: " + address);
+        }
+    }
 }

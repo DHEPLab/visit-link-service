@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import edu.stanford.fsi.reap.dto.AdminBabyVisitDTO;
 import edu.stanford.fsi.reap.dto.AppBabyDTO;
 import edu.stanford.fsi.reap.dto.AppCreateBabyDTO;
+import edu.stanford.fsi.reap.dto.GeoLocation;
 import edu.stanford.fsi.reap.dto.ImportBabyDto;
 import edu.stanford.fsi.reap.entity.*;
 import edu.stanford.fsi.reap.entity.enumerations.ActionFromApp;
@@ -49,6 +50,7 @@ public class BabyService {
   private final AccountOperationRecordService accountOperationRecordService;
   private final BabyModifyRecordRepository babyModifyRecordRepository;
   private final BabyUpdateInfoRepository babyUpdateInfoRepository;
+  private final GoogleMapService googleMapService;
 
   public BabyService(
       BabyRepository repository,
@@ -64,7 +66,8 @@ public class BabyService {
       AccountOperationRecordService accountOperationRecordService,
       BabyHistoryRepository historyRepository,
       BabyModifyRecordRepository babyModifyRecordRepository,
-      BabyUpdateInfoRepository babyUpdateInfoRepository) {
+      BabyUpdateInfoRepository babyUpdateInfoRepository,
+      GoogleMapService googleMapService) {
     this.repository = repository;
     this.carerRepository = carerRepository;
     this.userRepository = userRepository;
@@ -79,6 +82,7 @@ public class BabyService {
     this.historyRepository = historyRepository;
     this.babyModifyRecordRepository = babyModifyRecordRepository;
     this.babyUpdateInfoRepository = babyUpdateInfoRepository;
+    this.googleMapService = googleMapService;
   }
 
   /** 导出宝宝列表 */
@@ -162,10 +166,17 @@ public class BabyService {
               if (baby.getAssistedFood() == null) {
                 baby.setAssistedFood(false);
               }
-              //              if (baby.getLatitude() == null || baby.getLongitude() == null) {
-              //                babyLocationHandler.confirmBabyLocation(baby.getArea(),
-              // baby.getLocation());
-              //              }
+                if (baby.getLatitude() == null || baby.getLongitude() == null) {
+                    String address = baby.getArea() + " " + baby.getLocation();
+                    GeoLocation geoLocation = googleMapService.geocode(address);
+                    if (geoLocation != null) {
+                        baby.setLatitude(geoLocation.getLat());
+                        baby.setLongitude(geoLocation.getLng());
+                    } else {
+                        log.warn("Could not geocode address: {}", address);
+                        throw new BadRequestAlertException("Could not geocode address for baby " + baby.getName());
+                    }
+                }
               if (baby.getProjectId() == null) {
                 baby.setProjectId(SecurityUtils.getProjectId());
               }
