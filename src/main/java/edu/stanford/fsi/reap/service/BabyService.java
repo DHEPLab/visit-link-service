@@ -169,14 +169,9 @@ public class BabyService {
               if (baby.getLatitude() == null || baby.getLongitude() == null) {
                 String address = baby.getArea() + " " + baby.getLocation();
                 GeoLocation geoLocation = googleMapService.geocode(address);
-                if (geoLocation != null) {
-                  baby.setLatitude(geoLocation.getLat());
-                  baby.setLongitude(geoLocation.getLng());
-                } else {
-                  log.warn("Could not geocode address: {}", address);
-                  throw new BadRequestAlertException(
-                      "Could not geocode address for baby " + baby.getName());
-                }
+
+                baby.setLatitude(geoLocation.getLat());
+                baby.setLongitude(geoLocation.getLng());
               }
               if (baby.getProjectId() == null) {
                 baby.setProjectId(SecurityUtils.getProjectId());
