@@ -33,3 +33,6 @@ application:
 
   cron:
     visit-expired: "0 59 23 * * ?"
+
+google_map:
+  key: ${GOOGLE_MAP_API_KEY}

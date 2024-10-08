@@ -23,7 +23,6 @@ public class GoogleMapService {
   private static final String FIND_PLACE_URL_V1 =
       "https://places.googleapis.com/v1/places/{placeId}";
 
-  // TODO:
   @Value("${google_map.key}")
   private  String API_KEY ;
 
