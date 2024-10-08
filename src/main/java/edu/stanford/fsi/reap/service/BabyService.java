@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import edu.stanford.fsi.reap.dto.AdminBabyVisitDTO;
 import edu.stanford.fsi.reap.dto.AppBabyDTO;
 import edu.stanford.fsi.reap.dto.AppCreateBabyDTO;
+import edu.stanford.fsi.reap.dto.GeoLocation;
 import edu.stanford.fsi.reap.dto.ImportBabyDto;
 import edu.stanford.fsi.reap.entity.*;
 import edu.stanford.fsi.reap.entity.enumerations.ActionFromApp;
@@ -164,15 +165,24 @@ public class BabyService {
               }
               if (baby.getAssistedFood() == null) {
                 baby.setAssistedFood(false);
-              }
-              //              if (baby.getLatitude() == null || baby.getLongitude() == null) {
-              //                String address = baby.getArea() + " " + baby.getLocation();
-              //                GeoLocation geoLocation = googleMapService.geocode(address);
-              //
-              //                baby.setLatitude(geoLocation.getLat());
-              //                baby.setLongitude(geoLocation.getLng());
-              //              }
-              if (baby.getProjectId() == null) {
+            }
+
+            if (baby.getLatitude() == null || baby.getLongitude() == null) {
+                String address = baby.getArea() + " " + baby.getLocation();
+                try {
+                    GeoLocation geoLocation = googleMapService.geocode(address);
+                    if (geoLocation != null) {
+                        baby.setLatitude(geoLocation.getLat());
+                        baby.setLongitude(geoLocation.getLng());
+                    } else {
+                        log.warn("Could not geocode address for baby '{}': {}", baby.getName(), address);
+                    }
+                } catch (Exception e) {
+                    log.warn("Exception during geocoding for baby '{}': {}", baby.getName(), e.getMessage());
+                }
+            }
+
+            if (baby.getProjectId() == null) {
                 baby.setProjectId(SecurityUtils.getProjectId());
               }
 

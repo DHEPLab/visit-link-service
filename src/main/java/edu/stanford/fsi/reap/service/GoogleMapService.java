@@ -87,44 +87,43 @@ public class GoogleMapService {
             .queryParam("key", API_KEY)
             .toUriString();
 
-    try {
-      JsonNode json = restTemplate.getForObject(url, JsonNode.class);
-      if (json != null && "OK".equals(json.path("status").asText())) {
-        JsonNode location = json.path("results").get(0).path("geometry").path("location");
-        double lat = location.path("lat").asDouble();
-        double lng = location.path("lng").asDouble();
-        return new GeoLocation(address, lat, lng);
-      } else {
-        log.error(
-            "Error in geocoding API response: {}",
-            json != null ? json.path("status").asText() : "null response");
-        throw new BadRequestAlertException("Geocoding API error for address: " + address);
-      }
-    } catch (Exception e) {
-      log.error("Error fetching geocoding results from Google Maps API: {}", e.getMessage());
-      throw new BadRequestAlertException("Error geocoding address: " + address);
+        try {
+            JsonNode json = restTemplate.getForObject(url, JsonNode.class);
+            if (json != null && "OK".equals(json.path("status").asText())) {
+                JsonNode location = json.path("results").get(0).path("geometry").path("location");
+                double lat = location.path("lat").asDouble();
+                double lng = location.path("lng").asDouble();
+                return new GeoLocation(address, lat, lng);
+            } else {
+                String status = json != null ? json.path("status").asText() : "null response";
+                log.warn("Geocoding API error for address '{}': {}", address, status);
+                return null;
+            }
+        } catch (Exception e) {
+            log.error("Exception during geocoding for address '{}': {}", address, e.getMessage());
+            return null;
+        }
     }
-  }
 
-  public GeoLocation getPlaceGeoLocationByPlaceId(String placeId) {
-    String url =
-        UriComponentsBuilder.fromUriString(FIND_PLACE_URL_V1)
-            .queryParam("fields", "id,displayName,formattedAddress,location")
-            .queryParam("key", API_KEY)
-            .buildAndExpand(placeId)
-            .toUriString();
+    public GeoLocation getPlaceGeoLocationByPlaceId(String placeId) {
+        String url =
+                UriComponentsBuilder.fromUriString(FIND_PLACE_URL_V1)
+                        .queryParam("fields", "id,displayName,formattedAddress,location")
+                        .queryParam("key", API_KEY)
+                        .buildAndExpand(placeId)
+                        .toUriString();
 
-    try {
-      JsonNode json = restTemplate.getForObject(url, JsonNode.class);
-      return new GeoLocation(
-          json.get("formattedAddress").asText(),
-          json.get("location").get("latitude").asDouble(),
-          json.get("location").get("longitude").asDouble());
-    } catch (Exception e) {
-      log.error(
-          "Error fetching find place results by place ID from Google Maps API V1: {}",
-          e.getMessage());
-      throw new BadRequestAlertException(e.toString());
+        try {
+            JsonNode json = restTemplate.getForObject(url, JsonNode.class);
+            return new GeoLocation(
+                    json.get("formattedAddress").asText(),
+                    json.get("location").get("latitude").asDouble(),
+                    json.get("location").get("longitude").asDouble());
+        } catch (Exception e) {
+            log.error(
+                    "Error fetching find place results by place ID from Google Maps API V1: {}",
+                    e.getMessage());
+            throw new BadRequestAlertException(e.toString());
+        }
     }
-  }
 }
