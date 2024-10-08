@@ -19,12 +19,11 @@ public class GoogleMapService {
   private static final String FIND_PLACE_URL =
       "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?";
 
-
   private static final String FIND_PLACE_URL_V1 =
       "https://places.googleapis.com/v1/places/{placeId}";
 
   @Value("${google_map.key}")
-  private  String API_KEY ;
+  private String API_KEY;
 
   private final RestTemplate restTemplate;
 
@@ -80,26 +79,25 @@ public class GoogleMapService {
     }
   }
 
+  public GeoLocation getPlaceGeoLocationByPlaceId(String placeId) {
+    String url =
+        UriComponentsBuilder.fromUriString(FIND_PLACE_URL_V1)
+            .queryParam("fields", "id,displayName,formattedAddress,location")
+            .queryParam("key", API_KEY)
+            .buildAndExpand(placeId)
+            .toUriString();
 
-    public GeoLocation getPlaceGeoLocationByPlaceId(String placeId) {
-        String url =
-                UriComponentsBuilder.fromUriString(FIND_PLACE_URL_V1)
-                        .queryParam("fields", "id,displayName,formattedAddress,location")
-                        .queryParam("key", API_KEY)
-                        .buildAndExpand(placeId)
-                        .toUriString();
-
-        try {
-            JsonNode json = restTemplate.getForObject(url, JsonNode.class);
-            return new GeoLocation(
-                    json.get("formattedAddress").asText(),
-                    json.get("location").get("latitude").asDouble(),
-                    json.get("location").get("longitude").asDouble());
-        } catch (Exception e) {
-            log.error(
-                    "Error fetching find place results by place ID from Google Maps API V1: {}",
-                    e.getMessage());
-            throw new BadRequestAlertException(e.toString());
-        }
+    try {
+      JsonNode json = restTemplate.getForObject(url, JsonNode.class);
+      return new GeoLocation(
+          json.get("formattedAddress").asText(),
+          json.get("location").get("latitude").asDouble(),
+          json.get("location").get("longitude").asDouble());
+    } catch (Exception e) {
+      log.error(
+          "Error fetching find place results by place ID from Google Maps API V1: {}",
+          e.getMessage());
+      throw new BadRequestAlertException(e.toString());
     }
+  }
 }

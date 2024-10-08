@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import edu.stanford.fsi.reap.dto.AdminBabyVisitDTO;
 import edu.stanford.fsi.reap.dto.AppBabyDTO;
 import edu.stanford.fsi.reap.dto.AppCreateBabyDTO;
-import edu.stanford.fsi.reap.dto.GeoLocation;
 import edu.stanford.fsi.reap.dto.ImportBabyDto;
 import edu.stanford.fsi.reap.entity.*;
 import edu.stanford.fsi.reap.entity.enumerations.ActionFromApp;
@@ -166,35 +165,37 @@ public class BabyService {
               }
               if (baby.getAssistedFood() == null) {
                 baby.setAssistedFood(false);
-            }
+              }
 
-                if (baby.getLatitude() == null || baby.getLongitude() == null) {
-                    String address = baby.getArea() + " " + baby.getLocation();
-                    try {
-                        JsonNode json = googleMapService.findPlace(address);
-                        if (json != null && "OK".equals(json.path("status").asText())) {
-                            JsonNode candidates = json.get("candidates");
-                            if (candidates != null && !candidates.isEmpty()) {
-                                JsonNode elected = candidates.get(0);
-                                JsonNode location = elected.get("geometry").get("location");
-                                double lat = location.get("lat").asDouble();
-                                double lng = location.get("lng").asDouble();
-                                baby.setLatitude(lat);
-                                baby.setLongitude(lng);
-                            } else {
-                                log.warn("No candidates found for address '{}'", address);
-                            }
-                        } else {
-                            String status = json != null ? json.path("status").asText() : "null response";
-                            log.warn("Find Place API error for address '{}': {}", address, status);
-                        }
-                    } catch (Exception e) {
-                        log.warn("Exception during findPlace for baby '{}': {}", baby.getName(), e.getMessage());
+              if (baby.getLatitude() == null || baby.getLongitude() == null) {
+                String address = baby.getArea() + " " + baby.getLocation();
+                try {
+                  JsonNode json = googleMapService.findPlace(address);
+                  if (json != null && "OK".equals(json.path("status").asText())) {
+                    JsonNode candidates = json.get("candidates");
+                    if (candidates != null && !candidates.isEmpty()) {
+                      JsonNode elected = candidates.get(0);
+                      JsonNode location = elected.get("geometry").get("location");
+                      double lat = location.get("lat").asDouble();
+                      double lng = location.get("lng").asDouble();
+                      baby.setLatitude(lat);
+                      baby.setLongitude(lng);
+                    } else {
+                      log.warn("No candidates found for address '{}'", address);
                     }
+                  } else {
+                    String status = json != null ? json.path("status").asText() : "null response";
+                    log.warn("Find Place API error for address '{}': {}", address, status);
+                  }
+                } catch (Exception e) {
+                  log.warn(
+                      "Exception during findPlace for baby '{}': {}",
+                      baby.getName(),
+                      e.getMessage());
                 }
+              }
 
-
-            if (baby.getProjectId() == null) {
+              if (baby.getProjectId() == null) {
                 baby.setProjectId(SecurityUtils.getProjectId());
               }
 
