@@ -1,6 +1,7 @@
 package edu.stanford.fsi.reap.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.fasterxml.jackson.databind.JsonNode;
 import edu.stanford.fsi.reap.dto.AdminBabyVisitDTO;
 import edu.stanford.fsi.reap.dto.AppBabyDTO;
 import edu.stanford.fsi.reap.dto.AppCreateBabyDTO;
@@ -167,20 +168,31 @@ public class BabyService {
                 baby.setAssistedFood(false);
             }
 
-            if (baby.getLatitude() == null || baby.getLongitude() == null) {
-                String address = baby.getArea() + " " + baby.getLocation();
-                try {
-                    GeoLocation geoLocation = googleMapService.geocode(address);
-                    if (geoLocation != null) {
-                        baby.setLatitude(geoLocation.getLat());
-                        baby.setLongitude(geoLocation.getLng());
-                    } else {
-                        log.warn("Could not geocode address for baby '{}': {}", baby.getName(), address);
+                if (baby.getLatitude() == null || baby.getLongitude() == null) {
+                    String address = baby.getArea() + " " + baby.getLocation();
+                    try {
+                        JsonNode json = googleMapService.findPlace(address);
+                        if (json != null && "OK".equals(json.path("status").asText())) {
+                            JsonNode candidates = json.get("candidates");
+                            if (candidates != null && !candidates.isEmpty()) {
+                                JsonNode elected = candidates.get(0);
+                                JsonNode location = elected.get("geometry").get("location");
+                                double lat = location.get("lat").asDouble();
+                                double lng = location.get("lng").asDouble();
+                                baby.setLatitude(lat);
+                                baby.setLongitude(lng);
+                            } else {
+                                log.warn("No candidates found for address '{}'", address);
+                            }
+                        } else {
+                            String status = json != null ? json.path("status").asText() : "null response";
+                            log.warn("Find Place API error for address '{}': {}", address, status);
+                        }
+                    } catch (Exception e) {
+                        log.warn("Exception during findPlace for baby '{}': {}", baby.getName(), e.getMessage());
                     }
-                } catch (Exception e) {
-                    log.warn("Exception during geocoding for baby '{}': {}", baby.getName(), e.getMessage());
                 }
-            }
+
 
             if (baby.getProjectId() == null) {
                 baby.setProjectId(SecurityUtils.getProjectId());

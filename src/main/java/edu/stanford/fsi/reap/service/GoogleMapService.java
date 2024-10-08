@@ -5,6 +5,7 @@ import edu.stanford.fsi.reap.dto.GeoLocation;
 import edu.stanford.fsi.reap.web.rest.errors.BadRequestAlertException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,13 +19,13 @@ public class GoogleMapService {
   private static final String FIND_PLACE_URL =
       "https://maps.googleapis.com/maps/api/place/findplacefromtext/json?";
 
-  private static final String GEOCODING_URL = "https://maps.googleapis.com/maps/api/geocode/json";
 
   private static final String FIND_PLACE_URL_V1 =
       "https://places.googleapis.com/v1/places/{placeId}";
 
   // TODO:
-  private static final String API_KEY = "";
+  @Value("${google_map.key}")
+  private  String API_KEY ;
 
   private final RestTemplate restTemplate;
 
@@ -80,30 +81,6 @@ public class GoogleMapService {
     }
   }
 
-  public GeoLocation geocode(String address) {
-    String url =
-        UriComponentsBuilder.fromHttpUrl(GEOCODING_URL)
-            .queryParam("address", address)
-            .queryParam("key", API_KEY)
-            .toUriString();
-
-        try {
-            JsonNode json = restTemplate.getForObject(url, JsonNode.class);
-            if (json != null && "OK".equals(json.path("status").asText())) {
-                JsonNode location = json.path("results").get(0).path("geometry").path("location");
-                double lat = location.path("lat").asDouble();
-                double lng = location.path("lng").asDouble();
-                return new GeoLocation(address, lat, lng);
-            } else {
-                String status = json != null ? json.path("status").asText() : "null response";
-                log.warn("Geocoding API error for address '{}': {}", address, status);
-                return null;
-            }
-        } catch (Exception e) {
-            log.error("Exception during geocoding for address '{}': {}", address, e.getMessage());
-            return null;
-        }
-    }
 
     public GeoLocation getPlaceGeoLocationByPlaceId(String placeId) {
         String url =
