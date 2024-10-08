@@ -269,8 +269,12 @@ public class BabyResource {
   }
 
   @GetMapping("/place/location")
-  public ResponseEntity<GeoLocation> findPlaceLocation(@RequestParam String area) {
-    GeoLocation result = googleMapService.getPlaceGeoLocation(area);
+  public ResponseEntity<GeoLocation> findPlaceLocation(
+      @RequestParam(required = false) String placeId, @RequestParam(required = false) String area) {
+    GeoLocation result =
+        Optional.ofNullable(placeId)
+            .map(googleMapService::getPlaceGeoLocationByPlaceId)
+            .orElseGet(() -> googleMapService.getPlaceGeoLocation(area));
 
     return ResponseEntity.ok(result);
   }
