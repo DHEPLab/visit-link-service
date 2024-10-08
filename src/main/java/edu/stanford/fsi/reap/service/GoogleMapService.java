@@ -89,6 +89,10 @@ public class GoogleMapService {
 
     try {
       JsonNode json = restTemplate.getForObject(url, JsonNode.class);
+      if (json == null) {
+        log.error("Received null response from Google Maps API for placeId {}", placeId);
+        throw new BadRequestAlertException("Received null response from Google Maps API");
+      }
       return new GeoLocation(
           json.get("formattedAddress").asText(),
           json.get("location").get("latitude").asDouble(),
