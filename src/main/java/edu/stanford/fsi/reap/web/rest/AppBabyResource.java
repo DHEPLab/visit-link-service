@@ -1,5 +1,6 @@
 package edu.stanford.fsi.reap.web.rest;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import edu.stanford.fsi.reap.dto.*;
 import edu.stanford.fsi.reap.entity.Baby;
 import edu.stanford.fsi.reap.entity.Carer;
@@ -8,6 +9,7 @@ import edu.stanford.fsi.reap.entity.Chw;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.BabyService;
+import edu.stanford.fsi.reap.service.GoogleMapService;
 import edu.stanford.fsi.reap.service.LessonService;
 import edu.stanford.fsi.reap.utils.BabyAge;
 import edu.stanford.fsi.reap.utils.DateRange;
@@ -46,6 +48,7 @@ public class AppBabyResource {
   private final ModelMapper modelMapper;
   private final CarerModifyRecordRepository carerModifyRecordRepository;
   private final BabyUpdateInfoRepository babyUpdateInfoRepository;
+  private final GoogleMapService googleMapService;
 
   public AppBabyResource(
       LessonService lessonService,
@@ -55,7 +58,8 @@ public class AppBabyResource {
       VisitRepository visitRepository,
       ModelMapper modelMapper,
       CarerModifyRecordRepository carerModifyRecordRepository,
-      BabyUpdateInfoRepository babyUpdateInfoRepository) {
+      BabyUpdateInfoRepository babyUpdateInfoRepository,
+      GoogleMapService googleMapService) {
     this.lessonService = lessonService;
     this.repository = repository;
     this.service = service;
@@ -64,6 +68,7 @@ public class AppBabyResource {
     this.modelMapper = modelMapper;
     this.carerModifyRecordRepository = carerModifyRecordRepository;
     this.babyUpdateInfoRepository = babyUpdateInfoRepository;
+    this.googleMapService = googleMapService;
   }
 
   @GetMapping
@@ -323,5 +328,22 @@ public class AppBabyResource {
   public List<Carer> getAppBabyCarers(@PathVariable Long id) {
     Long chwId = SecurityUtils.getUserId();
     return carerRepository.findByBabyIdAndBabyChwIdOrderByMasterDesc(id, chwId);
+  }
+
+  @GetMapping("/place/autocomplete")
+  public ResponseEntity<JsonNode> getPlaceAutocomplete(@RequestParam String area) {
+    JsonNode result = googleMapService.getGlaceAutocomplete(area);
+    return ResponseEntity.ok(result);
+  }
+
+  @GetMapping("/place/location")
+  public ResponseEntity<GeoLocation> findPlaceLocation(
+      @RequestParam(required = false) String placeId, @RequestParam(required = false) String area) {
+    GeoLocation result =
+        Optional.ofNullable(placeId)
+            .map(googleMapService::getPlaceGeoLocationByPlaceId)
+            .orElseGet(() -> googleMapService.getPlaceGeoLocation(area));
+
+    return ResponseEntity.ok(result);
   }
 }

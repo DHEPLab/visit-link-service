@@ -30,6 +30,7 @@ import edu.stanford.fsi.reap.repository.CarerRepository;
 import edu.stanford.fsi.reap.repository.VisitRepository;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.BabyService;
+import edu.stanford.fsi.reap.service.GoogleMapService;
 import edu.stanford.fsi.reap.service.LessonService;
 import edu.stanford.fsi.reap.utils.DateRange;
 import java.time.LocalDate;
@@ -67,6 +68,7 @@ class AppBabyResourceTest {
   private static CarerRepository carerRepository;
   private static CarerModifyRecordRepository carerModifyRecordRepository;
   private static BabyUpdateInfoRepository babyUpdateInfoRepository;
+  private static GoogleMapService googleMapService;
   private static ModelMapper modelMapper;
   private static MockMvc mockMvc;
   private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -81,6 +83,7 @@ class AppBabyResourceTest {
     babyService = mock(BabyService.class);
     modelMapper = mock(ModelMapper.class);
     babyUpdateInfoRepository = mock(BabyUpdateInfoRepository.class);
+    googleMapService = mock(GoogleMapService.class);
     when(babyRepository.findByIdAndChwIdAndDeletedFalse(11L, null))
         .thenReturn(Optional.ofNullable(Baby.builder().build()));
     resource =
@@ -92,7 +95,8 @@ class AppBabyResourceTest {
             visitRepository,
             modelMapper,
             carerModifyRecordRepository,
-            babyUpdateInfoRepository);
+            babyUpdateInfoRepository,
+            googleMapService);
     mockMvc =
         MockMvcBuilders.standaloneSetup(resource)
             .setCustomArgumentResolvers(new PageableHandlerMethodArgumentResolver())
