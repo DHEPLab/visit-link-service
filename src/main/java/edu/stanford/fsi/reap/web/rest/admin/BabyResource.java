@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import edu.stanford.fsi.reap.dto.*;
 import edu.stanford.fsi.reap.dto.GeoLocation;
 import edu.stanford.fsi.reap.entity.*;
-import edu.stanford.fsi.reap.handler.BabyLocationHandler;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.BabyModifyRecordService;
@@ -27,7 +26,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,7 +42,6 @@ public class BabyResource {
   private final ModelMapper modelMapper;
   private final VisitRepository visitRepository;
   private final ExcelService excelService;
-  private final BabyLocationHandler babyLocationHandler;
   private final BabyModifyRecordRepository babyModifyRecordRepository;
   private final BabyModifyRecordService babyModifyRecordService;
   private final GoogleMapService googleMapService;
@@ -56,7 +53,6 @@ public class BabyResource {
       ModelMapper modelMapper,
       VisitRepository visitRepository,
       ExcelService excelService,
-      BabyLocationHandler babyLocationHandler,
       BabyModifyRecordRepository babyModifyRecordRepository,
       BabyModifyRecordService babyModifyRecordService,
       GoogleMapService googleMapService) {
@@ -66,7 +62,6 @@ public class BabyResource {
     this.modelMapper = modelMapper;
     this.visitRepository = visitRepository;
     this.excelService = excelService;
-    this.babyLocationHandler = babyLocationHandler;
     this.babyModifyRecordRepository = babyModifyRecordRepository;
     this.babyModifyRecordService = babyModifyRecordService;
     this.googleMapService = googleMapService;
@@ -76,8 +71,6 @@ public class BabyResource {
   public ResponseEntity<Baby> createBaby(@Valid @RequestBody BabyDTO dto) {
     Baby baby = modelMapper.map(dto, Baby.class);
     keepIdentityUnique(baby);
-    // TODO: temporary disable the location check
-    //    handleBabyLocation(baby);
     baby.setProjectId(SecurityUtils.getProjectId());
     return ResponseEntity.ok(repository.save(baby));
   }
@@ -91,36 +84,6 @@ public class BabyResource {
                 throw new BadRequestAlertException("ID: " + baby.getIdentity() + " 已经存在");
               }
             });
-  }
-
-  private void handleBabyLocation(Baby baby) {
-    if (baby.getShowLocation() == null || !baby.getShowLocation()) {
-      if (StringUtils.isEmpty(baby.getLatitude()) || StringUtils.isEmpty(baby.getLongitude())) {
-        if (!StringUtils.isEmpty(baby.getArea()) && !StringUtils.isEmpty(baby.getLocation())) {
-          String result =
-              babyLocationHandler.confirmBabyLocation(baby.getArea(), baby.getLocation());
-          if (!StringUtils.isEmpty(result)) {
-            String[] splits = result.split(",");
-            baby.setLongitude(Double.valueOf(splits[0]));
-            baby.setLatitude(Double.valueOf(splits[1]));
-            baby.setShowLocation(false);
-          }
-        }
-      } else {
-        baby.setShowLocation(true);
-      }
-    }
-  }
-
-  private void resetBabyLocation(Baby baby) {
-    if (!StringUtils.isEmpty(baby.getArea()) && !StringUtils.isEmpty(baby.getLocation())) {
-      String result = babyLocationHandler.confirmBabyLocation(baby.getArea(), baby.getLocation());
-      if (!StringUtils.isEmpty(result)) {
-        String[] splits = result.split(",");
-        baby.setLongitude(Double.valueOf(splits[0]));
-        baby.setLatitude(Double.valueOf(splits[1]));
-      }
-    }
   }
 
   @PutMapping("/{id}/chw/{userId}")
@@ -139,8 +102,6 @@ public class BabyResource {
   public ResponseEntity<Baby> updateBaby(@PathVariable Long id, @Valid @RequestBody BabyDTO dto) {
     Baby baby = modelMapper.map(dto, Baby.class);
     keepIdentityUnique(baby);
-    // TODO: temporary disable the location check
-    // handleBabyLocation(baby);
 
     Optional<Baby> oldBaby = repository.findById(dto.getId());
     baby.setCreatedAt(oldBaby.get().getCreatedAt());
@@ -203,7 +164,6 @@ public class BabyResource {
                 baby.setIdentity(wrapper.getIdentity());
                 keepIdentityUnique(baby);
               }
-              //              resetBabyLocation(baby);
               service.approve(baby);
             });
   }

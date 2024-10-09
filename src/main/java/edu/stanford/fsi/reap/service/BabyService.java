@@ -9,7 +9,6 @@ import edu.stanford.fsi.reap.dto.ImportBabyDto;
 import edu.stanford.fsi.reap.entity.*;
 import edu.stanford.fsi.reap.entity.enumerations.ActionFromApp;
 import edu.stanford.fsi.reap.entity.enumerations.VisitStatus;
-import edu.stanford.fsi.reap.handler.BabyLocationHandler;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.utils.DateRange;
@@ -46,7 +45,6 @@ public class BabyService {
   private final ExcelService excelService;
   private final ModelMapper modelMapper;
   private final VisitPositionRecordRepository visitPositionRecordRepository;
-  private final BabyLocationHandler babyLocationHandler;
   private final AccountOperationRecordService accountOperationRecordService;
   private final BabyModifyRecordRepository babyModifyRecordRepository;
   private final BabyUpdateInfoRepository babyUpdateInfoRepository;
@@ -62,7 +60,6 @@ public class BabyService {
       ExcelService excelService,
       ModelMapper modelMapper,
       VisitPositionRecordRepository visitPositionRecordRepository,
-      BabyLocationHandler babyLocationHandler,
       AccountOperationRecordService accountOperationRecordService,
       BabyHistoryRepository historyRepository,
       BabyModifyRecordRepository babyModifyRecordRepository,
@@ -77,7 +74,6 @@ public class BabyService {
     this.excelService = excelService;
     this.modelMapper = modelMapper;
     this.visitPositionRecordRepository = visitPositionRecordRepository;
-    this.babyLocationHandler = babyLocationHandler;
     this.accountOperationRecordService = accountOperationRecordService;
     this.historyRepository = historyRepository;
     this.babyModifyRecordRepository = babyModifyRecordRepository;

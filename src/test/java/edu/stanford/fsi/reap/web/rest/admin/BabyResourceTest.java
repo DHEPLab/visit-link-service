@@ -12,7 +12,6 @@ import edu.stanford.fsi.reap.entity.Carer;
 import edu.stanford.fsi.reap.entity.enumerations.BabyStage;
 import edu.stanford.fsi.reap.entity.enumerations.Gender;
 import edu.stanford.fsi.reap.entity.enumerations.VisitStatus;
-import edu.stanford.fsi.reap.handler.BabyLocationHandler;
 import edu.stanford.fsi.reap.repository.*;
 import edu.stanford.fsi.reap.security.SecurityUtils;
 import edu.stanford.fsi.reap.service.BabyModifyRecordService;
@@ -52,7 +51,6 @@ class BabyResourceTest {
   static VisitRepository visitRepository;
   private static final String url = "/admin/babies";
 
-  static BabyLocationHandler babyLocationHandler;
   static ExcelService excelService;
 
   @BeforeAll
@@ -60,7 +58,6 @@ class BabyResourceTest {
     carerRepository = mock(CarerRepository.class);
     repository = mock(BabyRepository.class);
     service = mock(BabyService.class);
-    babyLocationHandler = mock(BabyLocationHandler.class);
     ModelMapper modelMapper = new ModelMapper();
     excelService = mock(ExcelService.class);
     visitRepository = mock(VisitRepository.class);
@@ -76,7 +73,6 @@ class BabyResourceTest {
             modelMapper,
             visitRepository,
             excelService,
-            babyLocationHandler,
             babyModifyRecordRepository,
             babyModifyRecordService,
             googleMapService);
