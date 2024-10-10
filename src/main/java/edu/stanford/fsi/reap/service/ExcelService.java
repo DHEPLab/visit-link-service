@@ -1013,11 +1013,10 @@ public class ExcelService {
 
     int a = 0;
     for (int i = 2; i < endRow - 1; i++) {
-      if (StringUtils.isEmpty(sheet.getRow(i).getCell(0).getStringCellValue())) {
-        break;
-      }
       Row row = sheet.getRow(i);
-      if (row != null) {
+        if (row == null) {
+            continue;
+        }
         String realName = safeGetStringCellValue(row.getCell(0), evaluator);
         String identity = safeGetStringCellValue(row.getCell(1), evaluator);
         String tag = safeGetStringCellValue(row.getCell(2), evaluator);
@@ -1083,7 +1082,6 @@ public class ExcelService {
           errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.password", locale));
         }
       }
-    }
     map.put("errData", errDTOS);
     map.put("total", a);
     return map;
