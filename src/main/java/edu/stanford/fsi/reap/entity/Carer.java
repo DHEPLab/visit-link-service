@@ -32,7 +32,7 @@ public class Carer extends AbstractAuditingEntity {
   private String phone;
 
   @Size(max = 20)
-  private String wechat;
+  private String otherContact;
 
   @Enumerated(EnumType.STRING)
   @Column(length = 20)
@@ -58,8 +58,8 @@ public class Carer extends AbstractAuditingEntity {
         + ", phone='"
         + phone
         + '\''
-        + ", wechat='"
-        + wechat
+        + ", otherContact='"
+        + otherContact
         + '\''
         + ", familyTies="
         + familyTies

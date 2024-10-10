@@ -322,7 +322,7 @@ public class ExcelService {
                       + "/"
                       + localSource.getMessage("report.primaryCaregiver", null, locale)
                       + "/"
-                      + carer.getWechat());
+                      + carer.getOtherContact());
           itemRow.getCarers().remove(carer);
         } else {
           setCarers(itemRow, row, cellInt, 4, locale);
@@ -425,7 +425,7 @@ public class ExcelService {
               row.createCell(cellInt++).setCellValue("");
             }
             row.createCell(cellInt++).setCellValue(carer.getPhone());
-            row.createCell(cellInt++).setCellValue(carer.getWechat());
+            row.createCell(cellInt++).setCellValue(carer.getOtherContact());
           }
         }
       } else {
@@ -557,7 +557,7 @@ public class ExcelService {
                       + "/"
                       + localSource.getMessage("report.nonPrimaryCaregiver", null, locale)
                       + "/"
-                      + carer.getWechat());
+                      + carer.getOtherContact());
         } else {
           row.createCell(cellInt++).setCellValue("");
         }
@@ -813,7 +813,7 @@ public class ExcelService {
                       + "/"
                       + localSource.getMessage("report.primaryCaregiver", null, locale)
                       + "/"
-                      + carer.getWechat());
+                      + carer.getOtherContact());
           carerList.remove(carer);
         } else {
           setNotStartCarers(carerList, row, cellInt, 4, locale);
@@ -845,7 +845,7 @@ public class ExcelService {
                       + "/"
                       + localSource.getMessage("report.nonPrimaryCaregiver", null, locale)
                       + "/"
-                      + carer.getWechat());
+                      + carer.getOtherContact());
         } else {
           row.createCell(cellInt++).setCellValue("");
         }

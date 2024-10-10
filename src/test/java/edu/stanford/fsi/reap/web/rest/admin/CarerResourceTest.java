@@ -106,7 +106,7 @@ class CarerResourceTest {
         .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("test"))
         .andExpect(MockMvcResultMatchers.jsonPath("$.phone").value("13217499804"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.wechat").value("wechat"))
+        .andExpect(MockMvcResultMatchers.jsonPath("$.otherContact").value("wechat"))
         .andReturn();
   }
 
