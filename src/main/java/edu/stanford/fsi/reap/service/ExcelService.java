@@ -1014,74 +1014,74 @@ public class ExcelService {
     int a = 0;
     for (int i = 2; i < endRow - 1; i++) {
       Row row = sheet.getRow(i);
-        if (row == null) {
-            continue;
-        }
-        String realName = safeGetStringCellValue(row.getCell(0), evaluator);
-        String identity = safeGetStringCellValue(row.getCell(1), evaluator);
-        String tag = safeGetStringCellValue(row.getCell(2), evaluator);
-        String phone = safeGetStringCellValue(row.getCell(3), evaluator);
-        String username = safeGetStringCellValue(row.getCell(4), evaluator);
-        String password = safeGetStringCellValue(row.getCell(5), evaluator);
-
-        if (Stream.of(realName, identity, tag, phone, username, password)
-            .allMatch(StringUtils::isEmpty)) {
-          break;
-        }
-
-        a++;
-        if (StringUtils.isEmpty(realName)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.name", locale));
-          continue;
-        }
-        if (!realName.matches(RegexConstant.NAME_REGEX)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.name", locale));
-          continue;
-        }
-        if (StringUtils.isEmpty(identity)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.chwId", locale));
-          continue;
-        }
-        if (communityHouseWorkerRepository.findFirstByIdentity(identity).isPresent()) {
-          errDTOS.add(
-              getLocaleDTO(realName, (i - 1), "error.excel.chw.chwIdExist", locale, identity));
-          continue;
-        }
-        if (StringUtils.isEmpty(tag)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.area", locale));
-          continue;
-        }
-        String[] tags = tag.split(";");
-        if (tags.length > 3) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.areaInvalid", locale));
-          continue;
-        }
-        if (!Arrays.stream(tags).allMatch(part -> part.length() <= 100)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.areaLengthInvalid", locale));
-          continue;
-        }
-        if (StringUtils.isEmpty(phone)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.phone", locale));
-          continue;
-        }
-        if (!phone.matches(RegexConstant.PHONE_REGEX)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.phoneInvalid", locale));
-          continue;
-        }
-        if (StringUtils.isEmpty(username)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.username", locale));
-          continue;
-        }
-        if (userRepository.findOneByUsername(username).isPresent()) {
-          errDTOS.add(
-              getLocaleDTO(realName, (i - 1), "error.excel.chw.usernameExist", locale, username));
-          continue;
-        }
-
-        if (StringUtils.isEmpty(password)) {
-          errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.password", locale));
-        }
+      if (row == null) {
+        continue;
       }
+      String realName = safeGetStringCellValue(row.getCell(0), evaluator);
+      String identity = safeGetStringCellValue(row.getCell(1), evaluator);
+      String tag = safeGetStringCellValue(row.getCell(2), evaluator);
+      String phone = safeGetStringCellValue(row.getCell(3), evaluator);
+      String username = safeGetStringCellValue(row.getCell(4), evaluator);
+      String password = safeGetStringCellValue(row.getCell(5), evaluator);
+
+      if (Stream.of(realName, identity, tag, phone, username, password)
+          .allMatch(StringUtils::isEmpty)) {
+        break;
+      }
+
+      a++;
+      if (StringUtils.isEmpty(realName)) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.name", locale));
+        continue;
+      }
+      if (!realName.matches(RegexConstant.NAME_REGEX)) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.name", locale));
+        continue;
+      }
+      if (StringUtils.isEmpty(identity)) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.chwId", locale));
+        continue;
+      }
+      if (communityHouseWorkerRepository.findFirstByIdentity(identity).isPresent()) {
+        errDTOS.add(
+            getLocaleDTO(realName, (i - 1), "error.excel.chw.chwIdExist", locale, identity));
+        continue;
+      }
+      if (StringUtils.isEmpty(tag)) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.area", locale));
+        continue;
+      }
+      String[] tags = tag.split(";");
+      if (tags.length > 3) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.areaInvalid", locale));
+        continue;
+      }
+      if (!Arrays.stream(tags).allMatch(part -> part.length() <= 100)) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.areaLengthInvalid", locale));
+        continue;
+      }
+      if (StringUtils.isEmpty(phone)) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.phone", locale));
+        continue;
+      }
+      if (!phone.matches(RegexConstant.PHONE_REGEX)) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.phoneInvalid", locale));
+        continue;
+      }
+      if (StringUtils.isEmpty(username)) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.username", locale));
+        continue;
+      }
+      if (userRepository.findOneByUsername(username).isPresent()) {
+        errDTOS.add(
+            getLocaleDTO(realName, (i - 1), "error.excel.chw.usernameExist", locale, username));
+        continue;
+      }
+
+      if (StringUtils.isEmpty(password)) {
+        errDTOS.add(getLocaleDTO(realName, (i - 1), "error.excel.chw.password", locale));
+      }
+    }
     map.put("errData", errDTOS);
     map.put("total", a);
     return map;
