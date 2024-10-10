@@ -82,7 +82,7 @@ class CarerResourceTest {
     CarerDTO carerDTO = new CarerDTO();
     carerDTO.setName("test");
     carerDTO.setPhone("13217499804");
-    carerDTO.setWechat("wechat");
+    carerDTO.setOtherContact("wechat");
     carerDTO.setFamilyTies(FamilyTies.MOTHER);
     carerDTO.setBaby(baby);
 
@@ -126,7 +126,7 @@ class CarerResourceTest {
     CarerDTO carerDTO = new CarerDTO();
     carerDTO.setName("test");
     carerDTO.setPhone("13217499804");
-    carerDTO.setWechat("wechat");
+    carerDTO.setOtherContact("wechat");
     carerDTO.setFamilyTies(FamilyTies.MOTHER);
     carerDTO.setBaby(baby);
 

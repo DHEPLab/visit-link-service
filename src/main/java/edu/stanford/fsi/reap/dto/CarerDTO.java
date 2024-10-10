@@ -18,7 +18,7 @@ public class CarerDTO {
   @NotNull private String phone;
 
   @Size(max = 20)
-  private String wechat;
+  private String otherContact;
 
   @NotNull private FamilyTies familyTies;
 
