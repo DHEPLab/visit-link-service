@@ -499,7 +499,7 @@ public class ExcelService {
     Locale locale = "zh".equals(lang) ? Locale.CHINESE : Locale.ENGLISH;
 
     Function<UnfilteredUser, String> getStatusString =
-        u -> getMessageByCondition(u.isDeleted(), "status.archived", "status.active", locale);
+        u -> getMessageByCondition(u.isDeleted(), "status.deleted", "status.active", locale);
 
     Sheet sheet = workbook.getSheetAt(0);
     for (int i = 0; i < chwList.size(); i++) {
